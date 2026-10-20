@@ -10,9 +10,10 @@ See `SPEC.md` for goals, non-goals and acceptance criteria.
 <!-- How to install, run, test. Keep these exact and working. -->
 - Install: 
 - Run: 
-- Test: 
+- Test: `python -m unittest discover -s mcp-server -p "test_*.py" -v`
 - Coverage: 
-- MCP server: 
+- MCP server: `python mcp-server/server.py` (from the repository root)
+- MCP check: `node mcp-server/check.mjs -- python mcp-server/server.py`
 
 ## Conventions
 <!-- Folder layout, naming, where business rules live, how errors are returned to the client. -->

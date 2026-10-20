@@ -4,8 +4,8 @@
   },
   "mcpServers": {
     "my-project": {
-      "command": "node",
-      "args": ["mcp-server/server.js"],
+      "command": "python",
+      "args": ["mcp-server/server.py"],
       "env": { "MCP_TOKEN": "$MCP_TOKEN" }
     }
   }

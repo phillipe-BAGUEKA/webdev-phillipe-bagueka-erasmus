@@ -4,3 +4,6 @@ One row per agent session. In Gemini CLI, type `/stats` before you quit and copy
 
 | Date | Tool | Input tokens | Output tokens | Credits (if no tokens) | List-price cost |
 |---|---|---|---|---|---|
+| 2026-10-20 | Codex | non disponible | non disponible | non disponible | non disponible |
+
+Codex session token counts and a comparable list-price calculation were not available here. No Gemini CLI session was run.
