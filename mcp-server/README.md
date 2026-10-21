@@ -45,7 +45,7 @@ On this Windows machine, the direct check `node mcp-server/check.mjs -- npm run 
 node mcp-server/check.mjs -- node 'C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js' run --silent mcp
 ```
 
-Both the direct Python check and this Windows npm check reported `12/12 checks passed` on 2026-10-20. The additional standard-library tests reported `Ran 8 tests ... OK`. They also run through `npm test`, which the existing CI invokes when `package.json` is present:
+Both the direct Python check and this Windows npm check reported `12/12 checks passed` on 2026-10-20. The original eight standard-library tests passed then. A ninth test was added for Gemini CLI protocol negotiation; the current results are recorded below. The tests also run through `npm test`, which the existing CI invokes when `package.json` is present:
 
 ```powershell
 python -m unittest discover -s mcp-server -p 'test_*.py' -v
@@ -53,6 +53,24 @@ npm.cmd test
 ```
 
 For a one-line manual PowerShell check, use `'{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | python mcp-server/server.py 2>$null`. PowerShell's `2>$null` replaces the Bash example's `2>/dev/null`; it hides diagnostics only for this manual check. The server itself reserves stdout for protocol messages and stderr for diagnostics.
+
+## Gemini CLI 0.64.0 compatibility
+
+On 2026-10-20, `gemini.cmd mcp list` initially reported
+`my-project: python mcp-server/server.py (stdio) - Disconnected` without a
+more specific error; `/mcp list` showed the same status. The installed Gemini
+CLI bundle identifies `2025-06-18` as its MCP client's latest protocol version
+and its supported-version list does not include `2025-11-25`. The server used
+to return `2025-11-25` for every `initialize` request. This version mismatch is
+the diagnosis inferred from the installed client code and the before/after
+connection result; the actual initialization message was not captured.
+
+The server now answers `2025-06-18` when the client requests that revision,
+and keeps `2025-11-25` for the course checker and other requests. No SDK or
+framework was added. After this change, the same `gemini.cmd mcp list`
+reported `my-project ... Connected`; the checker still passed 12/12 and the
+Python tests passed 9/9, including a test for the older client revision. A
+connected listing alone does not prove that Gemini chose or called a tool.
 
 ## Session transcript
 
@@ -81,4 +99,40 @@ Invalid or missing tool arguments produce JSON-RPC `-32602`, following Lecture 2
 
 ## The description experiment
 
-Protocol for the later agent session: ask the same question that could use `search_lectures` twice, without naming the tool. Between trials, change only that tool's description, making its use case more or less precise; record whether the agent chose it and explain the observed difference. No model trial was performed here because Gemini CLI was not available, so no behavioural change is claimed.
+The student ran two separate Gemini CLI sessions with the same prompt,
+`What does lecture 5 cover?`, without naming a tool. Codex changed only
+`find_lecture.description` between these sessions. The first session requested
+`gemini-2.5-flash`, but its statistics show one failed request to that model
+and 15 requests to `gemini-3.8-flash`; the second requested
+`gemini-3.8-flash` explicitly. The student was instructed to keep per-call
+approval; acceptance is explicitly reported for the first trial, while the
+second trial's approval prompt was not described. No global automatic approval
+was configured by Codex. These are user-reported session observations, not a
+captured wire trace.
+
+For trial 1, the student's `/mcp list` showed `my-project — Ready (2 tools)`
+and named `mcp_my-project_find_lecture` and
+`mcp_my-project_search_lectures`. `/stats tools` showed one successful
+`find_lecture` call (100% success, displayed average duration 21.0 s), one
+authorization accepted, zero rejected and zero modified. The session also
+displayed `API Error: exception TypeError: fetch failed sending request`.
+`/stats model` showed `gemini-2.5-flash`: 1 request, 1 error, 866 ms average
+latency and 0 tokens; and `gemini-3.8-flash`: 15 requests, 13 errors, 52.6 s
+average latency, displayed total 25,659 tokens, input 25,287, thoughts 313,
+output 59. These are whole-session figures, not tokens for the one tool call.
+
+| Trial | `find_lecture` description | Observed behavior |
+|---|---|---|
+| 1 | `Find one course lecture by its number. Use for questions about a specific lecture; return its title and topics.` | The reported Gemini statistics showed one successful `mcp_my-project_find_lecture` call and an accepted authorization. The final answer gave `Lecture 5: What the agent built, part 1` and covered HTTP, REST vs GraphQL, Data modeling, ORM and Layers. The exact arguments and raw tool result were not recorded. |
+| 2 | `Return details for a numbered entry in the course data.` | Gemini called `find_lecture` on `my-project` with visible argument `number: 5`. The displayed tool result was `Lecture 5: What the agent built, part 1. Topics: HTTP, REST vs GraphQL, data modeling, ORM, layers`. Afterwards the interface displayed `Usage limit reached for gemini-3.8-flash`. The student selected Stop, but the interface kept showing thinking; no final model answer after the call was confirmed. |
+
+The tool choice did not change in these two trials. That observation alone
+does not show that the description had no effect on the model's decision:
+there were only two trials, the first session involved a failed request to a
+different model, and the second hit a usage limit. The first trial's exact
+arguments and raw result and the second trial's complete token statistics
+were not supplied; they are not inferred from the known lecture data or reused
+between trials. The student's screenshot of the second
+trial was described but not attached to this repository, so no screenshot is
+claimed as a committed artifact. The clear description from trial 1 is the
+final one restored in `server.py`.

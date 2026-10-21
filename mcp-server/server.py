@@ -8,6 +8,7 @@ from typing import Any, NoReturn
 
 
 PROTOCOL_VERSION = "2025-11-25"
+COMPATIBLE_PROTOCOL_VERSIONS = {PROTOCOL_VERSION, "2025-06-18"}
 TOOLS = [
     {
         "name": "find_lecture",
@@ -175,13 +176,20 @@ def handle_message(
         return error_response(request_id, -32602, "params must be an object")
 
     if method == "initialize":
-        if not isinstance(parameters.get("protocolVersion"), str):
+        requested_version = parameters.get("protocolVersion")
+        if not isinstance(requested_version, str):
             return error_response(request_id, -32602, "protocolVersion is required")
+
+        # Gemini CLI 0.64.0 offers 2025-06-18; the course checker uses 2025-11-25.
+        agreed_version = (
+            requested_version
+            if requested_version in COMPATIBLE_PROTOCOL_VERSIONS
+            else PROTOCOL_VERSION
+        )
         return result_response(
             request_id,
             {
-                # Name our supported revision, even if the client offered another.
-                "protocolVersion": PROTOCOL_VERSION,
+                "protocolVersion": agreed_version,
                 "capabilities": {"tools": {}},
                 "serverInfo": {"name": "lecture-tools", "version": "1.0.0"},
             },

@@ -5,5 +5,33 @@ One row per agent session. In Gemini CLI, type `/stats` before you quit and copy
 | Date | Tool | Input tokens | Output tokens | Credits (if no tokens) | List-price cost |
 |---|---|---|---|---|---|
 | 2026-10-20 | Codex | non disponible | non disponible | non disponible | non disponible |
+| 2026-10-20 | Gemini CLI, trial 1 (`gemini-2.5-flash` and `gemini-3.8-flash`) | 25,287 | 59 |  | ≈ US$0.02036, estimate |
+| 2026-10-21 | Gemini CLI, trial 2 (`gemini-3.8-flash`) | non relevé | non relevé | sans objet | non calculable |
+| 2026-10-21 | Codex, TP1 documentation and checks | non disponible | non disponible | sans objet | non calculable |
 
-Codex session token counts and a comparable list-price calculation were not available here. No Gemini CLI session was run.
+These are statistics reported by the student from Gemini CLI, not measurements
+of the single lecture lookup. In trial 1, `/stats model` showed:
+
+- `gemini-2.5-flash`: 1 request, 1 error, 866 ms average latency, 0 tokens.
+- `gemini-3.8-flash`: 15 requests, 13 errors, 52.6 s average latency;
+  displayed total 25,659 tokens, input 25,287, thoughts 313, output 59.
+
+The displayed total and categories are preserved as reported. `/stats tools`
+showed `find_lecture`: 1 call, 100% success, 21.0 s displayed average
+duration; 1 authorization accepted, 0 rejected, 0 modified. The session also
+displayed `API Error: exception TypeError: fetch failed sending request`.
+
+The list-price estimate in the table applies the [Google Gemini 3.8 Flash
+standard rate valid through 2026](https://ai.google.dev/gemini-api/docs/pricing)
+of US$0.75 per million input tokens and US$3.75 per million output tokens,
+including thinking tokens: 25,287 × 0.75 / 1,000,000 + (59 + 313) × 3.75 /
+1,000,000 ≈ US$0.02036. This is a hypothetical estimate for the reported
+session totals, not an exact charge or the cost of the single tool call. The
+free tier, API errors and billing status were not independently audited.
+
+In trial 2, `find_lecture` returned lecture 5 before Gemini CLI displayed
+`Usage limit reached for gemini-3.8-flash`. No final model answer or complete
+token statistics were confirmed, so no cost is calculated and trial 1's
+numbers are not reused. Codex token counts and a comparable cost were not
+available. The student's screenshots were described but not attached to this
+repository.

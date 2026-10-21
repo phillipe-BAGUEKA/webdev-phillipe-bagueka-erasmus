@@ -14,6 +14,30 @@ By the end you hand in one working application: a backend and a frontend over a 
 
 The course setup page explains accounts, sign-in, free limits and what to do if something goes wrong.
 
+### Exercise 1 on local Windows (2026-10-20)
+
+Gemini CLI 0.64.0 was installed with the official stable npm package, separately
+from the Python MCP server. The course's "Sign in with Google" instructions no
+longer work for individual accounts: Google [ended that access on 18 June
+2026](https://developers.google.com/gemini-code-assist/docs/deprecations/code-assist-individuals),
+and this account received "This client is no longer supported for Gemini Code
+Assist for individuals." The [Gemini CLI authentication
+guide](https://geminicli.com/docs/get-started/authentication/) supports a
+Gemini API key instead. Keep the project's key in the ignored `.gemini/.env`
+file as `GEMINI_API_KEY=...`; never commit or paste its value. From the repository root,
+start `gemini.cmd --approval-mode default`, choose "Use Gemini API key", and
+select a Flash model available to the unpaid AI Studio project.
+The [CLI quota guide](https://geminicli.com/docs/resources/quota-and-pricing/)
+lists an unpaid API-key tier for Flash models; this does not imply that a
+particular AI Studio project is unbilled. Check the project's billing status
+there and do not enable billing for this exercise.
+
+The existing `.gemini/settings.json` still loads `AGENTS.md` and starts the
+Python server with `python mcp-server/server.py`. No project-wide automatic
+tool approval was added. Gemini CLI 0.64.0 connects to the server after the
+version-negotiation adjustment documented in `mcp-server/README.md`, which
+also records the two tool-call trials and their limits.
+
 ## What is already here
 
 | Path | What it is for |
@@ -52,7 +76,7 @@ in at Exercise 4. The self-checks read both.
 Each exercise ships a self-check you run from the repository root:
 
 ```bash
-node mcp-server/check.mjs -- node mcp-server/server.js   # exercise 1
+node mcp-server/check.mjs -- python mcp-server/server.py  # exercise 1 (Python)
 node checks/ex2.mjs                                       # exercise 2
 node checks/ex3.mjs                                       # exercise 3
 node checks/ex4.mjs https://your-app.onrender.com         # exercise 4, URL optional

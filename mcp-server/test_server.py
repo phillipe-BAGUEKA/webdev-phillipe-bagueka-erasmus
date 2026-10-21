@@ -54,6 +54,13 @@ class ServerStdioTests(unittest.TestCase):
         self.assertEqual(tools[0]["inputSchema"]["required"], ["number"])
         self.assertEqual(tools[1]["inputSchema"]["required"], ["query"])
 
+    def test_initialize_accepts_gemini_cli_protocol_version(self) -> None:
+        replies = self.exchange(
+            request(1, "initialize", {"protocolVersion": "2025-06-18"}),
+        )
+
+        self.assertEqual(replies[0]["result"]["protocolVersion"], "2025-06-18")
+
     def test_find_lecture_success_and_missing_number(self) -> None:
         replies = self.exchange(
             request(
