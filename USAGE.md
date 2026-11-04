@@ -8,6 +8,15 @@ One row per agent session. In Gemini CLI, type `/stats` before you quit and copy
 | 2026-10-20 | Gemini CLI, trial 1 (`gemini-2.5-flash` and `gemini-3.8-flash`) | 25,287 | 59 |  | ≈ US$0.02036, estimate |
 | 2026-10-21 | Gemini CLI, trial 2 (`gemini-3.8-flash`) | non relevé | non relevé | sans objet | non calculable |
 | 2026-10-21 | Codex, TP1 documentation and checks | non disponible | non disponible | sans objet | non calculable |
+| 2026-11-03 | Codex, TP2 topic and specification preparation | non disponible | non disponible | sans objet | non calculable |
+| 2026-11-03 | Codex, checkpoint 1 Django structure and data | non disponible | non disponible | sans objet | non calculable |
+| 2026-11-04 | Codex, checkpoint 2 local sign-in, protected page and sign-out | non disponible | non disponible | sans objet | non calculable |
+| 2026-11-04 | Codex, checkpoint 3 laboratory API/list and Python coverage | non disponible | non disponible | sans objet | non calculable |
+| 2026-11-04 | Codex, checkpoint 3 module MIME diagnosis and correction | non disponible | non disponible | sans objet | non calculable |
+| 2026-11-04 | Codex, actual port-8000 browser diagnosis and module cache correction | non disponible | non disponible | sans objet | non calculable |
+| 2026-11-04 | Codex, AC-48 browser withdrawal/restoration verification (entry added during finalization) | non disponible | non disponible | sans objet | non calculable |
+| 2026-11-04 | Codex, TP2 documentation and local CI/publication preparation | non disponible | non disponible | sans objet | non calculable |
+| 2026-11-04 | Codex, authorized TP2 publication and GitHub Actions verification | non disponible | non disponible | sans objet | non calculable |
 
 These are statistics reported by the student from Gemini CLI, not measurements
 of the single lecture lookup. In trial 1, `/stats model` showed:

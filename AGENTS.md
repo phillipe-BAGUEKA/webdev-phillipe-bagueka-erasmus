@@ -6,17 +6,32 @@ Read this file at the start of every session. Keep it short and correct; update 
 <!-- One or two sentences: what the app does and for whom. Link SPEC.md. -->
 See `SPEC.md` for goals, non-goals and acceptance criteria.
 
+Lab booking's final goal is workstation reservations and staff catalogue management. Slice 1 implements only local sessions and a protected database-backed laboratory list. The student reported checkpoint 1/2 observations and the API error body after logout (not its HTTP status). Codex observed the real browser list and AC-48's 3 → 2 → 3 with identical Beta restoration. The 380-pixel check is explicitly deferred, not passed. CI has been adapted locally; remote Actions results and publication remain unconfirmed. Stop before another slice. See `docs/TP2_FINALIZATION.md`, `docs/SLICE1_PLAN.md` and the CHECKPOINT guides.
+
 ## Commands
 <!-- How to install, run, test. Keep these exact and working. -->
-- Install: 
-- Run: 
+- Install (PowerShell, local venv): `.\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-dev.txt`
+- Django check without local secrets: `.\.venv\Scripts\python.exe manage.py check --settings=tests.settings`
+- Application tests (isolated settings/database): `.\.venv\Scripts\python.exe -m pytest -v`
+- Run locally: `.\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000 --insecure --noreload` (serves local static files with DEBUG=False; see checkpoint 2 guide)
 - Test: `python -m unittest discover -s mcp-server -p "test_*.py" -v`
-- Coverage: 
+- Coverage (Python including TP1 subprocesses): `.\.venv\Scripts\python.exe tools/check_coverage.py`
+- Catalogue UI logic (simulated DOM/network): `node --test tests/labs_ui.test.mjs`
+- JavaScript coverage (loaded catalogue module only): `node --test --experimental-test-coverage --test-coverage-include='src/**' --test-coverage-exclude='tests/**' --test-coverage-lines=80 tests/labs_ui.test.mjs`
 - MCP server: `python mcp-server/server.py` (from the repository root)
 - MCP check: `node mcp-server/check.mjs -- python mcp-server/server.py`
 
+The existing demo accounts are configured by the student; do not rerun password preparation. Checkpoint 3 commands and the backup/withdraw/restore procedure are in `docs/CHECKPOINT3.md`. Do not execute that procedure on the demo database during automated work. On Linux use `.venv/bin/python`. Never read the local key or any Gemini secret to report status; tests load separate non-secret settings.
+
 ## Conventions
 <!-- Folder layout, naming, where business rules live, how errors are returned to the client. -->
+
+- Target stack: Django 5.2 LTS, HTML/CSS and plain JavaScript using fetch against the REST API. SQLite is for slice 1; PostgreSQL is required from the booking slice, including its concurrency tests.
+- Keep HTTP routes, business services and data access separate: `src/routes/` → `src/services/` → `src/data/`. GET `/api/labs` uses the shared authenticated-access service and returns JSON 401 without data for invalid sessions. Application ORM queries and SQL belong in data access, not in routes, services or MCP tools.
+- Put business permissions in the services reused by HTTP and the future project MCP tools. Services receive an actor and domain inputs; they must not depend on an HTTP request or MCP message.
+- Reuse Django password hashing, authentication and database-backed sessions. Define the email-based custom user in the first migration. HTTP/session plumbing remains in Django middleware and adapters; Django's internal authentication/session queries are framework behavior, not permission to add application queries outside data access.
+- Deliver schema changes as numbered migrations; never silently rewrite a migration that has run. Seed demonstration data separately and preserve existing data.
+- Tests must carry the exact relevant AC-n in their collected title (for example through pytest parameter ids). Keep meaningful assertions for success and refusal cases. Report Python coverage with its actual scope; a passing Node job is not evidence of Python coverage. Preserve the existing service/global thresholds below.
 
 ## Layers
 <!-- Fill in the file or folder for each layer. -->
@@ -31,7 +46,7 @@ that talks to the database directly is a second, unguarded way into your data: n
 
 ## The model feature
 <!-- Provider, env var, and the call site. -->
-- The provider is named in exactly one file: 
+- Planned feature only, not implemented in slice 1. The future provider call site must be isolated in one file, as described in SPEC.md.
 - The key comes from an environment variable and is never committed or logged.
 - Every call has a timeout and a deterministic fallback, so the app still works when the provider is down or rate-limited.
 - The model's output is re-checked against real data before anything is saved or shown.
@@ -40,13 +55,14 @@ that talks to the database directly is a second, unguarded way into your data: n
 ## The MCP server
 <!-- Where it lives and how it authenticates. -->
 - Lives in `mcp-server/`, grew out of Exercise 1.
-- Every tool calls a service function; none touches the data layer or the database directly.
-- It carries a user, and enforces exactly the same authorization rules as the HTTP API.
+- The two existing TP1 tools read course data; they do not access the application database. Project tools are still future work.
+- Every future project tool must call a shared service function; none may touch the data layer or database directly.
+- Project tools must carry a user and enforce exactly the same authorization rules as the HTTP API.
 - Adding a tool means adding a row to the table in `SPEC.md` too.
 
 ## Tests and coverage
-- Every acceptance criterion in `SPEC.md` has an id like `AC-3`, and a test whose title contains that id.
-- The coverage gate runs in CI: 100% of the service layer, 80% overall.
+- Every implemented acceptance criterion must have a test whose title contains its exact AC-n; final-project criteria outside slice 1 remain future work.
+- The configured CI gate uses `tools/check_coverage.py`: 100% of Python service lines and branches, at least 80% of global Python lines, including TP1. Keep `.coveragerc` and its production inventory; no remote success is implied by local configuration. JavaScript coverage is separate and not proof of whole-frontend or visual coverage.
 - A test is evidence. Changing a test so the code passes destroys the evidence.
 
 ## Always ask before

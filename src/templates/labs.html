@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Laboratoires · Lab booking{% endblock %}
+{% block content %}
+  <h1>Laboratoires</h1>
+  <p>Connecté avec <strong>{{ actor.email }}</strong>.</p>
+  <section id="laboratory-catalogue" aria-labelledby="catalogue-title">
+    <h2 id="catalogue-title">Liste des laboratoires</h2>
+    <p id="labs-status" class="message" role="status" aria-live="polite"></p>
+    <p id="labs-error" class="error message" role="alert"></p>
+    <ul id="labs-list" class="labs-list" hidden></ul>
+    <a id="labs-login" href="{% url 'login' %}?next=/labs" hidden>Se reconnecter</a>
+    <button id="labs-retry" type="button" hidden>Réessayer</button>
+    <noscript><p>Active JavaScript pour charger les laboratoires.</p></noscript>
+  </section>
+  <form id="logout-form" action="{% url 'sign-out' %}" method="post">
+    {% csrf_token %}
+    <p id="logout-error" class="error message" role="alert" tabindex="-1"></p>
+    <p id="logout-status" class="message" role="status" aria-live="polite"></p>
+    <button type="submit">Se déconnecter</button>
+  </form>
+{% endblock %}
+{% block scripts %}
+  <script src="{% static 'js/logout.js' %}" defer></script>
+  {# Fetch fresh MIME metadata instead of revalidating the old text/plain URL. #}
+  <script src="{% static 'js/labs.mjs' %}?v=2" type="module"></script>
+{% endblock %}

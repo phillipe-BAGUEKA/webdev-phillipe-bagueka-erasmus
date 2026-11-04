@@ -1,10 +1,58 @@
-# Web Development course · your workspace
+# Lab booking · Web Development, TU Sofia
 
-This repository is your workspace for the whole course: Exercise 1 in `mcp-server/`, and your project (Exercises 2–5) in the rest of it. Everything runs in your browser through GitHub Codespaces, so nothing needs to be installed on your laptop.
+This repository contains Exercise 1 in `mcp-server/` and Lab booking in the rest of it. The first slice was developed locally on Windows with Python 3.13, Django 5.2 LTS, SQLite and plain JavaScript. The course Codespaces template remains available; its Python 3.12 environment has not been validated in this work.
 
-By the end you hand in one working application: a backend and a frontend over a real database, sign-in with a password **and** with a provider, a feature that uses a model, your own MCP server over the same data, a UI that holds up on a phone and a keyboard, and tests that trace to the criteria in your spec. The full target is on the course site under **Resources → The course project**, and the questions you will be asked about it are under **Resources → The defence**. Read both before you start Exercise 2.
+The final target in [SPEC.md](SPEC.md) includes workstation reservations, staff management, Google sign-in, a model suggestion and project MCP tools. Those features are **not implemented by slice 1**. The current application provides local sign-in/sign-out and a protected laboratory list read from a real database. Specification wording and code were prepared with ChatGPT/Codex assistance, recorded in AGENT_LOG.md and USAGE.md; they are not presented as wholly independent student work.
 
 ## Start
+
+Local Lab booking progress: **checkpoints 1–3** are implemented. The student reported
+the [foundation checks](docs/CHECKPOINT1.md) and the session/keyboard observations
+for [checkpoint 2](docs/CHECKPOINT2.md). Codex has now observed all three laboratories
+in the actual port-8000 browser after the module MIME/cache correction. See
+[checkpoint 3](docs/CHECKPOINT3.md) for the running-server details and the observed
+AC-48 demonstration: **3 → 2 → 3**, with Beta restored identically. The student
+reported the API error body after logout, without an observed HTTP status.
+The 380-pixel check is explicitly deferred, not passed. No later slice is started.
+
+For a **fresh local copy**, follow [checkpoint 1](docs/CHECKPOINT1.md) to create a
+project venv, install the two pinned requirements files, initialize local settings,
+apply the committed migration and prepare demonstration accounts. Choose passwords
+locally with Django's masked prompt. Never repeat password preparation on the
+already configured demonstration accounts. No Google/Gemini secret is needed.
+
+For this prepared repository, run from its root in PowerShell:
+
+```powershell
+.\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000 --insecure --noreload
+```
+
+Open <http://127.0.0.1:8000/login>, then <http://127.0.0.1:8000/labs>.
+If the existing server already owns port 8000, use it instead of starting a second
+one. Stop a terminal-owned server with Ctrl+C before restarting changed code;
+CHECKPOINT3.md explains the separately launched background instance. `--insecure`
+only serves local static assets with DEBUG=False; this is not a production command.
+
+Tests and coverage use isolated settings, without the local secret or demo database:
+
+```powershell
+.\.venv\Scripts\python.exe manage.py check --settings=tests.settings
+.\.venv\Scripts\python.exe manage.py makemigrations --check --dry-run --settings=tests.settings
+.\.venv\Scripts\python.exe tools/check_coverage.py
+node --test tests/labs_ui.test.mjs
+node mcp-server/check.mjs -- .\.venv\Scripts\python.exe mcp-server/server.py
+node checks/ex2.mjs
+git diff --check
+```
+
+The coverage command runs both the Django tests and the existing TP1 Python tests.
+For application tests alone: `.\.venv\Scripts\python.exe -m pytest tests -q`.
+See [TP2 finalization](docs/TP2_FINALIZATION.md) for the CI commands, measured scope,
+results and publication file list. CI is configured locally for Python 3.13/Node 22;
+no GitHub Actions result is claimed before publication. No commit or push has been
+performed for this slice.
+
+### Original course workspace setup
 
 1. On the course template page, click **Use this template → Create a new repository**. Make it **public** and name it `webdev-<your faculty number>`.
 2. Your repository is public, so the lecturer and your Exercise 5 review partner can read it without an invitation. That also means **no keys, passwords or client secrets ever go into it**: put them in **Settings → Secrets and variables → Codespaces** instead, where the workspace picks them up as environment variables.
@@ -53,7 +101,7 @@ also records the two tool-call trials and their limits.
 | `checks/` | One self-check per exercise: `node checks/ex2.mjs`, `ex3`, `ex4`, `ex5`, plus `project.mjs` before the defence |
 | `docs/UI.md` | The UI checklist your project is graded against (Exercise 4) |
 | `DEFENSE.md` | Your notes for the defence (Exercise 5) |
-| `.env.example` | Every environment variable your app needs, with placeholder values |
+| `.env.example` | Course configuration placeholders for future integrations; slice 1 does not load a real .env |
 | `course.json` | How to start your MCP server, and where your deployment answers |
 
 ## Fill in `course.json` first

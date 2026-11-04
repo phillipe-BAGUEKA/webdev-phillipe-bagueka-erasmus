@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Vérification de sécurité · Lab booking{% endblock %}
+{% block content %}
+  <h1>Action non effectuée</h1>
+  <p class="error" role="alert">{{ error }}</p>
+  <a href="{% url 'login' %}">Revenir à la connexion</a>
+{% endblock %}

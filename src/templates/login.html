@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Connexion · Lab booking{% endblock %}
+{% block content %}
+  <h1>Connexion</h1>
+  <p>Connecte-toi avec ton compte pour accéder aux laboratoires.</p>
+  {% if logged_out %}<p class="success" role="status">Tu es déconnecté.</p>{% endif %}
+  <form id="login-form" action="{% url 'sign-in' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="field">
+      {{ form.email.label_tag }}
+      {{ form.email }}
+    </div>
+    <div class="field">
+      {{ form.password.label_tag }}
+      {{ form.password }}
+    </div>
+    <p id="login-error" class="error message" role="alert" tabindex="-1">{{ error }}</p>
+    <p id="login-status" class="message" role="status" aria-live="polite"></p>
+    <button type="submit">Se connecter</button>
+  </form>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/login.js' %}" defer></script>{% endblock %}

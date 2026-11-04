@@ -1,0 +1,18 @@
+[run]
+branch = True
+parallel = True
+patch = subprocess
+source = .
+relative_files = True
+omit =
+    tests/*
+    mcp-server/test_server.py
+    .venv/*
+
+[report]
+include_namespace_packages = True
+show_missing = True
+precision = 2
+# Count production code without pragma/TYPE_CHECKING exclusions.
+exclude_lines =
+partial_branches =

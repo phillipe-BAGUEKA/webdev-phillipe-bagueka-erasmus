@@ -16,6 +16,13 @@ __pycache__/
 dist/
 build/
 coverage/
+.pytest_cache/
+/pytest-cache-files-*/
+.coverage
+.coverage.*
+htmlcov/
+.local/
+/data/
 
 # editor and OS files
 .DS_Store

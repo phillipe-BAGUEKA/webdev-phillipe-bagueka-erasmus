@@ -1,0 +1,74 @@
+:root {
+  color-scheme: light;
+  --ink: #182534;
+  --paper: #ffffff;
+  --background: #f2f5f8;
+  --accent: #173e75;
+  --error: #9c2020;
+  --success: #17613d;
+  --border: #64748b;
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --text-body: 1rem;
+  --text-title: 1.8rem;
+  --radius: 0.5rem;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--background);
+  font: var(--text-body)/1.6 system-ui, sans-serif;
+}
+.site-header { padding: var(--space-3) var(--space-2); text-align: center; }
+.brand { color: var(--accent); font-weight: 700; }
+.panel {
+  width: min(34rem, calc(100% - var(--space-4)));
+  margin: 0 auto var(--space-4);
+  padding: var(--space-3);
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow-wrap: anywhere;
+}
+h1 { margin: 0 0 var(--space-2); font-size: var(--text-title); line-height: 1.3; }
+p { margin: 0 0 var(--space-2); }
+.field { margin: var(--space-3) 0; }
+label { display: block; margin-bottom: var(--space-1); font-weight: 600; }
+input, button { font: inherit; min-height: 44px; border-radius: var(--radius); }
+input:not([type="hidden"]) {
+  width: 100%;
+  padding: var(--space-1);
+  border: 1px solid var(--border);
+  background: var(--paper);
+  color: var(--ink);
+}
+button {
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  border: 2px solid var(--accent);
+  color: var(--paper);
+  background: var(--accent);
+  cursor: pointer;
+}
+button:disabled { cursor: wait; }
+a {
+  color: var(--accent);
+  display: inline-block;
+  min-height: 44px;
+  padding: var(--space-1) 0;
+}
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+.message { min-height: 3.2em; margin: var(--space-1) 0; }
+.error { color: var(--error); }
+.success { color: var(--success); }
+.skip-link { position: absolute; top: -8rem; left: var(--space-2); }
+.skip-link:focus { top: var(--space-1); background: var(--paper); z-index: 1; }
+[hidden] { display: none !important; }
+#laboratory-catalogue { margin: var(--space-3) 0; }
+h2 { font-size: 1.25rem; line-height: 1.4; }
+.labs-list { padding-left: var(--space-3); }
+.labs-list li { margin-bottom: var(--space-1); }
