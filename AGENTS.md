@@ -6,7 +6,7 @@ Read this file at the start of every session. Keep it short and correct; update 
 <!-- One or two sentences: what the app does and for whom. Link SPEC.md. -->
 See `SPEC.md` for goals, non-goals and acceptance criteria.
 
-Lab booking's final goal is workstation reservations and staff catalogue management. Slice 1 implements only local sessions and a protected database-backed laboratory list. The student reported checkpoint 1/2 observations and the API error body after logout (not its HTTP status). Codex observed the real browser list and AC-48's 3 → 2 → 3 with identical Beta restoration. The 380-pixel check is explicitly deferred, not passed. CI has been adapted locally; remote Actions results and publication remain unconfirmed. Stop before another slice. See `docs/TP2_FINALIZATION.md`, `docs/SLICE1_PLAN.md` and the CHECKPOINT guides.
+Lab booking's final goal is workstation reservations and staff catalogue management. Slice 1 implements only local sessions and a protected database-backed laboratory list. The student reported checkpoint 1/2 observations and the API error body after logout (not its HTTP status). Codex observed the real browser list and AC-48's 3 → 2 → 3 with identical Beta restoration. The 380-pixel check is explicitly deferred, not passed. Slice 1 is published; the four GitHub Actions jobs passed on delivery commit 4243d717716142b45ab8304abf21c2056f28fdb7. Check the exact SHA of any later commit independently. Stop before TP3 or another slice. See `docs/TP2_FINALIZATION.md`, `docs/SLICE1_PLAN.md` and the CHECKPOINT guides.
 
 ## Commands
 <!-- How to install, run, test. Keep these exact and working. -->
@@ -62,7 +62,7 @@ that talks to the database directly is a second, unguarded way into your data: n
 
 ## Tests and coverage
 - Every implemented acceptance criterion must have a test whose title contains its exact AC-n; final-project criteria outside slice 1 remain future work.
-- The configured CI gate uses `tools/check_coverage.py`: 100% of Python service lines and branches, at least 80% of global Python lines, including TP1. Keep `.coveragerc` and its production inventory; no remote success is implied by local configuration. JavaScript coverage is separate and not proof of whole-frontend or visual coverage.
+- The CI gate uses `tools/check_coverage.py`: 100% of Python service lines and branches, at least 80% of global Python lines, including TP1. Keep `.coveragerc` and its production inventory; remote results must be checked for the published SHA, not inferred from local success. JavaScript coverage is separate and not proof of whole-frontend or visual coverage.
 - A test is evidence. Changing a test so the code passes destroys the evidence.
 
 ## Always ask before

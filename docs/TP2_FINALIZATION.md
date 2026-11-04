@@ -1,6 +1,23 @@
-# TP 2 — préparation locale avant publication
+# TP 2 — finalisation et publication
 
-État au 4 novembre 2026, préparé avec l’aide de Codex. La spécification et la première tranche de Lab booking sont présentes ; cette étape aligne les documents et la CI, sans commencer une autre tranche. Aucun commit ni push n’est effectué. Les résultats ci-dessous sont **locaux sous Windows**, pas des exécutions GitHub Actions.
+État au 4 novembre 2026, préparé avec l’aide de Codex. La spécification et la première tranche de Lab booking sont publiées, sans commencer une autre tranche. Les résultats **distants** ci-dessous sont séparés des mesures **locales Windows** conservées plus loin ; les observations navigateur et leurs limites restent distinctes.
+
+## Publication et GitHub Actions effectivement observés
+
+Commit de livraison : [`4243d717716142b45ab8304abf21c2056f28fdb7`](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/commit/4243d717716142b45ab8304abf21c2056f28fdb7), message `feat(lab-booking): deliver TP2 first slice with tests and CI`. Les 71 fichiers du manifeste ont été indexés explicitement ; `main` et `origin/main` étaient identiques avant cette opération. Le push est un fast-forward normal, sans force ni remplacement d’historique.
+
+[Exécution CI de ce SHA, événement push](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/41758283141), Ubuntu, CPython **3.13.17**, Node **22.23.4** :
+
+| Job | Résultat lu dans GitHub Actions |
+| --- | --- |
+| [test](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/41758283141/job/126339503831) | Succès : 105 tests pytest, neuf tests TP1, sept tests JavaScript ; dépendances, Django et cohérence des migrations conformes. |
+| [coverage](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/41758283141/job/126339503494) | Succès : services **25/25 lignes et 4/4 branches (100 %)** ; global Python **587/642 lignes (91,43 %)** et **151/172 branches (87,79 %)**, TP1 inclus (**91/106 lignes**). Taux combiné affiché : 90,66 %. Node : labs.mjs **97,26 % lignes**, 95,65 % branches, 100 % fonctions. |
+| [mcp](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/41758283141/job/126339503907) | Succès : **12/12** contrôles du vérificateur original. |
+| [spec](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/41758283141/job/126339503816) | Succès : **32/32** contrôles. |
+
+Aucun job requis n’a échoué ou été désactivé. **Seule l’étape Docker est ignorée** par sa condition existante (`Dockerfile` absent). Aucun correctif de CI n’a été nécessaire après publication. Le contrôle du diff indexé a seulement fait retirer une ligne vide finale préexistante dans un test ; son test ciblé a réussi sans modification d’assertion.
+
+Les chiffres sont tirés des journaux de ce SHA, pas déduits des résultats Windows. La mise à jour documentaire qui consigne cette preuve ne change ni l’application ni le workflow ; tout commit suivant, y compris documentaire, doit néanmoins être vérifié par son propre SHA. Aucun déploiement web n’est réalisé. Codespaces et le contrôle à 380 pixels restent non validés.
 
 ## Réalisé, observé et encore prévu
 
@@ -13,7 +30,7 @@
 | API après déconnexion, retour utilisateur | Corps `{"error": "Connexion requise."}`, sans laboratoire. Ce texte seul ne prouve pas le statut HTTP ; les tests isolés vérifient séparément 401. |
 | Affichage à 380 pixels | Reporté par l’utilisateur, non validé. Aucune conformité mobile globale revendiquée. |
 | Postes, réservations, personnel, Google, IA, PostgreSQL et nouveaux outils MCP | Spécifiés pour la suite ; non construits par cette tranche. Les deux outils TP1 restent inchangés. |
-| CI distante et publication | Workflow adapté localement ; premier résultat GitHub Actions encore à confirmer après publication autorisée. |
+| CI distante et publication | Commit de livraison publié, quatre jobs réussis sur le SHA précisé ci-dessus. Vérification distincte nécessaire pour chaque commit suivant. |
 
 Les critères AC-46 à AC-49 ont des preuves automatisées ; les observations manuelles restent attribuées à leur auteur dans SPEC.md et CHECKPOINT3.md. Cela ne certifie ni la compréhension personnelle de l’étudiant ni l’acceptation pédagogique du professeur. Les questions de compréhension et challenges sont reportés à la fin du projet à la demande de l’utilisateur.
 
@@ -31,7 +48,7 @@ Les commandes de nouvelle installation, migration et préparation masquée des m
 - Le vérificateur MCP original reste exécuté avec `npm run --silent mcp`, sous un Python explicitement choisi. Le contrôle `node checks/ex2.mjs` et l’historique Git complet de son job sont conservés. Le contrôle conditionnel de construction Docker est conservé ; aucun Dockerfile n’existe encore et aucun build Docker n’est revendiqué.
 - Les anciennes sorties « No project yet » ne permettent plus d’ignorer l’application désormais présente. Aucun `continue-on-error`, seuil abaissé ou test affaibli n’est ajouté. Aucun pytest-cov ou autre paquet supplémentaire n’est installé ; les deux fichiers de dépendances existants sont la référence.
 
-Référence officielle consultée pour cette adaptation : [construction et tests Python avec GitHub Actions](https://docs.github.com/en/actions/tutorials/build-and-test-code/python) (4 novembre 2026). L’exécution des commandes sous Windows ne valide pas l’installation réseau des dépendances ni le workflow complet sur Ubuntu.
+Référence officielle consultée pour cette adaptation : [construction et tests Python avec GitHub Actions](https://docs.github.com/en/actions/tutorials/build-and-test-code/python) (4 novembre 2026). L’installation des dépendances et le workflow sur Ubuntu sont désormais vérifiés par l’exécution distante citée plus haut ; ils n’étaient pas prouvés par les seules commandes Windows.
 
 ## Commandes et résultats locaux
 
@@ -70,11 +87,11 @@ Exclusions inchangées dans `.coveragerc` : `tests/*`, `mcp-server/test_server.p
 
 La mesure Node porte sur le module effectivement chargé par les sept tests : `labs.mjs`. Elle ne mesure pas login.js/logout.js non chargés par cette suite, HTML/CSS, le rendu visuel ou l’ensemble du projet multilangage. Les vérifications HTTP des parcours de session et les observations navigateur restent des preuves distinctes. Cette limite n’est pas corrigée artificiellement par une exclusion supplémentaire ou une déclaration de conformité mobile.
 
-## Fichiers locaux protégés et publication proposée
+## Fichiers locaux protégés et manifeste de la livraison
 
 Vérification par métadonnées Git uniquement : `.gemini/.env`, `.local/django-dev-key`, `data/demo.sqlite3`, `data/demo-lab-2-ac48-20261104.json` et `.venv/pyvenv.cfg` existent, sont ignorés et non suivis ; aucun fichier de `.venv/`, `.local/` ou `data/` n’est suivi. Aucun contenu de secret, cookie ou mot de passe n’a été affiché. La sauvegarde Beta reste locale ; aucune nouvelle manipulation de données n’a été effectuée. Les réglages partageables `.gemini/settings.json` et le modèle `.env.example` restent suivis. Le SHA-256 de la migration initiale reste `DB3A8FE7A120260B3338A8ABE7B2E91BA1C90FF150EA01F340BC3230861A1D1B` ; aucun diff TP1 n’est présent.
 
-Le futur commit doit inclure le travail de la tranche déjà présent et cette finalisation, après relecture, sans `git add -f` :
+Le commit de livraison inclut le travail de la tranche et sa finalisation, après relecture, sans `git add -f` :
 
 | Groupe à inclure | Rôle |
 | --- | --- |
@@ -88,11 +105,11 @@ Le futur commit doit inclure le travail de la tranche déjà présent et cette f
 
 Les fichiers sous src/, tests/ et tools/ proviennent de la construction précédente ; aucun n’a été modifié pendant cette finalisation. Le serveur/tests TP1, les données de cours, la configuration Gemini et les fichiers du conteneur ne font pas partie des changements proposés. La liste exhaustive peut être relue sans indexation avec `git diff --name-only` et `git ls-files --others --exclude-standard`.
 
-Message de commit proposé : `feat(lab-booking): deliver TP2 first slice with tests and CI`.
+Message du commit de livraison : `feat(lab-booking): deliver TP2 first slice with tests and CI`.
 
 
 <details>
-<summary>Liste exacte des 71 fichiers proposés (non indexés pendant cette étape)</summary>
+<summary>Liste exacte des 71 fichiers inclus dans le commit de livraison</summary>
 
 ```text
 .coveragerc
@@ -170,10 +187,10 @@ tools/init_local.py
 
 </details>
 
-## Avant et après une publication autorisée
+## Revue et limites après publication
 
-La revue indépendante a été effectuée une fois par l’agent personnalisé `reviewer`, en lecture seule, après adaptation et tests. Aucun problème bloquant ou important n’a été relevé ; aucun constat n’a été écarté et aucune correction supplémentaire n’a été nécessaire. La liste des 71 fichiers a été comparée à l’état Git : fichiers présents, aucun ignoré dans cette liste et aucun fichier indexé. Les liens Markdown locaux ont été contrôlés.
+La revue indépendante de préparation a été effectuée une fois par l’agent personnalisé `reviewer`, en lecture seule, après adaptation et tests. Une autre revue, une fois dans le tour de publication, a examiné le diff indexé. Aucun problème bloquant ou important n’a été relevé ; aucun constat n’a été écarté. La liste des 71 fichiers a été comparée au manifeste et à l’index ; aucun fichier ignoré n’a été ajouté. Les liens Markdown locaux ont été contrôlés.
 
-Avant publication : examiner le diff et la liste de fichiers, conserver les attributions et les limites ci-dessus. Le report du contrôle à 380 pixels doit rester visible ; le statut HTTP manuel non relevé ne doit pas être inventé. Aucun autre développement n’est requis pour préparer ce commit.
+Le report du contrôle à 380 pixels reste visible ; le statut HTTP manuel non relevé n’est pas inventé. Les observations AC-48 ne sont pas rejouées pour la publication. Aucune autre tranche ni nouvelle fonctionnalité n’est construite.
 
-Après autorisation distincte : commit/push sans écraser le travail distant, puis contrôler les jobs `test`, `coverage`, `mcp` et `spec` sur le SHA publié. Tant que cette exécution distante n’existe pas, ne pas annoncer une CI verte sur GitHub. L’acceptation du TP et les attentes pédagogiques restent à valider avec l’enseignant ; la finalisation technique locale ne remplace pas cette validation.
+Pour toute publication ultérieure autorisée : préserver l’historique distant et contrôler les quatre jobs sur le nouveau SHA, sans lui attribuer automatiquement la réussite du précédent. L’acceptation du TP et les attentes pédagogiques restent à valider avec l’enseignant ; les tests et la publication ne remplacent pas cette validation.

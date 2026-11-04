@@ -48,9 +48,11 @@ git diff --check
 The coverage command runs both the Django tests and the existing TP1 Python tests.
 For application tests alone: `.\.venv\Scripts\python.exe -m pytest tests -q`.
 See [TP2 finalization](docs/TP2_FINALIZATION.md) for the CI commands, measured scope,
-results and publication file list. CI is configured locally for Python 3.13/Node 22;
-no GitHub Actions result is claimed before publication. No commit or push has been
-performed for this slice.
+results and publication file list. Delivery commit
+[`4243d71`](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/commit/4243d717716142b45ab8304abf21c2056f28fdb7)
+is published on main; its [GitHub Actions run](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/41758283141)
+passed all four jobs on Ubuntu. This remote evidence is separate from the local
+Windows and browser results. Each subsequent commit must have its own CI result checked.
 
 ### Original course workspace setup
 
