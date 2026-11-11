@@ -10,11 +10,11 @@ Lab booking's final goal is workstation reservations and staff catalogue managem
 
 ## Commands
 
-TP3 authorization now covers checkpoint 1B: Workstation/Booking PostgreSQL models,
-new migrations, constraints and isolated tests; see docs/POSTGRES_1B.md. Stop before
-business services, HTTP, UI, MCP, AI or CI changes. Student-only creation and
-idempotent owner cancellation are user decisions for future services, not model
-permissions. SQLite remains the preserved TP2 environment; never migrate it to 1B.
+TP3 authorization now covers checkpoint 2A: read-only availability and personal
+history services, their data access and direct PostgreSQL tests. See
+docs/READ_SERVICES_2A.md. Stop before creation/cancellation services, HTTP, UI,
+MCP, AI, migrations, dependencies or CI changes. A slot suggestion must be
+rechecked transactionally by the future creation service. SQLite remains preserved.
 PostgreSQL commands are opt-in: --settings=src.config.postgres for development,
 --ds=tests.settings_postgres --reuse-db for tests, after local provisioning.
 Never run the SQLite demonstration seed against PostgreSQL.

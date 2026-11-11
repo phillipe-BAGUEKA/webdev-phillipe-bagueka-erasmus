@@ -206,14 +206,18 @@ Statut des critères ci-dessous : cible fonctionnelle retenue par l’utilisateu
 | Criterion | Test |
 | --- | --- |
 | AC-1 |  |
-| AC-14 (partiel) | `tests/test_booking_models.py` : types PostgreSQL avec fuseau ; affichage et conversions saisonnières non validés. |
+| AC-11 (partiel, lecture) | `tests/test_read_services.py` : aucun créneau proposé sur un poste hors service ; refus de création non implémenté. |
+| AC-13 (partiel, services) | `tests/test_read_services.py` : jours ouvrés, limites horaires et début strictement futur, sans écran ni réponse HTTP. |
+| AC-14 (partiel) | `tests/test_booking_models.py` : types PostgreSQL avec fuseau ; `tests/test_read_services.py` : créneaux Europe/Sofia convertis en UTC hiver/été. Affichage et réponses HTTP non validés. |
 | AC-15 (partiel) | `tests/test_booking_models.py` : création d'une ligne valide ; services et HTTP non validés. |
 | AC-16 (partiel) | `tests/test_booking_models.py` : intervalle positif d'une heure ; horaires et instant courant non validés. |
-| AC-17 (partiel) | `tests/test_booking_models.py` : exclusion séquentielle sur un poste ; réponse HTTP non validée. |
-| AC-18 (partiel) | `tests/test_booking_models.py` : exclusion séquentielle pour un propriétaire sur deux postes. |
-| AC-19 (partiel) | `tests/test_booking_models.py` : adjacence [début, fin) acceptée ; quota non validé. |
-| AC-25 (partiel) | `tests/test_booking_models.py` : ligne annulée exclue des conflits ; propriétaire/délai/API non validés. |
-| AC-28 (partiel) | `tests/test_booking_models.py` : ligne annulée conservée ; consultation personnelle non validée. |
+| AC-17 (partiel) | `tests/test_booking_models.py` : exclusion séquentielle ; `tests/test_read_services.py` : créneaux occupés non proposés. Création HTTP non validée. |
+| AC-18 (partiel) | `tests/test_booking_models.py` : exclusion séquentielle ; `tests/test_read_services.py` : conflit personnel filtré aussi dans un autre laboratoire. |
+| AC-19 (partiel) | Tests de schéma et `tests/test_read_services.py` : bornes [début, fin) et créneaux adjacents ; création métier non validée. |
+| AC-20 (partiel, lecture) | `tests/test_read_services.py` : quota global futur, postes hors service inclus ; aucun contrôle transactionnel de création prouvé. |
+| AC-21 (partiel, lecture) | `tests/test_read_services.py` : annulations/passé/en cours exclus du quota ; création métier non implémentée. |
+| AC-25 (partiel) | Tests de schéma et de lecture : annulation conservée, sans blocage des disponibilités ; propriétaire/délai/API d'annulation non validés. |
+| AC-28 (partiel) | `tests/test_read_services.py` : historique personnel complet, état actuel du poste, ordre déterministe, sans fuite ni mutation. Écran et HTTP non validés. |
 | AC-46 | `tests/test_access.py`, `tests/test_labs.py` : redirection de page et JSON 401 de l’API pour sessions absentes, invalides, expirées ou inactives. |
 | AC-47 | `tests/test_auth.py` : connexion locale HTTP, refus uniformes, CSRF et retours internes sur comptes isolés. |
 | AC-48 | `tests/test_labs.py`, `tests/test_demo_labs.py`, `tests/labs_ui.test.mjs` : lecture, retrait/restauration et liste vide isolés ; états du client avec DOM/réseau simulés. `tests/test_static_assets.py` : type MIME JavaScript du module. `tests/test_access.py` : l’URL extraite du HTML évite la revalidation 304 de l’ancienne réponse text/plain. |
@@ -223,6 +227,12 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
+
+Jalon 2A, 11 novembre 2026 : disponibilités et historique personnel sont testés
+directement sur PostgreSQL, avec horloge contrôlée et sans mutation. Les lectures
+filtrent horaires, poste, conflits personnels et quota global ; elles ne garantissent
+pas la disponibilité lors d'une future création. AC-13/14/28 restent partiels
+sans parcours HTTP ou écran. Résultats : docs/READ_SERVICES_2A.md.
 
 Jalon 1B, 11 novembre 2026 : schéma PostgreSQL et contraintes testés séparément
 des services. La chaîne complète est appliquée sur une base de vérification vide ;

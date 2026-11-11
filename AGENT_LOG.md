@@ -379,3 +379,46 @@ One entry per agent session, newest at the bottom. Be honest: what went wrong is
   Slice 2 criteria/status contracts and personal architecture note remain open.
   The 380-pixel check is deferred. Stop before business services. Codex assisted
   the implementation, test adaptation and documentation; no acceptance inferred.
+
+## 2026-11-11 ? TP3 checkpoint 2A ? read-only availability and personal history
+
+- Initial Git clean at 76c23c2c48efd4a09919ad165ff46e238335a643, ahead two local
+  commits. Scope/partial AC-13, AC-14 and AC-28 recorded in READ_SERVICES_2A before
+  implementation. Filtering also partially supports AC-11/17/18/19/20/21/25.
+  No approved AC rewritten, renumbered or invented. Slice 2 grouping remains open.
+- Tests written first: initial AC-13/14 case failed with missing service module.
+  Implemented src/data/booking_reads.py eager ORM projections and
+  src/services/booking_reads.py transport-independent immutable read results.
+  No ORM in services; no creation/cancellation/HTTP/UI/MCP/AI built.
+- Availability: weekdays 08-18 Europe/Sofia, UTC aware one-hour [) slots, strictly
+  future and operational posts only, uncancelled occupation and own cross-lab
+  conflicts removed. Global future quota includes offline posts, excludes cancelled,
+  current and past rows. Staff get no reservable proposals; authenticated personal
+  history remains available. Reads offer no transactional creation guarantee.
+- History owner comes exclusively from trusted actor.user_id, never a client
+  owner ID. Descending start then descending booking ID, all past/current/future/
+  cancelled rows and current workstation state. Explicit domain/auth errors.
+- Initial 13 tests passed. First full run had 175 passed, 1 failed, 1 deselected:
+  the default-clock test's foreign-history fixture also occupied today's slot,
+  producing 17 rather than expected 18 candidates. Moved that fixture to tomorrow
+  while preserving its foreign-owner detection and original assertion. No service
+  rule or business assertion changed to ignore an occupied slot. Final direct run
+  21 passed in 2.39 s; invalid/absent/empty and clock cases included.
+- Final unchanged runner --postgresql: 176 pytest passed, 1 deselected, no skipped
+  tests in 221.64 s, followed by 9 TP1 unittest passed in 24.045 s. Only deselection
+  is historical SQLite guard test_guard_refuses_unmarked_or_wrong_database.
+  PostgreSQL coverage: services 103/103 lines and 34/34 branches; new service
+  78/78 and 30/30. Global lines 901/978 (92.13%); branches 218/248 (87.90%).
+  Inventory 43 production files, no missing file. Thresholds/exclusions unchanged.
+  Report .local/coverage/056ed6d01e43403f9d62846fec47dcaf/coverage.json.
+- Django check and migration drift pass. No migration applied or added; no seed,
+  development data transfer, 5432 operation, dependency or CI change. SQLite and
+  the original migration are checked against prior hashes before local commit.
+- One independent read-only reviewer found no blocking/important code issue;
+  requested current documentation, partial traceability and factual results, all
+  retained. Tuple annotations refined; ordinary eager ORM projections remain
+  dictionaries to avoid speculative duplicated data types. No architecture change.
+- Documentation and code are Codex-assisted, not the student's personal architecture
+  note. No provider call, new criteria, browser/mobile acceptance or concurrency
+  success claimed. 380-pixel test remains deferred; CI unchanged/unverified here.
+  Stop before creation service. Local commit authorized, no push.
