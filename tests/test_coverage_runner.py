@@ -76,6 +76,21 @@ def test_measure_stops_on_test_failure(
     assert run.call_count == 1
 
 
+def test_postgresql_mode_is_explicit_and_only_deselects_sqlite_guard(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    run = Mock()
+    monkeypatch.setattr(check_coverage.subprocess, "run", run)
+    check_coverage.measure(tmp_path, postgresql=True)
+    command = run.call_args_list[0].args[0]
+    assert "--ds=tests.settings_postgres" in command
+    assert "--reuse-db" in command
+    assert command[command.index("-k") + 1] == (
+        "not test_guard_refuses_unmarked_or_wrong_database"
+    )
+    assert "unittest" in run.call_args_list[1].args[0]
+
+
 @pytest.mark.parametrize("case", ["pass", "gate", "test", "report"])
 def test_main_exit_status_is_honest(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, case: str
@@ -97,7 +112,7 @@ def test_main_exit_status_is_honest(
             target.write_text("invalid" if case == "report" else json.dumps(report))
 
     monkeypatch.setattr(check_coverage.subprocess, "run", run)
-    result = check_coverage.main()
+    result = check_coverage.main([])
     assert result == (0 if case == "pass" else 1)
     if case != "test":
         assert any("combine" in command for command in calls)

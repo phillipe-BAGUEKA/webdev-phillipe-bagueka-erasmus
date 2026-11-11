@@ -23,9 +23,10 @@ def criterion_id(request: pytest.FixtureRequest) -> str:
 def demo_snapshot(
     db: None, tmp_path: Path, settings: Settings, monkeypatch: pytest.MonkeyPatch
 ) -> Path:
-    # Only replace the path/marker guard here; its real refusals are tested separately.
+    # Exercise the historical snapshot logic independently of its SQLite-only guard.
+    # The new relation guard is tested separately: real 1B use must stay refused.
     settings.DEMO_DATABASE_PATH = tmp_path / "demo.sqlite3"
-    monkeypatch.setattr(demo_labs, "require_demo_database", lambda: None)
+    monkeypatch.setattr(demo_labs, "check_demo_target", lambda: None)
     seed_demo_data()
     return tmp_path / "demo-lab-2.json"
 
@@ -104,4 +105,14 @@ def test_non_demo_lab_and_outside_path_are_refused(demo_snapshot: Path) -> None:
 def test_command_refuses_real_guard_before_any_operation() -> None:
     with pytest.raises(CommandError, match="other than"):
         call_command("demo_labs", "list")
+    assert User.objects.count() == Laboratory.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_original_demo_procedure_refuses_new_relations(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(demo_labs, "require_demo_database", lambda: None)
+    with pytest.raises(ValueError, match="model changed"):
+        demo_labs.check_demo_target()
     assert User.objects.count() == Laboratory.objects.count() == 0

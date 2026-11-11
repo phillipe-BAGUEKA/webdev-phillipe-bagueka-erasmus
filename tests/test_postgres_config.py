@@ -152,5 +152,5 @@ def test_postgresql_identity_and_existing_schema() -> None:
         assert cursor.fetchone() == ("test_lab_booking_1a", "lab_booking_1a_test")
     tables = connection.introspection.table_names()
     assert {"data_user", "data_laboratory", "django_session"}.issubset(tables)
-    assert "data_booking" not in tables
-    assert "data_workstation" not in tables
+    assert "data_booking" in tables
+    assert "data_workstation" in tables

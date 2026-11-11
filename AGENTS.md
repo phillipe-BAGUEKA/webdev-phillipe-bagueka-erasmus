@@ -10,11 +10,11 @@ Lab booking's final goal is workstation reservations and staff catalogue managem
 
 ## Commands
 
-TP3 authorization currently covers checkpoint 1A only: PostgreSQL preparation,
-existing migrations and isolated regressions. See docs/POSTGRES_1A.md. The prior
-stop-before-TP3 instruction does not block this authorized checkpoint. Do not add
-workstations/bookings, a personnel booking restriction, btree_gist, CI changes
-or new business migrations. SQLite remains the preserved TP2 environment.
+TP3 authorization now covers checkpoint 1B: Workstation/Booking PostgreSQL models,
+new migrations, constraints and isolated tests; see docs/POSTGRES_1B.md. Stop before
+business services, HTTP, UI, MCP, AI or CI changes. Student-only creation and
+idempotent owner cancellation are user decisions for future services, not model
+permissions. SQLite remains the preserved TP2 environment; never migrate it to 1B.
 PostgreSQL commands are opt-in: --settings=src.config.postgres for development,
 --ds=tests.settings_postgres --reuse-db for tests, after local provisioning.
 Never run the SQLite demonstration seed against PostgreSQL.
@@ -25,10 +25,10 @@ Restart it manually after Windows reboot; no service was registered. Existing
 <!-- How to install, run, test. Keep these exact and working. -->
 - Install (PowerShell, local venv): `.\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-dev.txt`
 - Django check without local secrets: `.\.venv\Scripts\python.exe manage.py check --settings=tests.settings`
-- Application tests (isolated settings/database): `.\.venv\Scripts\python.exe -m pytest -v`
+- Current application tests: `.\.venv\Scripts\python.exe -m pytest --ds=tests.settings_postgres --reuse-db -k 'not test_guard_refuses_unmarked_or_wrong_database' -v`
 - Run locally: `.\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000 --insecure --noreload` (serves local static files with DEBUG=False; see checkpoint 2 guide)
 - Test: `python -m unittest discover -s mcp-server -p "test_*.py" -v`
-- Coverage (Python including TP1 subprocesses): `.\.venv\Scripts\python.exe tools/check_coverage.py`
+- Current coverage (PostgreSQL and TP1 subprocesses): `.\.venv\Scripts\python.exe tools/check_coverage.py --postgresql`
 - Catalogue UI logic (simulated DOM/network): `node --test tests/labs_ui.test.mjs`
 - JavaScript coverage (loaded catalogue module only): `node --test --experimental-test-coverage --test-coverage-include='src/**' --test-coverage-exclude='tests/**' --test-coverage-lines=80 tests/labs_ui.test.mjs`
 - MCP server: `python mcp-server/server.py` (from the repository root)

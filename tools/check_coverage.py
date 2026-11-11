@@ -1,6 +1,7 @@
 """Measure all project Python, including TP1 subprocesses; enforce separate gates."""
 
 import json
+import argparse
 import os
 import subprocess
 import sys
@@ -63,15 +64,21 @@ def check_report(report: dict[str, Any], expected_files: set[str]) -> list[str]:
     return problems
 
 
-def measure(root: Path) -> Path:
+def measure(root: Path, postgresql: bool = False) -> Path:
     """Keep each run separate so old successful data cannot mask a failed run."""
     output = root / ".local" / "coverage" / uuid4().hex
     output.mkdir(parents=True)
     environment = os.environ.copy()
     environment["COVERAGE_FILE"] = str(output / ".coverage")
     environment["COVERAGE_RCFILE"] = str(root / ".coveragerc")
+    pytest_arguments = ["run", "-m", "pytest", "tests", "-q"]
+    if postgresql:
+        pytest_arguments += [
+            "--ds=tests.settings_postgres", "--reuse-db", "-k",
+            "not test_guard_refuses_unmarked_or_wrong_database",
+        ]
     commands = [
-        ["run", "-m", "pytest", "tests", "-q"],
+        pytest_arguments,
         [
             "run", "-m", "unittest", "discover", "-s", "mcp-server",
             "-p", "test_*.py", "-v",
@@ -88,9 +95,13 @@ def measure(root: Path) -> Path:
     return output / "coverage.json"
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--postgresql", action="store_true")
+    arguments = parser.parse_args(argv)
     try:
-        report_path = measure(BASE_DIR)
+        print("Coverage database: PostgreSQL" if arguments.postgresql else "Coverage database: SQLite")
+        report_path = measure(BASE_DIR, postgresql=arguments.postgresql)
         report = json.loads(report_path.read_text(encoding="utf-8"))
         problems = check_report(report, production_files(BASE_DIR))
         print(f"Coverage report: {report_path}")

@@ -322,3 +322,60 @@ One entry per agent session, newest at the bottom. Be honest: what went wrong is
   tests are excluded, while actual server subprocesses are present and measured;
   Git reports LF/CRLF normalization. Neither warning is hidden or treated as a
   remote result. The 380-pixel check remains deferred. Codex assisted this work.
+
+## 2026-11-11 ? TP3 checkpoint 1B ? PostgreSQL models and schema
+
+- Initial Git clean at local commit 7b3c375c151aa03bddd7c51466be34ed099ef794.
+  User authorized models, new PG migrations, dedicated verification database,
+  btree_gist and tests, then a local commit only. No service/HTTP/UI/MCP/AI,
+  dependency, CI change, seed/transfer, push or existing migration edit.
+- Explicit student decisions recorded in SPEC.md: student-only creation and
+  repeated cancellation of one's own already-cancelled booking returns 200 with
+  current state and no new mutation. These remain future service/HTTP rules;
+  no student criteria or personal architecture note were invented by Codex.
+- Workstation: Laboratory PROTECT, name, operational boolean, per-lab uniqueness.
+  Booking: owner/post PROTECT, aware start/end/created/cancelled timestamps.
+  Constraints: positive exactly-one-hour interval; immediate GiST exclusions
+  for non-cancelled workstation/owner TSTZRANGE intervals with [) bounds.
+- Added only numbered 0002_btree_gist and 0003_workstation_booking. Existing
+  0001 SHA256 remains db3a8fe7a120260b3338a8abe7b2e91ba1c90ff150ea01f340bc3230861a1d1b.
+  btree_gist is trusted: non-admin owners applied it without added role privilege.
+- Bootstrap used only to create fresh lab_booking_1b_verify, owned by the existing
+  dev role and with PUBLIC privileges revoked. Full 18-migration chain applied
+  there successfully; all business/session tables empty. Development and test
+  dedicated databases also migrated; no development seed or data transfer.
+- Tests cover valid row, invalid intervals, exact and partial conflicts for post
+  and owner, consecutive slots, cancelled row retention/conflict release,
+  workstation name uniqueness, aware PG columns and non-admin role, ORM PROTECT
+  and raw SQL FK refusal. Test titles name partial AC-14/15/16/17/18/19/25/28.
+  No role/quota/current-time/hours/owner-service/HTTP/concurrency proof is claimed.
+- Initial full run before test adaptation: 138 passed, 14 failed, 1 deselected.
+  Failures exposed historical assumptions that current schema has only User/Lab,
+  the old demo guard permits snapshots, and the new CLI parser consumed pytest
+  argv. Initial-migration test now inspects historical migration state; current
+  schema identity expects new tables. Snapshot unit fixture isolates the full
+  guard; an added real guard test refuses new relations before mutation. Existing
+  snapshot/refusal assertions and SQLite vendor guard remain intact. CLI main
+  accepts explicit argv in unit tests; its exit-status assertions are unchanged.
+- Targeted adaptation run: 67 passed. Final runner --postgresql: 155 pytest passed,
+  1 SQLite-specific test deselected, no skipped tests in 54.16 s; 9 TP1 unittest
+  passed in 8.881 s. Last schema-only run: 19 passed; JS regression: 7 passed.
+- Only deselection: test_guard_refuses_unmarked_or_wrong_database, whose SQLite
+  vendor/path acceptance is not a PostgreSQL regression. No other test excluded.
+  No SQLite suite/migration executed for 1B; SQLite is preserved as TP2 data.
+- Measured PostgreSQL coverage: services 25/25 lines, 4/4 branches; global
+  808/885 lines (91.30%), 188/218 branches (86.24%). Production inventory has
+  41 files and no missing file. Thresholds and exclusions unchanged, TP1 included.
+  Report .local/coverage/2f42e953a1ab4854a38829bb823764e6/coverage.json.
+- Django check and migration drift pass. SQLite demo hash remains
+  983e3847e7495dff0652b1cf7cb7928c02d0c075db19f113f1dba04f4dcbdcaa;
+  marker unchanged. No action targeted the existing 5432 instance or old secrets.
+- One independent read-only reviewer: no blocking/important issue. Its requests
+  for final journal and explicit historical CI incompatibility were retained.
+  More precise Catalogue typing applied to new tests. Existing helper dict typing
+  left outside this task. No architectural extension made after review.
+- CI remains unchanged and uses historical SQLite commands: it is not declared
+  ready for publishing PostgreSQL 1B. Future CI alignment needs separate approval.
+  Slice 2 criteria/status contracts and personal architecture note remain open.
+  The 380-pixel check is deferred. Stop before business services. Codex assisted
+  the implementation, test adaptation and documentation; no acceptance inferred.

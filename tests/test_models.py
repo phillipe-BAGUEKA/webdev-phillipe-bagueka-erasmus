@@ -88,7 +88,9 @@ def test_initial_migrations_create_only_expected_models(criterion: str) -> None:
     tables = set(connection.introspection.table_names())
     assert {"data_user", "data_laboratory", "django_session"} <= tables
     assert "auth_user" not in tables
-    assert not any("booking" in name or "workstation" in name for name in tables)
+    initial_state = executor.loader.project_state([("data", "0001_initial")])
+    initial_models = initial_state.apps.get_app_config("data").get_models()
+    assert {model._meta.model_name for model in initial_models} == {"user", "laboratory"}
     laboratory = Laboratory.objects.create(name="DEMO - Test laboratory")
     assert Laboratory.objects.get(pk=laboratory.pk).name == laboratory.name
     call_command("makemigrations", "data", check=True, dry_run=True, verbosity=0)

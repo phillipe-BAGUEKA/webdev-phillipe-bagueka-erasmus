@@ -47,11 +47,20 @@ Comportements attendus pour le projet final, à préciser dans les critères d�
 
 #### Cancellation
 
+Décision explicite de l'utilisateur pour les jalons suivants : une nouvelle
+demande d'annulation de sa propre réservation déjà annulée répondra HTTP 200
+avec son état actuel, sans nouvelle mutation. Le propriétaire doit toujours être
+contrôlé. Le modèle seul n'implémente ni cette règle métier ni sa réponse HTTP.
+
 - Un étudiant peut annuler uniquement ses propres réservations, strictement avant leur début : maintenant < début_du_créneau. Aucun délai supplémentaire n’est imposé ; pour un créneau débutant à 10:00, l’annulation est autorisée avant 10:00 et refusée à partir de 10:00.
 - Cette possibilité d’annulation reste valable si le poste a été déclaré hors service.
 - Une réservation annulée reste conservée comme telle dans l’historique. Elle ne bloque plus le créneau et ne compte plus dans le quota. Le poste redevient réservable si toutes les autres conditions sont satisfaites, notamment son état « en service ».
 
 #### Per-student limits
+
+Décision explicite de l'utilisateur : seuls les étudiants peuvent créer des
+réservations, sans privilège implicite pour le personnel. Ce contrôle sera ajouté
+dans les services partagés à un jalon ultérieur ; il n'est pas assuré par le schéma.
 
 - Un étudiant peut détenir au maximum trois réservations à venir et non annulées, tous laboratoires et postes confondus. « À venir » signifie que le début est strictement postérieur à l’instant courant ; les réservations annulées, en cours ou passées ne comptent pas dans ce quota.
 - Une quatrième réservation future est refusée avec un message compréhensible et sans création d’une nouvelle réservation.
@@ -197,6 +206,14 @@ Statut des critères ci-dessous : cible fonctionnelle retenue par l’utilisateu
 | Criterion | Test |
 | --- | --- |
 | AC-1 |  |
+| AC-14 (partiel) | `tests/test_booking_models.py` : types PostgreSQL avec fuseau ; affichage et conversions saisonnières non validés. |
+| AC-15 (partiel) | `tests/test_booking_models.py` : création d'une ligne valide ; services et HTTP non validés. |
+| AC-16 (partiel) | `tests/test_booking_models.py` : intervalle positif d'une heure ; horaires et instant courant non validés. |
+| AC-17 (partiel) | `tests/test_booking_models.py` : exclusion séquentielle sur un poste ; réponse HTTP non validée. |
+| AC-18 (partiel) | `tests/test_booking_models.py` : exclusion séquentielle pour un propriétaire sur deux postes. |
+| AC-19 (partiel) | `tests/test_booking_models.py` : adjacence [début, fin) acceptée ; quota non validé. |
+| AC-25 (partiel) | `tests/test_booking_models.py` : ligne annulée exclue des conflits ; propriétaire/délai/API non validés. |
+| AC-28 (partiel) | `tests/test_booking_models.py` : ligne annulée conservée ; consultation personnelle non validée. |
 | AC-46 | `tests/test_access.py`, `tests/test_labs.py` : redirection de page et JSON 401 de l’API pour sessions absentes, invalides, expirées ou inactives. |
 | AC-47 | `tests/test_auth.py` : connexion locale HTTP, refus uniformes, CSRF et retours internes sur comptes isolés. |
 | AC-48 | `tests/test_labs.py`, `tests/test_demo_labs.py`, `tests/labs_ui.test.mjs` : lecture, retrait/restauration et liste vide isolés ; états du client avec DOM/réseau simulés. `tests/test_static_assets.py` : type MIME JavaScript du module. `tests/test_access.py` : l’URL extraite du HTML évite la revalidation 304 de l’ancienne réponse text/plain. |
@@ -206,6 +223,13 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
+
+Jalon 1B, 11 novembre 2026 : schéma PostgreSQL et contraintes testés séparément
+des services. La chaîne complète est appliquée sur une base de vérification vide ;
+les références, exclusions et intervalles sont testés sur PostgreSQL isolé.
+Les correspondances AC ci-dessus restent partielles. Aucun quota, permission
+métier, traitement HTTP ou scénario concurrent n'est déclaré vérifié. Résultats
+et limites : docs/POSTGRES_1B.md. La CI historique n'est pas adaptée à ce moteur.
 
 Bilan factuel au 4 novembre 2026, après la correction de l’affichage et la démonstration AC-48 :
 
