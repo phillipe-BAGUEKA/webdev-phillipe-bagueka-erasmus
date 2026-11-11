@@ -517,3 +517,60 @@ One entry per agent session, newest at the bottom. Be honest: what went wrong is
   PostgreSQL report: .local/coverage/c363ddc75c094bb5bf5b09acafba30ab/coverage.json.
   Ignored raw output .local/coverage-2c-final.txt. No remote CI claim, and the
   380-pixel check remains deferred. Final staged scope: tests and documentation.
+
+## 2026-11-11 — TP3 checkpoint 2D — owner-only idempotent cancellation
+
+- Initial Git clean at 13fd34c01c3f06ef353ddf0fe353cedd701b870e, ahead five local
+  commits. User authorized cancellation service/tests and local commit, no push.
+  Scope recorded before implementation in CANCELLATION_2D. AC-25/26/27/28 remain
+  partial without HTTP/UI. No approved criterion rewritten or renumbered.
+- Codex proposed contract/code/tests/docs using the student's validated rules;
+  no personal architecture note or final Slice 2 grouping written for them.
+- TDD: initial refusal failed with missing booking_cancellation module. First
+  implementation passed 19 direct tests in 2.34 s. Extended targeted suite then
+  passed 35 tests in 8.69 s (27 direct, 5 concurrent 2D, 3 old 2C scenarios).
+- cancel_booking(actor, booking_id, clock=None) returns immutable UTC stored
+  cancellation state. Active actor reloaded under user lock, preliminary station
+  hint, station lock, booking lock, authoritative owner/state recheck. A changed
+  routing key aborts, never takes another lock out of order. Clock is read only
+  for a first cancellation and after all locks. Strictly before starts_at only.
+- Owner/auth checks precede idempotence. Repetition preserves timestamp, even
+  after slot start; offline station does not prevent owner cancellation. Historic
+  rows remain; existing read/create services prove slot and quota release.
+  No role-only restriction on an active owner whose role changed to personnel.
+- Data layer owns ORM/atomic block. Reuses existing user/station locks and
+  BookingError/InvalidBookingInput/AuthenticationRequired semantics; new explicit
+  errors BookingNotFound, NotBookingOwner, CancellationTooLate, BookingChanged.
+  Unrelated write failures roll back and propagate. No HTTP status implemented.
+- Extracted existing 2C wait/cleanup protocol to test-only concurrency_helpers;
+  checks initial visibility, test DB/5433/autocommit, three distinct backend PIDs,
+  pg_blocking_pids + Lock/FOR UPDATE before releasing leader, bounded waits and
+  future exceptions/connection cleanup. No production-only test synchronization.
+- Observed two cancellations -> one UPDATE and identical result; cancellation
+  before quota creation -> both succeed, 4 rows/3 active; creation first ->
+  QuotaExceeded then cancellation, 3 rows/2 active. Same station, different owners:
+  cancellation first -> 2 rows/1 active; creation first -> WorkstationConflict
+  then cancellation, 1 cancelled row. Controlled UTC clocks, no automatic retry.
+  PIDs and raw result reference in CANCELLATION_2D/.local/cancellation-2d-tests.txt.
+- No migration, dependency, seed, development data, SQLite/5432 operation, CI,
+  endpoint, UI, MCP or AI. Regression PostgreSQL coverage and independent review
+  follow; no concurrency claim beyond the schedules actually executed.
+- One independent custom reviewer examined the current service/data/test changes
+  read-only, without another agent or database access. No blocking/important
+  finding, no correction requested, no finding rejected. It confirmed ownership
+  and active checks before repeat, fresh clock after locks, atomic rollback and
+  the five controlled schedules. No universal concurrency or HTTP claim added.
+- Final unchanged runner --postgresql: 266 pytest passed, 1 deselected, no skips,
+  243.03 s; 9 TP1 unittest passed in 11.495 s. Sole deselection remains historical
+  SQLite-specific test_guard_refuses_unmarked_or_wrong_database, unchanged and
+  previously exercised on SQLite in 1A. Both added availability assertions pass.
+- Actual PostgreSQL coverage: services 220/220 lines, 74/74 branches; cancellation
+  service 52/52, 18/18; cancellation data 28/28, 2/2. Global 1089/1166 lines
+  (93.40%), 266/296 branches (89.86%). Inventory 47 production files, none absent.
+  Existing scope/exclusions/thresholds preserved, TP1 included; no SQLite measure.
+  Ignored report .local/coverage/b9b69e05ff13468a949d09869f47d11f/coverage.json.
+- Django check tests.settings_postgres: no issues. ex2: 32/32; diff check clean.
+  Hashes of SQLite, marker, initial migration and creation service unchanged;
+  no migration applied, no 5432/development data intervention. Profiles, local
+  reports, database and venv ignored/untracked; no secret read for reporting.
+  380-pixel check remains deferred. No remote CI claim. Stop before API HTTP.

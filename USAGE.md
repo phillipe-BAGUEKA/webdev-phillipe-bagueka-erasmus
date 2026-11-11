@@ -19,6 +19,7 @@ One row per agent session. In Gemini CLI, type `/stats` before you quit and copy
 | 2026-11-04 | Codex, authorized TP2 publication and GitHub Actions verification | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-11 | Codex, checkpoint 2B transactional creation and direct PostgreSQL tests | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-11 | Codex, checkpoint 2C real PostgreSQL concurrency and quota mutation test | non disponible | non disponible | sans objet | non calculable |
+| 2026-11-11 | Codex, checkpoint 2D owner-only cancellation and PostgreSQL tests | non disponible | non disponible | sans objet | non calculable |
 
 These are statistics reported by the student from Gemini CLI, not measurements
 of the single lecture lookup. In trial 1, `/stats model` showed:

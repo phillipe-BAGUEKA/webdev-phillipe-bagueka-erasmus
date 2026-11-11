@@ -10,13 +10,13 @@ Lab booking's final goal is workstation reservations and staff catalogue managem
 
 ## Commands
 
-TP3 authorization now covers checkpoint 2C only: real concurrent PostgreSQL
-creation tests for AC-22/23/24 through the public service. See
-docs/CONCURRENCY_2C.md and docs/CREATION_2B.md. Test instrumentation must prove
-distinct backends and an actual PostgreSQL lock wait, with bounded waits and
-closed connections. Stop before 2D, cancellation, HTTP, UI, MCP, AI, migrations,
-dependencies or CI changes. SQLite remains preserved. Local commit authorized,
-no push. Read suggestions never authorize writes.
+TP3 authorization now covers checkpoint 2D only: owner-only idempotent
+cancellation, data access and direct/concurrent PostgreSQL tests. See
+docs/CANCELLATION_2D.md. Locks stay user -> workstation -> booking, with
+authoritative ownership/state checks before any idempotent return. Shared
+test-only concurrency helpers require distinct backends and observed lock waits.
+Stop before HTTP, UI, MCP, AI, migrations, dependencies or CI changes. SQLite
+remains preserved. Local commit authorized, no push. Slice 2 grouping stays open.
 PostgreSQL commands are opt-in: --settings=src.config.postgres for development,
 --ds=tests.settings_postgres --reuse-db for tests, after local provisioning.
 Never run the SQLite demonstration seed against PostgreSQL.

@@ -12,10 +12,12 @@ dans SPEC.md ; leur application appartient aux prochains jalons.
 3. 2A livré séparément : disponibilités et historique personnel, sans mutation ;
    voir READ_SERVICES_2A.md.
 4. 2B construit sur autorisation explicite : création transactionnelle par un
-   étudiant actif ; voir CREATION_2B.md. Aucun service d'annulation.
+   étudiant actif ; voir CREATION_2B.md. Annulation traitée séparément en 2D.
 5. 2C autorisé et testé séparément : trois scénarios concurrents AC-22/23/24,
    connexions distinctes et attente de verrou PostgreSQL observée. Voir
    CONCURRENCY_2C.md ; aucune garantie universelle de concurrence n'est inférée.
+   2D autorisé séparément : annulation propriétaire idempotente, tests directs et
+   cinq ordres concurrents contrôlés ; voir CANCELLATION_2D.md. Arrêt avant HTTP.
 6. Regroupement définitif des critères Slice 2 et statuts HTTP de refus encore
    ouverts avant les étapes correspondantes ; HTTP et interface restent futurs.
 7. MCP/IA/personnel/Google restent des étapes distinctes du projet final.

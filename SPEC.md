@@ -219,8 +219,10 @@ Statut des critères ci-dessous : cible fonctionnelle retenue par l’utilisateu
 | AC-22 (service concurrent) | `tests/test_booking_concurrency.py` : deux étudiants, même poste/créneau ; backends distincts et attente PostgreSQL prouvée ; une création, WorkstationConflict et une ligne finale. Aucun HTTP. |
 | AC-23 (service concurrent) | `tests/test_booking_concurrency.py` : même étudiant, deux postes/créneau commun ; attente du verrou utilisateur observée ; une création, PersonalConflict et une ligne finale. Aucun HTTP. |
 | AC-24 (service concurrent) | `tests/test_booking_concurrency.py` : deux réservations initiales, deux demandes sans chevauchement ; une création, QuotaExceeded et trois lignes finales. Mutation du quota détectée par quatre lignes au lieu de trois. Aucun HTTP. |
-| AC-25 (partiel) | Tests de schéma et de lecture : annulation conservée, sans blocage des disponibilités ; propriétaire/délai/API d'annulation non validés. |
-| AC-28 (partiel) | `tests/test_read_services.py` : historique personnel complet, état actuel du poste, ordre déterministe, sans fuite ni mutation. Écran et HTTP non validés. |
+| AC-25 (partiel, services) | `tests/test_booking_cancellation.py` : annulation avant début, poste hors service, état conservé, répétition sans mutation, quota/créneau libérés via services existants ; `tests/test_cancellation_concurrency.py` : double annulation et ordres avec création. Aucun HTTP. |
+| AC-26 (partiel, services) | `tests/test_booking_cancellation.py` : première annulation refusée exactement au début et après, horloge relue après les trois verrous, refus sans mutation. Aucun HTTP. |
+| AC-27 (partiel, services) | `tests/test_booking_cancellation.py` : propriété relue sous verrou, refus d'autrui même après annulation, contrôle avant retour idempotent ; refus sans mutation. Aucun HTTP. |
+| AC-28 (partiel) | `tests/test_read_services.py` et `tests/test_booking_cancellation.py` : historique propre conservé après annulation avec état actuel du poste ; ordre déterministe et absence de fuite. Écran et HTTP non validés. |
 | AC-46 | `tests/test_access.py`, `tests/test_labs.py` : redirection de page et JSON 401 de l’API pour sessions absentes, invalides, expirées ou inactives. |
 | AC-47 | `tests/test_auth.py` : connexion locale HTTP, refus uniformes, CSRF et retours internes sur comptes isolés. |
 | AC-48 | `tests/test_labs.py`, `tests/test_demo_labs.py`, `tests/labs_ui.test.mjs` : lecture, retrait/restauration et liste vide isolés ; états du client avec DOM/réseau simulés. `tests/test_static_assets.py` : type MIME JavaScript du module. `tests/test_access.py` : l’URL extraite du HTML évite la revalidation 304 de l’ancienne réponse text/plain. |
@@ -230,6 +232,15 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
+
+Jalon 2D, 11 novembre 2026 : service d'annulation propriétaire construit et testé
+directement sur PostgreSQL. Authentification active et propriété précèdent le
+retour idempotent ; première annulation strictement avant le début, ligne et
+timestamp conservés. Tests concurrents : une seule transition pour deux
+annulations ; création/annulation sur quota ou même poste respectent les deux
+ordres contrôlés. Aucun endpoint ni HTTP 200 implémenté. Ces preuves ne couvrent
+pas tous les entrelacements ni les parcours navigateur. Détails et mesures :
+docs/CANCELLATION_2D.md. Regroupement définitif Slice 2 toujours ouvert.
 
 Jalon 2C, 11 novembre 2026 : les trois scénarios directs AC-22/23/24 ont réussi
 sur la seule base PostgreSQL de test dédiée, avec connexions distinctes et
