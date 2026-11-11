@@ -9,10 +9,15 @@ dans SPEC.md ; leur application appartient aux prochains jalons.
 
 1. 1A enregistré : instance indépendante 5433 et profils privés.
 2. 1B : Workstation/Booking, migrations 0002/0003, contraintes et tests de schéma.
-3. À valider avant construction : critères Slice 2, statuts de refus définitifs,
-   puis services (horaires, état du poste, rôle, quota, propriété, annulation).
-4. Ensuite seulement : vrais tests concurrents PostgreSQL, HTTP et interface.
-5. MCP/IA/personnel/Google restent des étapes distinctes du projet final.
+3. 2A livré séparément : disponibilités et historique personnel, sans mutation ;
+   voir READ_SERVICES_2A.md.
+4. 2B construit sur autorisation explicite : création transactionnelle par un
+   étudiant actif ; voir CREATION_2B.md. Aucun service d'annulation.
+5. 2C reste à autoriser : vrais tests concurrents avec connexions PostgreSQL
+   distinctes. Le protocole de verrous de 2B n'en constitue pas la preuve.
+6. Regroupement définitif des critères Slice 2 et statuts HTTP de refus encore
+   ouverts avant les étapes correspondantes ; HTTP et interface restent futurs.
+7. MCP/IA/personnel/Google restent des étapes distinctes du projet final.
 
 Ne pas rédiger la note d'architecture personnelle de l'étudiant à sa place.
 

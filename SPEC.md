@@ -206,16 +206,16 @@ Statut des critères ci-dessous : cible fonctionnelle retenue par l’utilisateu
 | Criterion | Test |
 | --- | --- |
 | AC-1 |  |
-| AC-11 (partiel, lecture) | `tests/test_read_services.py` : aucun créneau proposé sur un poste hors service ; refus de création non implémenté. |
+| AC-11 (partiel, services) | `tests/test_read_services.py` et `tests/test_booking_creation.py` : poste hors service exclu des lectures et création refusée sans mutation. HTTP absent. |
 | AC-13 (partiel, services) | `tests/test_read_services.py` : jours ouvrés, limites horaires et début strictement futur, sans écran ni réponse HTTP. |
 | AC-14 (partiel) | `tests/test_booking_models.py` : types PostgreSQL avec fuseau ; `tests/test_read_services.py` : créneaux Europe/Sofia convertis en UTC hiver/été. Affichage et réponses HTTP non validés. |
-| AC-15 (partiel) | `tests/test_booking_models.py` : création d'une ligne valide ; services et HTTP non validés. |
-| AC-16 (partiel) | `tests/test_booking_models.py` : intervalle positif d'une heure ; horaires et instant courant non validés. |
-| AC-17 (partiel) | `tests/test_booking_models.py` : exclusion séquentielle ; `tests/test_read_services.py` : créneaux occupés non proposés. Création HTTP non validée. |
-| AC-18 (partiel) | `tests/test_booking_models.py` : exclusion séquentielle ; `tests/test_read_services.py` : conflit personnel filtré aussi dans un autre laboratoire. |
-| AC-19 (partiel) | Tests de schéma et `tests/test_read_services.py` : bornes [début, fin) et créneaux adjacents ; création métier non validée. |
-| AC-20 (partiel, lecture) | `tests/test_read_services.py` : quota global futur, postes hors service inclus ; aucun contrôle transactionnel de création prouvé. |
-| AC-21 (partiel, lecture) | `tests/test_read_services.py` : annulations/passé/en cours exclus du quota ; création métier non implémentée. |
+| AC-15 (partiel) | `tests/test_booking_models.py` et `tests/test_booking_creation.py` : une ligne créée atomiquement pour l'acteur étudiant actif, avec refus des accès non autorisés. HTTP et confirmation visuelle absents. |
+| AC-16 (partiel) | `tests/test_booking_models.py` et `tests/test_booking_creation.py` : durée, fuseau, horaires, jours et début strictement futur contrôlés ; refus sans mutation. HTTP absent. |
+| AC-17 (partiel) | Tests de schéma, lecture et `tests/test_booking_creation.py` : conflit préexistant sur le poste refusé sans mutation, exclusion PostgreSQL finale et rollback. HTTP et concurrence non validés. |
+| AC-18 (partiel) | Tests de schéma, lecture et `tests/test_booking_creation.py` : conflit personnel refusé aussi sur un autre poste/laboratoire ; chevauchement partiel testé. HTTP et concurrence non validés. |
+| AC-19 (partiel) | Tests de schéma, lecture et `tests/test_booking_creation.py` : intervalles [début, fin) et création de créneaux consécutifs. Aucun parcours HTTP. |
+| AC-20 (partiel, services) | Lectures et `tests/test_booking_creation.py` : quatrième réservation refusée, quota recompté dans la transaction, postes hors service inclus. Concurrence et HTTP non validés. |
+| AC-21 (partiel, services) | Lectures et `tests/test_booking_creation.py` : annulations/passé/en cours exclus du quota ; troisième réservation future créée. Aucun parcours HTTP. |
 | AC-25 (partiel) | Tests de schéma et de lecture : annulation conservée, sans blocage des disponibilités ; propriétaire/délai/API d'annulation non validés. |
 | AC-28 (partiel) | `tests/test_read_services.py` : historique personnel complet, état actuel du poste, ordre déterministe, sans fuite ni mutation. Écran et HTTP non validés. |
 | AC-46 | `tests/test_access.py`, `tests/test_labs.py` : redirection de page et JSON 401 de l’API pour sessions absentes, invalides, expirées ou inactives. |
@@ -227,6 +227,15 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
+
+Jalon 2B, 11 novembre 2026 : création directement testée sur PostgreSQL, acteur
+étudiant actif relu sous verrou, propriétaire imposé par l'acteur. Transaction,
+verrous utilisateur puis poste, heure relue après acquisition, règles et quota
+revérifiés ; contraintes connues traduites après rollback, autres erreurs de base
+propagées. Tests directs sans HTTP ni interface, sans essai à connexions
+concurrentes : AC-22/23/24 restent à vérifier en 2C. Les AC ci-dessus restent
+partiels ; aucun résultat concurrent ou distant n'est inféré. Résultats et
+limites : docs/CREATION_2B.md. Regroupement définitif Slice 2 encore ouvert.
 
 Jalon 2A, 11 novembre 2026 : disponibilités et historique personnel sont testés
 directement sur PostgreSQL, avec horloge contrôlée et sans mutation. Les lectures

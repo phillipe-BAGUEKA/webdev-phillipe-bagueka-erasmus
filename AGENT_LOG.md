@@ -422,3 +422,52 @@ One entry per agent session, newest at the bottom. Be honest: what went wrong is
   note. No provider call, new criteria, browser/mobile acceptance or concurrency
   success claimed. 380-pixel test remains deferred; CI unchanged/unverified here.
   Stop before creation service. Local commit authorized, no push.
+
+## 2026-11-11 — TP3 checkpoint 2B — transactional student creation
+
+- Initial Git clean at 470a7ef0d9fad59a16179089eaae7bdf6611eae4, main ahead three
+  local commits. User authorized 2B only, including a local commit, not a push.
+  Scope recorded in docs/CREATION_2B.md before implementation. Approved AC-11,
+  AC-13 through AC-21 unchanged; evidence remains partial without HTTP/UI.
+- The student's decisions remain student-only creation, canonical Sofia slots,
+  half-open intervals and global future quota. Codex proposed the service contract,
+  code, tests and documentation, not the student's personal architecture note.
+- First refusal test failed because booking_creation did not exist. Implemented
+  create_booking(actor, workstation_id, starts_at, ends_at, clock=None), returning
+  immutable UTC CreatedBooking. Owner exclusively from the trusted actor, then
+  authoritative account reloaded in the transaction. No client owner parameter.
+- Data layer owns atomic block, ORM, user then workstation row locks, conflict
+  queries and insert. Service reads clock after locks, checks active student,
+  station, canonical hours/duration/future, conflicts and quota. Reuses 2A eager
+  personal interval and future-count data queries, never a previous offer.
+- Known constraint names plus SQLSTATE are translated only after atomic rollback.
+  Unrelated integrity errors propagate. Real PostgreSQL insert failures test both
+  exclusions and one_hour; positive_interval diagnostic is explicitly simulated
+  because zero duration triggers one_hour first with both constraints installed.
+- Initial 30 tests passed; extended run had 51 passed and 2 fixture failures:
+  constraint-order assumption and create_user's pre-insert full_clean. Fixed the
+  test mechanisms, preserving domain assertions and installed constraints.
+  Final direct suite: 55 passed in 2.14 s. Refusals compare all business rows;
+  checks include stale roles, missing users, clock ordering, quota exclusions,
+  offline future quota, cross-lab/partial overlaps and consecutive slots.
+- Unchanged coverage runner --postgresql: 231 pytest passed, 1 deselected,
+  no skipped tests, 184.09 s; 9 TP1 unittest passed in 17.942 s. Sole deselection:
+  test_guard_refuses_unmarked_or_wrong_database, whose SQLite-specific acceptance
+  assertion remains unchanged and ran in the historical 1A SQLite suite.
+- PostgreSQL coverage: services 168/168 lines, 56/56 branches; new service 65/65,
+  22/22; new data access 43/43, 6/6. Global 1009/1086 lines (92.91%) and 246/276
+  branches (89.13%). Inventory 45 production files, none missing; thresholds,
+  runner and exclusions unchanged, TP1 included. No SQLite 2B measurement.
+  Report .local/coverage/a2fa736a234645a98a8e35d58fadad6a/coverage.json.
+- Django check and migration drift pass; no migration applied. ex2: 32/32 after
+  authorized unsandboxed retry of EPERM on an old local pytest cache folder.
+  SQLite/marker/initial migration hashes match previous checkpoint. No operation
+  on 5432, seed, new dependency, CI, provider or existing secret. Dedicated new
+  profiles remain ignored/untracked, no authorized secret in Git candidates.
+- No concurrency claim: only sequential direct tests and lock-order observation,
+  not separate simultaneous connections. AC-22/23/24 and final Slice 2 grouping
+  remain open; no cancellation, HTTP, UI, MCP or AI added. 380-pixel check deferred.
+  One independent read-only custom reviewer found no blocking/important issue.
+  Retained its request for final measurements and explicit 2C limits, recorded
+  here and in CREATION_2B. No finding rejected, no code correction requested.
+  Staged-diff and authorized-secret checks precede the local commit; no push.

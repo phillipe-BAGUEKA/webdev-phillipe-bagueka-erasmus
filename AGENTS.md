@@ -10,11 +10,12 @@ Lab booking's final goal is workstation reservations and staff catalogue managem
 
 ## Commands
 
-TP3 authorization now covers checkpoint 2A: read-only availability and personal
-history services, their data access and direct PostgreSQL tests. See
-docs/READ_SERVICES_2A.md. Stop before creation/cancellation services, HTTP, UI,
-MCP, AI, migrations, dependencies or CI changes. A slot suggestion must be
-rechecked transactionally by the future creation service. SQLite remains preserved.
+TP3 authorization now covers checkpoint 2B: transactional student booking
+creation, its data access and direct PostgreSQL tests. See docs/CREATION_2B.md
+and docs/READ_SERVICES_2A.md. Stop before 2C concurrency tests, cancellation,
+HTTP, UI, MCP, AI, migrations, dependencies or CI changes. Creation rechecks
+rules after user -> workstation locks; read suggestions never authorize writes.
+SQLite remains preserved. Local checkpoint commit authorized, no push.
 PostgreSQL commands are opt-in: --settings=src.config.postgres for development,
 --ds=tests.settings_postgres --reuse-db for tests, after local provisioning.
 Never run the SQLite demonstration seed against PostgreSQL.
