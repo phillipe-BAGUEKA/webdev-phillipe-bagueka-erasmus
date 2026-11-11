@@ -2,26 +2,27 @@
 
 This repository contains Exercise 1 in `mcp-server/` and Lab booking in the rest of it. The first slice was developed locally on Windows with Python 3.13, Django 5.2 LTS, SQLite and plain JavaScript. The course Codespaces template remains available; its Python 3.12 environment has not been validated in this work.
 
-The final target in [SPEC.md](SPEC.md) includes workstation reservations, staff management, Google sign-in, a model suggestion and project MCP tools. Those features are **not implemented by slice 1**. The current application provides local sign-in/sign-out and a protected laboratory list read from a real database. Specification wording and code were prepared with ChatGPT/Codex assistance, recorded in AGENT_LOG.md and USAGE.md; they are not presented as wholly independent student work.
+The final target in [SPEC.md](SPEC.md) includes workstation reservations, staff management, Google sign-in, a model suggestion and project MCP tools. Slice 1 provides local sign-in/sign-out and a protected database-backed laboratory list. TP3 now also provides PostgreSQL availability/history/create/cancel services and their protected HTTP APIs; the booking interface, staff management, Google, AI and project MCP tools remain future work. See [HTTP checkpoint 3](docs/HTTP_API_3.md) for contracts, explicit PostgreSQL commands and measured tests. Specification wording and code were prepared with ChatGPT/Codex assistance, recorded in AGENT_LOG.md and USAGE.md; they are not presented as wholly independent student work.
 
 ## Start
 
-Local Lab booking progress: **checkpoints 1–3** are implemented. The student reported
+Historical slice 1 progress: **checkpoints 1–3** are implemented. The student reported
 the [foundation checks](docs/CHECKPOINT1.md) and the session/keyboard observations
 for [checkpoint 2](docs/CHECKPOINT2.md). Codex has now observed all three laboratories
 in the actual port-8000 browser after the module MIME/cache correction. See
 [checkpoint 3](docs/CHECKPOINT3.md) for the running-server details and the observed
 AC-48 demonstration: **3 → 2 → 3**, with Beta restored identically. The student
 reported the API error body after logout, without an observed HTTP status.
-The 380-pixel check is explicitly deferred, not passed. No later slice is started.
+The 380-pixel check is explicitly deferred, not passed. These browser observations
+concern slice 1; the new booking APIs have automated HTTP evidence only.
 
-For a **fresh local copy**, follow [checkpoint 1](docs/CHECKPOINT1.md) to create a
-project venv, install the two pinned requirements files, initialize local settings,
-apply the committed migration and prepare demonstration accounts. Choose passwords
-locally with Django's masked prompt. Never repeat password preparation on the
-already configured demonstration accounts. No Google/Gemini secret is needed.
+The [checkpoint 1](docs/CHECKPOINT1.md) guide records the original TP2 foundation.
+Preserve existing SQLite data and accounts; do not run the current PostgreSQL
+migration chain on SQLite or repeat demonstration password preparation. Current
+booking work requires the dedicated PostgreSQL profiles/instance documented in
+[POSTGRES_1A](docs/POSTGRES_1A.md), with no automatic account/data transfer.
 
-For this prepared repository, run from its root in PowerShell:
+For the preserved TP2 sessions/catalogue only, run from the root in PowerShell:
 
 ```powershell
 .\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000 --insecure --noreload

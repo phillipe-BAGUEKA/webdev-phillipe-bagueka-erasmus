@@ -574,3 +574,55 @@ One entry per agent session, newest at the bottom. Be honest: what went wrong is
   no migration applied, no 5432/development data intervention. Profiles, local
   reports, database and venv ignored/untracked; no secret read for reporting.
   380-pixel check remains deferred. No remote CI claim. Stop before API HTTP.
+
+## 2026-11-11 — TP3 checkpoint 3 — session/CSRF HTTP booking APIs
+
+- Initial Git clean at 39bb68f3255f75a2713b79b988873050798be4e7, main ahead six
+  local commits. Read user's attached scope and applicable instructions. Contracts
+  documented before code in HTTP_API_3: four HTTP contracts through three views,
+  no application UI, model/migration/dependency/CI/MCP/AI or demonstration seed.
+- New routes/bookings calls existing availability/history/create/cancel services
+  unchanged. Session is the only actor source; strict JSON shapes reject client
+  owner fields, no route ORM. Explicit UTC serializers select only allowed fields.
+  Existing HTTP session forms remain unchanged except targeted CSRF JSON handling
+  for the new URL names; HTML form failures remain HTML when requested.
+- HTTP adapters map known errors to 401/403/404/409/422; malformed JSON 400,
+  unsupported media 415, unsupported method JSON 405 with Allow. Unexpected
+  exceptions remain generic JSON 500 and log class only, not SQL/messages/trace.
+  Middleware CSRF remains active and can return 403 before authentication; tests
+  separately prove anonymous POST 401 with valid CSRF and 403 without valid token.
+- First integration: 46 passed, one fixture failure because Django test client
+  omitted Content-Type for an empty body, obtaining 415 instead of malformed JSON
+  400. Set the actual WSGI header in the test; preserved status expectations.
+  Completed direct HTTP suite: 50 passed in 1.17 s with real PostgreSQL services,
+  session backend and enforced CSRF. Only faults injected are DatabaseError for
+  safe 500 and an actual post-routing change for real BookingChanged rollback.
+- Tests cover final row owner/count, create/conflicts/quota/personnel, history
+  privacy/empty reads, owner cancellation/repeat timestamp/offline station,
+  invalid payload/media/date/methods, winter/summer input UTC, expired/inactive/
+  missing sessions and old cookie after logout. Refusals compare all business rows.
+  No acceptance of SQL exception or mocked domain decision as correct behavior.
+- SPEC records technical Slice 2 scope using existing ACs, without rewriting or
+  inventing criteria. Personal final grouping is not presumed validated; the
+  student's architecture section stays blank. Guide lists paths for their note.
+  Code/contracts/tests/docs assisted by Codex, not student personal prose or
+  professor approval. Stop before interface, authorized local commit only, no push.
+- Final unchanged runner --postgresql: 316 pytest passed, 1 deselected, no skips,
+  121.28 s; 9 TP1 unittest passed in 13.323 s, including prior TP2/2C/2D regressions.
+  Services 220/220 lines and 74/74 branches (100%); new booking_http 83/83 and
+  20/20, new bookings 32/32 and 4/4. Global 1206/1283 lines (94.00%), 290/320
+  branches (90.625%). Inventory 49 production files, none absent; unchanged scope,
+  exclusions and thresholds, TP1 included. No SQLite measurement. Sole unchanged
+  deselection remains SQLite-specific test_guard_refuses_unmarked_or_wrong_database.
+  Report .local/coverage/f46e825e705047a2853571099f8f6381/coverage.json.
+- One independent read-only custom reviewer found no blocking/important issue.
+  Initial missing-cache CSRF concern withdrawn after checking existing
+  @never_cache on csrf_failure and passing tests. No production correction
+  requested, no valid finding ignored. README now distinguishes historical TP2
+  SQLite launch from current PostgreSQL booking APIs; no migration run by this task.
+- Django check tests.settings_postgres passed, ex2 32/32, diff check clean.
+  SQLite/marker/initial migration hashes unchanged; all services/data, CI,
+  dependencies, TP1 and coverage policy unchanged. No existing secret read for
+  reporting; private profiles, local logs/reports/database and venv ignored and
+  untracked. No remote CI result, provider call or browser claim; 380-pixel check
+  remains deferred. Staged scope is limited to HTTP adapters, tests and docs.

@@ -73,6 +73,36 @@ dans les services partagés à un jalon ultérieur ; il n'est pas assuré par le
 - Ces règles doivent être appliquées dans les services partagés par HTTP et MCP.
 - La tranche de réservation sur PostgreSQL devra prévoir la vérification de ces règles lors de créations simultanées : aucun double usage d’un même poste, aucun chevauchement pour un même étudiant et aucun dépassement du quota. Ces vérifications restent à planifier et à exécuter ; aucun résultat fonctionnel n’est acquis à ce stade.
 
+### Slice 2 — périmètre technique et contrat HTTP du jalon 3
+
+Disponibilités, création pour soi, historique et annulation propriétaire sont
+exposés par HTTP sur PostgreSQL, en complément des services existants. Périmètre
+référencé : AC-11 et AC-13 à AC-28, avec AC-46/49 pour les preuves de session
+applicables. Ce regroupement technique ne vaut pas validation par l'étudiant du
+regroupement définitif Slice 2. Aucun critère approuvé n'est réécrit ou renuméroté.
+
+| Route | Contrat |
+| --- | --- |
+| GET /api/labs/{id}/availability?date=YYYY-MM-DD | 200, slots réservables pour la session ; aucun propriétaire ni historique d'autrui |
+| GET /api/bookings | 200, bookings de la seule session, historique compris |
+| POST /api/bookings | JSON exact workstation_id, starts_at, ends_at ; 201, booking créé pour l'acteur |
+| POST /api/bookings/{id}/cancel | JSON {} ; 200, booking annulé ou état existant sans nouvelle mutation |
+
+Dates ISO 8601 conscientes du fuseau, sérialisation UTC suffixe Z, champs
+explicitement sélectionnés. Toute donnée propriétaire du client est refusée,
+jamais utilisée. Erreurs JSON stables {"error": "message"} : 401 authentification,
+403 autorisation/CSRF, 404 ressource inexistante, 409 conflit/quota/hors service/
+annulation tardive/BookingChanged, 422 forme ou créneau invalide (début non futur
+compris), 400 JSON mal formé, 405 méthode avec Allow, 415 Content-Type non pris
+en charge, 500 erreur interne sans détail sensible. Les mutations exigent
+application/json et le CSRF Django ; celui-ci peut refuser avant la vue. Les
+statuts de service sont traduits uniquement dans l'adaptateur HTTP.
+
+Contrats détaillés, champs, tests et vérifications : docs/HTTP_API_3.md. Les
+écrans de réservation restent absents ; aucune validation navigateur n'est
+déduite des tests HTTP. La section Architecture reste à rédiger personnellement
+par l'étudiant ; elle n'est pas remplie par les assistants.
+
 ## The model feature
 <!-- Which model, which modality, and what it does for a user.
      Name three things or the check fails: the input it receives, the output it produces,
@@ -206,23 +236,23 @@ Statut des critères ci-dessous : cible fonctionnelle retenue par l’utilisateu
 | Criterion | Test |
 | --- | --- |
 | AC-1 |  |
-| AC-11 (partiel, services) | `tests/test_read_services.py` et `tests/test_booking_creation.py` : poste hors service exclu des lectures et création refusée sans mutation. HTTP absent. |
-| AC-13 (partiel, services) | `tests/test_read_services.py` : jours ouvrés, limites horaires et début strictement futur, sans écran ni réponse HTTP. |
-| AC-14 (partiel) | `tests/test_booking_models.py` : types PostgreSQL avec fuseau ; `tests/test_read_services.py` : créneaux Europe/Sofia convertis en UTC hiver/été. Affichage et réponses HTTP non validés. |
-| AC-15 (partiel) | `tests/test_booking_models.py` et `tests/test_booking_creation.py` : une ligne créée atomiquement pour l'acteur étudiant actif, avec refus des accès non autorisés. HTTP et confirmation visuelle absents. |
-| AC-16 (partiel) | `tests/test_booking_models.py` et `tests/test_booking_creation.py` : durée, fuseau, horaires, jours et début strictement futur contrôlés ; refus sans mutation. HTTP absent. |
-| AC-17 (partiel) | Tests de schéma, lecture et `tests/test_booking_creation.py` : conflit préexistant sur le poste refusé sans mutation, exclusion PostgreSQL finale et rollback. HTTP absent ; scénario concurrent traité séparément sous AC-22. |
-| AC-18 (partiel) | Tests de schéma, lecture et `tests/test_booking_creation.py` : conflit personnel refusé aussi sur un autre poste/laboratoire ; chevauchement partiel testé. HTTP absent ; scénario concurrent traité sous AC-23. |
+| AC-11 (partiel, services et HTTP) | Tests de lecture/création et `tests/test_booking_api.py` : poste hors service exclu, création HTTP 409 sans mutation. Écran absent. |
+| AC-13 (partiel) | `tests/test_read_services.py` et `tests/test_booking_api.py` : créneaux canoniques et réponse HTTP issue de la base, cas vide/week-end ; aucun écran de disponibilité. |
+| AC-14 (partiel) | Tests de schéma/lecture et `tests/test_booking_api.py` : conversions hiver/été, entrée avec offset, stockage et réponse UTC ; affichage navigateur non validé. |
+| AC-15 (partiel) | Tests directs et `tests/test_booking_api.py` : HTTP 201, une ligne pour le propriétaire de session, personnel 403 et propriétaire client refusé ; confirmation visuelle absente. |
+| AC-16 (partiel) | Tests directs et `tests/test_booking_api.py` : contraintes temporelles/forme refusées sans mutation, HTTP 422 ; JSON mal formé 400, Content-Type 415. Écran absent. |
+| AC-17 (partiel) | Tests directs et `tests/test_booking_api.py` : conflit préexistant HTTP 409 sans mutation ; scénario concurrent de service séparé sous AC-22. Écran absent. |
+| AC-18 (partiel) | Tests directs cross-lab et `tests/test_booking_api.py` : conflit personnel HTTP 409 ; concurrence de service sous AC-23. Écran absent. |
 | AC-19 (partiel) | Tests de schéma, lecture et `tests/test_booking_creation.py` : intervalles [début, fin) et création de créneaux consécutifs. Aucun parcours HTTP. |
-| AC-20 (partiel, services) | Lectures et `tests/test_booking_creation.py` : quatrième réservation refusée, quota recompté dans la transaction, postes hors service inclus. HTTP absent ; scénario concurrent sans chevauchement traité sous AC-24. |
+| AC-20 (partiel) | Tests directs : quota transactionnel, postes hors service inclus ; `tests/test_booking_api.py` : quota HTTP 409 sans mutation. Concurrence de service sous AC-24, écran absent. |
 | AC-21 (partiel, services) | Lectures et `tests/test_booking_creation.py` : annulations/passé/en cours exclus du quota ; troisième réservation future créée. Aucun parcours HTTP. |
 | AC-22 (service concurrent) | `tests/test_booking_concurrency.py` : deux étudiants, même poste/créneau ; backends distincts et attente PostgreSQL prouvée ; une création, WorkstationConflict et une ligne finale. Aucun HTTP. |
 | AC-23 (service concurrent) | `tests/test_booking_concurrency.py` : même étudiant, deux postes/créneau commun ; attente du verrou utilisateur observée ; une création, PersonalConflict et une ligne finale. Aucun HTTP. |
 | AC-24 (service concurrent) | `tests/test_booking_concurrency.py` : deux réservations initiales, deux demandes sans chevauchement ; une création, QuotaExceeded et trois lignes finales. Mutation du quota détectée par quatre lignes au lieu de trois. Aucun HTTP. |
-| AC-25 (partiel, services) | `tests/test_booking_cancellation.py` : annulation avant début, poste hors service, état conservé, répétition sans mutation, quota/créneau libérés via services existants ; `tests/test_cancellation_concurrency.py` : double annulation et ordres avec création. Aucun HTTP. |
-| AC-26 (partiel, services) | `tests/test_booking_cancellation.py` : première annulation refusée exactement au début et après, horloge relue après les trois verrous, refus sans mutation. Aucun HTTP. |
-| AC-27 (partiel, services) | `tests/test_booking_cancellation.py` : propriété relue sous verrou, refus d'autrui même après annulation, contrôle avant retour idempotent ; refus sans mutation. Aucun HTTP. |
-| AC-28 (partiel) | `tests/test_read_services.py` et `tests/test_booking_cancellation.py` : historique propre conservé après annulation avec état actuel du poste ; ordre déterministe et absence de fuite. Écran et HTTP non validés. |
+| AC-25 (partiel) | Tests directs/concurrents et `tests/test_booking_api.py` : annulation et réannulation HTTP 200, timestamp inchangé, poste hors service accepté ; historique conservé. Écran absent. |
+| AC-26 (partiel) | Tests directs : limites et heure après verrous ; `tests/test_booking_api.py` : HTTP 409 au début, sans mutation. Écran absent. |
+| AC-27 (partiel) | Tests directs et `tests/test_booking_api.py` : propriétaire issu de session, autre propriétaire HTTP 403, même après annulation ; aucun effet en base. Écran absent. |
+| AC-28 (partiel) | Tests directs et `tests/test_booking_api.py` : historique HTTP propre, annulation et état du poste, aucune fuite ; écran absent. |
 | AC-46 | `tests/test_access.py`, `tests/test_labs.py` : redirection de page et JSON 401 de l’API pour sessions absentes, invalides, expirées ou inactives. |
 | AC-47 | `tests/test_auth.py` : connexion locale HTTP, refus uniformes, CSRF et retours internes sur comptes isolés. |
 | AC-48 | `tests/test_labs.py`, `tests/test_demo_labs.py`, `tests/labs_ui.test.mjs` : lecture, retrait/restauration et liste vide isolés ; états du client avec DOM/réseau simulés. `tests/test_static_assets.py` : type MIME JavaScript du module. `tests/test_access.py` : l’URL extraite du HTML évite la revalidation 304 de l’ancienne réponse text/plain. |
@@ -232,6 +262,15 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
+
+Jalon 3, 11 novembre 2026 : quatre contrats HTTP exposés par trois vues, services
+existants inchangés. Tests d'intégration PostgreSQL avec sessions/CSRF réels,
+propriétaire de session uniquement, codes et JSON explicites, contrôles des lignes
+finales et refus sans mutation. Le CSRF des nouvelles routes est JSON sans
+changer les formulaires HTML. Aucune interface ni preuve navigateur ajoutée,
+aucun compte/donnée de démonstration créé. Guide : docs/HTTP_API_3.md.
+Le regroupement définitif Slice 2 et la note d'architecture personnelle restent
+à valider/rédiger par l'étudiant ; aucune formulation personnelle n'est présumée.
 
 Jalon 2D, 11 novembre 2026 : service d'annulation propriétaire construit et testé
 directement sur PostgreSQL. Authentification active et propriété précèdent le

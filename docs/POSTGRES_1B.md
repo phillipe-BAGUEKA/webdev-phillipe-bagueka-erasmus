@@ -18,6 +18,8 @@ dans SPEC.md ; leur application appartient aux prochains jalons.
    CONCURRENCY_2C.md ; aucune garantie universelle de concurrence n'est inférée.
    2D autorisé séparément : annulation propriétaire idempotente, tests directs et
    cinq ordres concurrents contrôlés ; voir CANCELLATION_2D.md. Arrêt avant HTTP.
+   Jalon 3 autorisé ensuite : API HTTP avec sessions/CSRF et tests PostgreSQL,
+   voir HTTP_API_3.md. Les écrans restent hors périmètre.
 6. Regroupement définitif des critères Slice 2 et statuts HTTP de refus encore
    ouverts avant les étapes correspondantes ; HTTP et interface restent futurs.
 7. MCP/IA/personnel/Google restent des étapes distinctes du projet final.

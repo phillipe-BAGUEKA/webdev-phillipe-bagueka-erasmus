@@ -6,17 +6,17 @@ Read this file at the start of every session. Keep it short and correct; update 
 <!-- One or two sentences: what the app does and for whom. Link SPEC.md. -->
 See `SPEC.md` for goals, non-goals and acceptance criteria.
 
-Lab booking's final goal is workstation reservations and staff catalogue management. Slice 1 implements only local sessions and a protected database-backed laboratory list. The student reported checkpoint 1/2 observations and the API error body after logout (not its HTTP status). Codex observed the real browser list and AC-48's 3 → 2 → 3 with identical Beta restoration. The 380-pixel check is explicitly deferred, not passed. Slice 1 is published; the four GitHub Actions jobs passed on delivery commit 4243d717716142b45ab8304abf21c2056f28fdb7. Check the exact SHA of any later commit independently. Stop before TP3 or another slice. See `docs/TP2_FINALIZATION.md`, `docs/SLICE1_PLAN.md` and the CHECKPOINT guides.
+Lab booking's final goal is workstation reservations and staff catalogue management. Slice 1 implements only local sessions and a protected database-backed laboratory list. The student reported checkpoint 1/2 observations and the API error body after logout (not its HTTP status). Codex observed the real browser list and AC-48's 3 → 2 → 3 with identical Beta restoration. The 380-pixel check is explicitly deferred, not passed. Slice 1 is published; the four GitHub Actions jobs passed on delivery commit 4243d717716142b45ab8304abf21c2056f28fdb7. Check the exact SHA of any later commit independently. TP3 proceeds only through the explicitly authorized checkpoint below. See `docs/TP2_FINALIZATION.md`, `docs/SLICE1_PLAN.md` and the CHECKPOINT guides.
 
 ## Commands
 
-TP3 authorization now covers checkpoint 2D only: owner-only idempotent
-cancellation, data access and direct/concurrent PostgreSQL tests. See
-docs/CANCELLATION_2D.md. Locks stay user -> workstation -> booking, with
-authoritative ownership/state checks before any idempotent return. Shared
-test-only concurrency helpers require distinct backends and observed lock waits.
-Stop before HTTP, UI, MCP, AI, migrations, dependencies or CI changes. SQLite
-remains preserved. Local commit authorized, no push. Slice 2 grouping stays open.
+TP3 authorization now covers checkpoint 3 only: session-protected HTTP booking
+and availability APIs calling existing services. See docs/HTTP_API_3.md for
+schemas, statuses and CSRF precedence. No ORM or duplicated booking rules in
+routes. Preserve HTML session forms and the 2C/2D concurrency regressions.
+Stop before UI, MCP, AI, migrations, dependencies or CI changes. SQLite remains
+preserved. Local commit authorized, no push. Final Slice 2 grouping and the
+student's personal architecture note are not assumed approved or written.
 PostgreSQL commands are opt-in: --settings=src.config.postgres for development,
 --ds=tests.settings_postgres --reuse-db for tests, after local provisioning.
 Never run the SQLite demonstration seed against PostgreSQL.

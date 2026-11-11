@@ -10,6 +10,7 @@ from django.views.decorators.http import require_GET
 from src.services.access import AuthenticationRequired, require_authenticated
 
 from .forms import LoginForm
+from .booking_http import API_ROUTE_NAMES
 from .session import current_actor, safe_return_path, wants_json
 
 
@@ -45,6 +46,7 @@ def csrf_failure(request: HttpRequest, reason: str = "") -> HttpResponse:
     message = (
         "La vérification de sécurité a échoué. Recharge la page puis réessaie."
     )
-    if wants_json(request):
+    match = request.resolver_match
+    if (match is not None and match.url_name in API_ROUTE_NAMES) or wants_json(request):
         return JsonResponse({"error": message}, status=403)
     return render(request, "csrf_error.html", {"error": message}, status=403)
