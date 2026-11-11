@@ -211,11 +211,14 @@ Statut des critères ci-dessous : cible fonctionnelle retenue par l’utilisateu
 | AC-14 (partiel) | `tests/test_booking_models.py` : types PostgreSQL avec fuseau ; `tests/test_read_services.py` : créneaux Europe/Sofia convertis en UTC hiver/été. Affichage et réponses HTTP non validés. |
 | AC-15 (partiel) | `tests/test_booking_models.py` et `tests/test_booking_creation.py` : une ligne créée atomiquement pour l'acteur étudiant actif, avec refus des accès non autorisés. HTTP et confirmation visuelle absents. |
 | AC-16 (partiel) | `tests/test_booking_models.py` et `tests/test_booking_creation.py` : durée, fuseau, horaires, jours et début strictement futur contrôlés ; refus sans mutation. HTTP absent. |
-| AC-17 (partiel) | Tests de schéma, lecture et `tests/test_booking_creation.py` : conflit préexistant sur le poste refusé sans mutation, exclusion PostgreSQL finale et rollback. HTTP et concurrence non validés. |
-| AC-18 (partiel) | Tests de schéma, lecture et `tests/test_booking_creation.py` : conflit personnel refusé aussi sur un autre poste/laboratoire ; chevauchement partiel testé. HTTP et concurrence non validés. |
+| AC-17 (partiel) | Tests de schéma, lecture et `tests/test_booking_creation.py` : conflit préexistant sur le poste refusé sans mutation, exclusion PostgreSQL finale et rollback. HTTP absent ; scénario concurrent traité séparément sous AC-22. |
+| AC-18 (partiel) | Tests de schéma, lecture et `tests/test_booking_creation.py` : conflit personnel refusé aussi sur un autre poste/laboratoire ; chevauchement partiel testé. HTTP absent ; scénario concurrent traité sous AC-23. |
 | AC-19 (partiel) | Tests de schéma, lecture et `tests/test_booking_creation.py` : intervalles [début, fin) et création de créneaux consécutifs. Aucun parcours HTTP. |
-| AC-20 (partiel, services) | Lectures et `tests/test_booking_creation.py` : quatrième réservation refusée, quota recompté dans la transaction, postes hors service inclus. Concurrence et HTTP non validés. |
+| AC-20 (partiel, services) | Lectures et `tests/test_booking_creation.py` : quatrième réservation refusée, quota recompté dans la transaction, postes hors service inclus. HTTP absent ; scénario concurrent sans chevauchement traité sous AC-24. |
 | AC-21 (partiel, services) | Lectures et `tests/test_booking_creation.py` : annulations/passé/en cours exclus du quota ; troisième réservation future créée. Aucun parcours HTTP. |
+| AC-22 (service concurrent) | `tests/test_booking_concurrency.py` : deux étudiants, même poste/créneau ; backends distincts et attente PostgreSQL prouvée ; une création, WorkstationConflict et une ligne finale. Aucun HTTP. |
+| AC-23 (service concurrent) | `tests/test_booking_concurrency.py` : même étudiant, deux postes/créneau commun ; attente du verrou utilisateur observée ; une création, PersonalConflict et une ligne finale. Aucun HTTP. |
+| AC-24 (service concurrent) | `tests/test_booking_concurrency.py` : deux réservations initiales, deux demandes sans chevauchement ; une création, QuotaExceeded et trois lignes finales. Mutation du quota détectée par quatre lignes au lieu de trois. Aucun HTTP. |
 | AC-25 (partiel) | Tests de schéma et de lecture : annulation conservée, sans blocage des disponibilités ; propriétaire/délai/API d'annulation non validés. |
 | AC-28 (partiel) | `tests/test_read_services.py` : historique personnel complet, état actuel du poste, ordre déterministe, sans fuite ni mutation. Écran et HTTP non validés. |
 | AC-46 | `tests/test_access.py`, `tests/test_labs.py` : redirection de page et JSON 401 de l’API pour sessions absentes, invalides, expirées ou inactives. |
@@ -227,6 +230,15 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
+
+Jalon 2C, 11 novembre 2026 : les trois scénarios directs AC-22/23/24 ont réussi
+sur la seule base PostgreSQL de test dédiée, avec connexions distinctes et
+attente de verrou constatée côté serveur. Le test quota échoue avec quatre
+réservations lorsque le contrôle est neutralisé temporairement ; le service
+est ensuite restauré exactement. Aucun correctif de production nécessaire.
+Ces preuves ne couvrent pas tous les entrelacements, les futurs parcours HTTP,
+l'annulation ou un autre niveau d'isolation. Détails : docs/CONCURRENCY_2C.md.
+Regroupement définitif Slice 2 et note d'architecture personnelle restent ouverts.
 
 Jalon 2B, 11 novembre 2026 : création directement testée sur PostgreSQL, acteur
 étudiant actif relu sous verrou, propriétaire imposé par l'acteur. Transaction,

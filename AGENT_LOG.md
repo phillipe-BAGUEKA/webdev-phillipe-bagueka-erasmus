@@ -471,3 +471,49 @@ One entry per agent session, newest at the bottom. Be honest: what went wrong is
   Retained its request for final measurements and explicit 2C limits, recorded
   here and in CREATION_2B. No finding rejected, no code correction requested.
   Staged-diff and authorized-secret checks precede the local commit; no push.
+
+## 2026-11-11 — TP3 checkpoint 2C — real PostgreSQL creation concurrency
+
+- Initial Git clean at c2f2673164622dc8e1d01fea7e80841d9c07c4c3, main ahead four
+  local commits. User authorized only concurrent AC-22/23/24 service tests and
+  a local commit, no push. No approved AC rewritten. Codex wrote the tests and
+  guide, not the student's personal architecture note or professor approval.
+- Added real transaction=True tests using committed fixtures, independent
+  thread-local connections, explicit test DB/5433 guard and distinct backend
+  PIDs. Leader holds a real row lock, observer confirms peer's pg_blocking_pids
+  and Lock/FOR UPDATE state before releasing leader. User lock for AC-23/24,
+  workstation lock for AC-22. All instrumentation is confined to tests.
+- Initial run: 3 passed in 4.18 s. AC-22: creation/WorkstationConflict, final 1;
+  AC-23: creation/PersonalConflict, final 1; AC-24: creation/QuotaExceeded,
+  final 3, including two unchanged initial rows. Four quota intervals disjoint.
+  Both worker futures retrieved, SQL/event waits bounded and connections closed.
+- Temporarily changed only quota condition 3 to 3000. Real AC-24 then produced
+  two creations and four final rows: expected failure assert 4 == 3, 2.36 s.
+  PIDs 39972/30392 and actual lock wait observed. Original service bytes restored
+  in finally and SHA256 checked; no mutation retained. Ignored raw record:
+  .local/quota-mutation-2c.txt. No production correction or schema change needed.
+- After exact restoration, all 3 concurrent tests passed in 3.77 s. PIDs:
+  AC-22 35268/42832, AC-23 37340/33196, AC-24 10104/35704. Same expected domain
+  outcomes and final counts 1/1/3; initial quota rows unchanged. Independent
+  observer backend also checked distinct in each case. Raw ignored record:
+  .local/concurrency-2c-final.txt. No worker SQL error/timeout accepted as refusal.
+- ex2 passes 32/32; diff check clean. Preserved SQLite/marker/initial migration
+  hashes and restored creation service hash. No production, CI, dependency,
+  coverage policy or migration change retained. Full PostgreSQL regression and
+  coverage are measured again, not inferred from 2B. No SQLite measurement here.
+- One independent read-only custom reviewer examined synchronization, real
+  PostgreSQL wait-chain proof, cleanup, mutation and outcomes. No blocking or
+  important finding, no code correction requested, no finding rejected. Scope
+  remains these three schedules, not all interleavings, HTTP or cancellation.
+  No existing secret read for reporting; local profiles, logs, database and venv
+  confirmed ignored and untracked. Stop before 2D, local commit only, no push.
+- Final unchanged coverage runner --postgresql passed: 234 pytest passed,
+  1 deselected, no skipped tests, in 220.34 s; 9 TP1 unittest passed in 13.697 s.
+  Sole deselection remains the unchanged historical SQLite target guard
+  test_guard_refuses_unmarked_or_wrong_database, exercised on SQLite in 1A.
+  Services 168/168 lines and 56/56 branches (100%); global Python including TP1
+  1009/1086 lines (92.91%) and 246/276 branches (89.13%). Production inventory
+  unchanged at 45 files, none absent, exclusions/thresholds unchanged. Actual
+  PostgreSQL report: .local/coverage/c363ddc75c094bb5bf5b09acafba30ab/coverage.json.
+  Ignored raw output .local/coverage-2c-final.txt. No remote CI claim, and the
+  380-pixel check remains deferred. Final staged scope: tests and documentation.
