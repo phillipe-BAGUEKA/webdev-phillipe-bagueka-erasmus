@@ -9,6 +9,19 @@ See `SPEC.md` for goals, non-goals and acceptance criteria.
 Lab booking's final goal is workstation reservations and staff catalogue management. Slice 1 implements only local sessions and a protected database-backed laboratory list. The student reported checkpoint 1/2 observations and the API error body after logout (not its HTTP status). Codex observed the real browser list and AC-48's 3 → 2 → 3 with identical Beta restoration. The 380-pixel check is explicitly deferred, not passed. Slice 1 is published; the four GitHub Actions jobs passed on delivery commit 4243d717716142b45ab8304abf21c2056f28fdb7. Check the exact SHA of any later commit independently. Stop before TP3 or another slice. See `docs/TP2_FINALIZATION.md`, `docs/SLICE1_PLAN.md` and the CHECKPOINT guides.
 
 ## Commands
+
+TP3 authorization currently covers checkpoint 1A only: PostgreSQL preparation,
+existing migrations and isolated regressions. See docs/POSTGRES_1A.md. The prior
+stop-before-TP3 instruction does not block this authorized checkpoint. Do not add
+workstations/bookings, a personnel booking restriction, btree_gist, CI changes
+or new business migrations. SQLite remains the preserved TP2 environment.
+PostgreSQL commands are opt-in: --settings=src.config.postgres for development,
+--ds=tests.settings_postgres --reuse-db for tests, after local provisioning.
+Never run the SQLite demonstration seed against PostgreSQL.
+The independent user-owned cluster uses only 127.0.0.1:5433. Lifecycle:
+`.\.venv\Scripts\python.exe tools/local_postgres.py start` (or status/stop/verify).
+Restart it manually after Windows reboot; no service was registered. Existing
+5432 and TP2 SQLite remain separate. Never rerun init on an existing cluster.
 <!-- How to install, run, test. Keep these exact and working. -->
 - Install (PowerShell, local venv): `.\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-dev.txt`
 - Django check without local secrets: `.\.venv\Scripts\python.exe manage.py check --settings=tests.settings`

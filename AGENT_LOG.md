@@ -184,3 +184,141 @@ One entry per agent session, newest at the bottom. Be honest: what went wrong is
 - Pre-commit verification: Staging was restricted to the exact 71 manifest paths. The staged whitespace check exposed one pre-existing extra blank line at the end of tests/test_static_assets.py, previously untracked; only that blank line was removed. Its targeted test passed (1 test; a sandbox pytest-cache write warning remained), with no assertion or production change. The staged whitespace check then passed; ex2 passed 32/32. Metadata-only checks excluded secrets, venv, demo data, backups and temporary files. The exact custom reviewer ran once, read-only, on the staged diff and found no blocking or important issue. No finding was rejected and no further correction was required.
 - Delivery and remote evidence: Commit 4243d717716142b45ab8304abf21c2056f28fdb7, titled feat(lab-booking): deliver TP2 first slice with tests and CI, was pushed normally to origin/main. Workflow https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/41758283141 is a push run for that exact SHA. All four jobs passed: test 126339503831, coverage 126339503494, mcp 126339503907, spec 126339503816. Test logs show 105 pytest passes (17.93 s), nine TP1 tests and seven Node passes, with successful dependency/Django/migration checks. MCP reports 12/12 and spec 32/32. Only Docker image builds was conditionally skipped because no Dockerfile exists; no required job failed or was disabled. No CI correction was needed.
 - Measured in CI, not inferred from local results: Ubuntu used CPython 3.13.17 and Node 22.23.4. The coverage job independently ran 105 pytest tests (12.79 s) and nine TP1 tests, then reported global lines 587/642 (91.43%), global branches 151/172 (87.79%), services 25/25 lines and 4/4 branches, TP1 91/106 lines; combined display 90.66%. Node measured labs.mjs at 97.26% lines, 95.65% branches and 100% functions. The existing scope and exclusions were unchanged. Job logs were read through the GitHub connector; the public Actions API identified the push run because the connector's run-list tool only lists pull-request events. No token or local secret was inspected. A documentation-only follow-up records these observed results and will itself be checked on its exact published SHA; it does not change the tested code or CI.
+## 2026-11-11 · TP3 checkpoint 1A — corrected plan and authorized autonomy
+
+- Student review: PostgreSQL becomes active for the future booking slice; SQLite
+  remains TP2. No portability of future PostgreSQL constraints is requested.
+  Personnel booking restrictions are undecided and must not be added.
+- Corrected sequence: 1A driver/configuration/dedicated PostgreSQL databases and
+  existing migrations; later explicit checkpoint for Workstation/Booking and
+  constraints; then services/refusals/concurrency, HTTP permissions and browser.
+  Slice 2 criteria, final refusal contracts and the personal architecture note
+  remain student work to review before their corresponding construction steps.
+- Autonomy: checkpoint 1A only; local .venv installation and new local profiles
+  authorized. No pre-existing secret, SQLite write/transfer, demo passwords,
+  business model/migration, btree_gist, CI/npm change, provider, commit or push.
+- Initial Git: clean main at b4c4cc6a38e2fc39e8528eb8481923454076d2c9.
+- Initial SHA-256: data/demo.sqlite3
+  983e3847e7495dff0652b1cf7cb7928c02d0c075db19f113f1dba04f4dcbdcaa;
+  data/demo.marker bc4f39968f679287f482976d8afa45ae7e4d28443882f5ddaaa031859d26182e;
+  src/data/migrations/0001_initial.py
+  db3a8fe7a120260b3338a8abe7b2e91ba1c90ff150ea01f340bc3230861a1d1b.
+- Installed Psycopg/psycopg-binary 3.3.8 in project .venv only; pip check passes.
+  Existing Python 3.13.7 / Django 5.2.18 preserved. New profiles are under the
+  already ignored .local directory. No pre-existing key was read or reused.
+- Administrative authentication is deliberately left to the student's masked
+  local terminal. Provisioning, PostgreSQL migration and PostgreSQL test results
+  are pending, not reported as successful. See docs/POSTGRES_1A.md.
+- Initial synthetic configuration test attempt: 1 pass, 1 explicit PostgreSQL
+  skip and 8 temporary-directory permission errors in the sandbox. A unique
+  temporary directory and an authorized rerun are used without weakening tests.
+- Assistance: Codex proposed and implemented the technical preparation and this
+  log; it does not claim student authorship of criteria, understanding or
+  professor acceptance. The 380-pixel check remains deferred.
+- Authorized rerun on isolated SQLite test settings: **114 passed, 1 skipped**
+  in 66.37 s; the skip is the explicit live PostgreSQL identity test. Django check
+  reports no issue; makemigrations --check --dry-run detects no change. SQLite,
+  its marker and migration 0001 retain their initial SHA-256 values. No existing
+  business assertion was modified. PostgreSQL tests/migrations remain pending.
+- One read-only custom reviewer ran as required for a dependency/security change.
+  Both important findings retained: chmod is not a private Windows ACL; existing
+  PostgreSQL object preflight needed explicit tests. New empty profiles now have
+  inherited ACLs removed and current-user access granted before credentials are
+  written. Added existing-role/database refusal tests, a synthetic ACL test and
+  a native empty-file ACL check. No finding rejected. Targeted rerun: 13 passed,
+  1 skipped in 0.77 s. No provider, database provisioning or demo mutation occurred.
+- Local masked provisioning command sent to the student. Administrative input,
+  real PostgreSQL migrations/tests and role inspection are still pending. The
+  checkpoint is prepared, not declared operational or completed.
+
+## 2026-11-11 ? Jalon 1A completed on an independent local instance
+
+- Initial state: previous authorized 1A files were already modified/untracked;
+  they were preserved. The student authorized the independent cluster and its
+  new bootstrap credential [REDACTED], random distinct application credentials,
+  private local storage and exact cleanup of this operation's temporary files.
+  No pre-existing secret or 5432 authentication configuration was consulted.
+- PostgreSQL 16.4 binaries reused; no installation, cloud, service registration,
+  provider call, CI change, npm change, business model/migration, commit or push.
+- New cluster under LOCALAPPDATA/LabBooking/PostgreSQL16, owned by current user;
+  only 127.0.0.1:5433, cluster_name=lab_booking_1a, UTF8 and SCRAM-SHA-256.
+  Initialization refused existing paths/profiles and checked the dedicated port.
+  ACLs were applied before secret writes, including the temporary initdb pwfile;
+  finally removed that exact file. Bootstrap/dev/test passwords are distinct.
+- Private ignored profiles: .local/postgres-1a-bootstrap.json (cluster admin),
+  .local/postgres-1a-dev.json and .local/postgres-1a-test.json. Their contents are
+  never logged. The bootstrap account is separate from Django roles.
+- Created lab_booking_1a owned by lab_booking_1a_dev, and test_lab_booking_1a owned
+  by lab_booking_1a_test. Both application roles lack SUPERUSER, CREATEDB,
+  CREATEROLE, REPLICATION and BYPASSRLS. PUBLIC access revoked for these DBs;
+  own-base connections succeeded and cross-base connections were refused.
+- All 16 existing migrations applied on empty PostgreSQL development; all [X].
+  Django checks and migration drift checks passed. Development data_user,
+  data_laboratory and django_session remain empty. No SQLite seed was redirected.
+- Incident: pg_ctl startup succeeded but captured inherited Windows pipe handles
+  kept the initializer waiting. Interrupting that process also stopped this new
+  cluster. Changed run_pg output to DEVNULL, then restarted and provisioned the
+  identified cluster without reinitialization. A regression test protects this.
+- Full PostgreSQL run: 118 passed, 1 failed in 75.76 s. Existing test
+  test_guard_refuses_unmarked_or_wrong_database assumes SQLite and expects its
+  marked-path acceptance. PostgreSQL correctly refuses this SQLite seed. Its
+  assertions were preserved. Applicable PostgreSQL rerun: 121 passed, 1 deselected
+  in 98.30 s. Full isolated SQLite rerun: 121 passed, 1 skipped in 97.77 s; only
+  the explicit PostgreSQL identity proof skips on SQLite.
+- Read-only independent custom reviewer ran once for this new task. Both findings
+  retained: direct provisioner also needs the exact data_directory check, and
+  previous pending log status needs an explicit final entry. Both corrected.
+  No finding rejected. Post-review targeted PostgreSQL tests: 18 passed in 1.60 s.
+- Dedicated stop/start/status verified successfully; cluster left running.
+  Windows reboot itself not performed; manual restart instructions are in
+  docs/POSTGRES_1A.md. Existing service postgresql-x64-16 still running at PID 5832.
+- SQLite demo SHA-256 remains
+  983e3847e7495dff0652b1cf7cb7928c02d0c075db19f113f1dba04f4dcbdcaa;
+  migration 0001 remains
+  db3a8fe7a120260b3338a8abe7b2e91ba1c90ff150ea01f340bc3230861a1d1b.
+  No account/hash/session/laboratory transfer or demonstration mutation.
+- No new secret found in Git candidates or the dedicated server log; local
+  profiles ignored and untracked. Coverage not remeasured; thresholds and scope
+  untouched. This checkpoint proves PostgreSQL infrastructure, not future
+  booking/concurrency rules. The 380-pixel check remains deferred.
+- Codex authored the infrastructure and documentation; no student criteria or
+  personal architecture note were invented. Stop before the next checkpoint.
+
+## 2026-11-11 ? Local commit closure of PostgreSQL checkpoint 1A
+
+- Explicit scope: final checks and a local commit only; no push, CI change,
+  provisioning replay, data transfer, new feature/criterion or reservation model.
+  Initial Git state comprised the previous 1A files; no unrelated changes found.
+- Existing coverage runner first passed at 711/840 global lines, 175/216 global
+  branches, services 25/25 lines and 4/4 branches. Added twelve useful synthetic
+  safety cases in tests/test_postgres_tools_safety.py; 12/12 passed on both
+  explicit SQLite and PostgreSQL settings. No real DDL/lifecycle call in them.
+- Final unchanged runner: 134 pytest passed, 1 skipped in 90.48 s on SQLite test
+  settings, then 9 TP1 unittest passed in 7.021 s. Global lines 767/840 (91.31%),
+  branches 189/216 (87.50%); services 25/25 lines and 4/4 branches (100% each).
+  TP1 91/106 lines. Production inventory: 38 files, none missing, all existing
+  thresholds/exclusions preserved. Report .local/coverage/f1d8b962758c46b4bd6ca35169b1c908/coverage.json.
+- This is SQLite-based coverage, not measured PostgreSQL coverage. The previously
+  observed real PostgreSQL regressions are reused honestly: full run 118 pass/1
+  SQLite-guard failure; applicable rerun 121 pass/1 deselected; post-review
+  targeted PostgreSQL 18 pass. No concurrency or booking behavior tested.
+- The sole PostgreSQL deselection is
+  tests/test_demo_data.py::test_guard_refuses_unmarked_or_wrong_database. Its
+  vendor/path/marker acceptance specifically targets SQLite. The unchanged test
+  is executed in the complete SQLite run. The sole SQLite skip is the explicit
+  PostgreSQL identity/schema check, not a business refusal test.
+- One independent read-only reviewer ran for this closure. No blocker. Its
+  missing-negative-test finding was evaluated and rejected: existing
+  tests/test_postgres_config.py::test_same_named_cluster_in_other_directory_is_refused
+  already asserts RuntimeError, no profile directory and only the identity SELECT
+  for a different data directory despite matching port/name. No duplicate test
+  or production change was needed. Existing tests and assertions preserved.
+- New profiles remain ignored/untracked with private ACLs. Data directory remains
+  outside the repository. Exact temporary initdb file remains absent. New secrets
+  checked without display against Git candidate files. SQLite demo and migration
+  0001 SHA-256 values remain those recorded above. Coverage runner, .coveragerc,
+  CI, npm command and TP1 code remain unchanged.
+- Warnings retained: the TP1 parent process reports no collected data because its
+  tests are excluded, while actual server subprocesses are present and measured;
+  Git reports LF/CRLF normalization. Neither warning is hidden or treated as a
+  remote result. The 380-pixel check remains deferred. Codex assisted this work.
