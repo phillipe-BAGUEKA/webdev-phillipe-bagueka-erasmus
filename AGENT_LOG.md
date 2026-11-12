@@ -805,3 +805,20 @@ approved the whole feature diff. User must supply their own assessment.
   local Windows .venv Python is preferred by the npm launcher. Targeted Node
   rerun passed1/1 after that assertion; no production change or second review.
   No finding rejected. Remote ephemeral PostgreSQL/CI remains to observe.
+- Normal push completed to2011d95d6d711dd0ee84d60af7eb2135801ae9de, preserving all
+  eight checkpoint commits. Actions run43262915943 completed all four jobs
+  successfully. GitHub connector fetched job results and decoded logs, rather
+  than inferring success from local checks. Public curl listed push runs because
+  the available connector listing is limited to pull-request-triggered runs.
+- Both test/coverage logs prove zero public tables, dedicated test identity on
+  serverport5433, role flags allfalse, all migrations including0001/0002/0003
+  applied, no model drift; PostgreSQL16.15. test job:319PG passed/1deselected,
+  separate1SQLite,9TP1,23Node. coverage:319PG/1deselected,9TP1; services220/220
+  lines74/74branches100%, global1207/1283lines94.08%,291/320branches90.9375%;
+  loaded JS lines98.18%. These Linux values are distinct from Windows94.00%.
+  Docker build step skipped by existing condition; no other job skipped/failed.
+  Expected constraint errors in server logs correspond to negative tests.
+- Recorded publication proof in docs/README/SPEC. No post-push code/config fix
+  needed. The documentation-only follow-up must get its own remote CI check;
+  no success inferred in advance. TP3 remains incomplete for the listed personal,
+  manual and future-project/model/MCP requirements; 380 pixels still deferred.

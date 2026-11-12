@@ -35,7 +35,8 @@ one. Stop a terminal-owned server with Ctrl+C before restarting changed code;
 CHECKPOINT3.md explains the separately launched background instance. `--insecure`
 only serves local static assets with DEBUG=False; this is not a production command.
 
-Tests and coverage use isolated settings, without the local secret or demo database:
+Tests and coverage use isolated settings, without the development key or demo
+database; the dedicated PostgreSQL test profile is required:
 
 ```powershell
 .\.venv\Scripts\python.exe manage.py check --settings=tests.settings
@@ -59,6 +60,15 @@ results and publication file list. Delivery commit
 is published on main; its [GitHub Actions run](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/41758283141)
 passed all four jobs on Ubuntu. This remote evidence is separate from the local
 Windows and browser results. Each subsequent commit must have its own CI result checked.
+
+Slice 2 delivery commit
+[`2011d95`](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/commit/2011d95d6d711dd0ee84d60af7eb2135801ae9de)
+passed all four [CI jobs](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/43262915943),
+including empty PostgreSQL migrations, real concurrent tests and coverage gates.
+Python CI lines: 94.08%; service lines/branches: 100%; loaded JavaScript modules:
+98.18% lines. This does not close TP3: see the sourced gaps and personal-note
+questions in [Slice 2 finalization](docs/SLICE2_FINALIZATION.md). Later commits
+must be checked on their own SHA.
 
 ### Original course workspace setup
 

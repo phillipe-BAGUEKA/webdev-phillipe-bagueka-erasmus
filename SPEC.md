@@ -289,6 +289,14 @@ démonstration manuelle complète des codes de refus et exigences IA/MCP du TP3
 restent ouvertes. Voir docs/SLICE2_FINALIZATION.md pour les sources actuelles,
 les limites de l'ex3 et les preuves locales/distantes distinctes.
 
+Publication initiale Slice 2 : 2011d95d6d711dd0ee84d60af7eb2135801ae9de sur
+origin/main par push normal, historique conservé. Les quatre jobs du run
+43262915943 ont réussi ; bases PostgreSQL éphémères vides puis migrations,
+tests concurrents et couverture réellement exécutés. Python global Linux :
+1207/1283 lignes (94,08 %), services 220/220 lignes et 74/74 branches. L'ex3
+Windows reste à 11/18 et la note personnelle reste à écrire ; ce résultat CI
+ne valide pas les exigences manquantes du TP3/projet ni le contrôle à 380 pixels.
+
 Jalon 4, 11 novembre 2026 : parcours étudiant construit sur /labs, API et services
 inchangés. Confirmation explicite avant création, historique et annulation,
 rafraîchissement sans rechargement, fuseau Europe/Sofia, états et erreurs textuels,

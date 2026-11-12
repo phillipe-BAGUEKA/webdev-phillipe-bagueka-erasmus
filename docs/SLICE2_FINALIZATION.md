@@ -221,4 +221,35 @@ pas une preuve de clôture masquée par les quatre jobs de livraison.
 Revue indépendante en lecture seule : aucun problème bloquant ou important.
 Amélioration facultative retenue : assertion explicite de priorité du Python
 Windows de la .venv dans le test synthétique du lanceur. Aucun constat écarté.
-Les résultats de publication seront consignés après observation réelle.
+Les résultats de publication réellement observés sont consignés ci-dessous.
+
+## Publication et preuves GitHub Actions
+
+Push normal de l'historique local conservé, de b4c4cc6 à
+[2011d95d6d711dd0ee84d60af7eb2135801ae9de](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/commit/2011d95d6d711dd0ee84d60af7eb2135801ae9de),
+sans divergence distante ni force-push. Répertoire propre juste après ce push.
+[Run CI 43262915943](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/43262915943) :
+
+| Job | Résultat observé dans les logs |
+| --- | --- |
+| [test](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/43262915943/job/131338691716) | Réussi ; 319 pytest PostgreSQL, 1 désélectionné (23,15 s), garde SQLite séparé réussi (0,11 s), 9 TP1 (0,284 s), 23 Node, aucun ignoré. Étape Docker ignorée par la condition existante, aucun Dockerfile. |
+| [coverage](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/43262915943/job/131338690884) | Réussi ; 319 pytest/1 désélectionné (21,70 s), 9 TP1 (1,033 s). Services 220/220 lignes et 74/74 branches (100 %). Global Python 1207/1283 lignes (94,0764 %, arrondi94,08 %), branches291/320 (90,9375 %). JS : 22 tests et 98,18 % lignes, 90,91 % branches des modules src chargés. |
+| [mcp](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/43262915943/job/131338691900) | Réussi, contrôle de conformité TP1 conservé ; pas une preuve des outils MCP projet absents. |
+| [spec](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/43262915943/job/131338691271) | Réussi, ex2 conservé ; pas une exécution de l'ex3 ni une validation professorale. |
+
+Dans **chacun** des deux jobs PostgreSQL : `Public tables before migrations: 0`,
+identité test_lab_booking_1a / lab_booking_1a_test, port serveur5433 ; flags
+SUPERUSER/CREATEDB/CREATEROLE tous faux. Migrations data.0001_initial,
+0002_btree_gist, 0003_workstation_booking et migrations Django réussies ; aucune
+dérive de modèle. Version serveur réellement affichée : PostgreSQL16.15.
+Les erreurs de contraintes présentes dans les logs PostgreSQL proviennent des
+tests négatifs attendus, pas d'un job échoué. Aucun correctif CI après ce run.
+
+La mesure Linux est distincte de la mesure Windows : une ligne et une branche
+supplémentaires couvertes, mêmes1283 lignes/320 branches et mêmes seuils.
+Les jobs s'exécutent sur des clusters séparés ; aucun profil ou donnée du PC
+n'est utilisé. La condition Docker existante n'a pas été supprimée ou désactivée.
+
+Ce relevé porte sur le SHA cité. Le commit documentaire qui l'enregistre est
+vérifié séparément après publication ; son résultat final doit être rapporté
+avec son propre SHA, sans déduire sa réussite de ce premier run.
