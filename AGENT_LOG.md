@@ -822,3 +822,92 @@ approved the whole feature diff. User must supply their own assessment.
   needed. The documentation-only follow-up must get its own remote CI check;
   no success inferred in advance. TP3 remains incomplete for the listed personal,
   manual and future-project/model/MCP requirements; 380 pixels still deferred.
+
+### 2026-11-12 — real HTTP observations, preparation
+
+- User explicitly deferred personal architecture coaching/writing/review and
+  authorized the four real HTTP scenarios, a second nonprivileged demonstration
+  student if needed, documentation and later normal publication. No claim of
+  personal understanding or TP3 closure. No IA/MCP/Google/staff/deployment work.
+- Initial Git clean on 8910a6c454e91d321d9d0e9ddc8236f8908974b0. Read applicable
+  AGENTS, finalization guide and only session/API/model fragments needed here.
+  No full audit, test rerun or CI change.
+- Read-only process identification initially denied by sandbox; authorized rerun
+  confirmed port 8000 listener PID 40884, launched through this repository's .venv
+  Python wrapper PID 24124 with src.config.postgres, --insecure and --noreload.
+  Windows venv wrapper's child uses the base Python executable; command line
+  remains the project venv invocation. PostgreSQL identity read explicitly:
+  lab_booking_1a / lab_booking_1a_dev / 5433. No process stopped or restarted.
+- Only dedicated student-ui account existed. Created student-http@demo.example,
+  id 2, active student, no staff/superuser privileges, no usable initial password.
+  Existing user query selected only non-secret identity/role/status fields; no
+  existing password read or modified. Lab/stations and two historical bookings
+  preserved. Masked changepassword command and separate InPrivate sign-in supplied
+  to user; waiting for that authentication intervention, no credentials requested
+  in conversation. No cookie/CSRF/profile values printed or recorded.
+- Real unauthenticated GET http://127.0.0.1:8000/api/bookings via standard-library
+  urllib, outside pytest/Django Client/mocks: 401, application/json, only the
+  Connexion requise error. All Booking fields compared from actual PostgreSQL
+  before/after: two rows, identical. Safe report .local/http-manual-401-20261112.json.
+  No 201/409/403 observation claimed yet. Guide/SPEC updated with pending states.
+- SQLite SHA256 remains 983e3847e7495dff0652b1cf7cb7928c02d0c075db19f113f1dba04f4dcbdcaa.
+  No 5432 intervention, migration, new dependency or provider call. Codex-assisted
+  documentation; personal Architecture section remains untouched. No publication
+  of this incomplete observation batch yet.
+- Preparation documentation checks: ex2 passed 32/32, git diff --check clean.
+  Application code unchanged, so no full test/coverage rerun. No independent
+  reviewer triggered for this incomplete documentation-only preparation.
+
+### 2026-11-12 — real HTTP observations, execution after authentication handoff
+
+- User confirmed second student logged into Edge InPrivate, original session
+  still open. Initial Git has only the five documentation changes from the
+  preceding preparation turn; preserved and completed them. No application edit.
+  Personal note/coaching/review remain deferred, no understanding validated.
+- Computer-use skill, native Edge windows. Codex independently observed /labs
+  as student-http in InPrivate and student-ui in the normal window. No login or
+  password entry automated. No credential, cookie, CSRF or profile value printed,
+  copied or saved. No session manufactured through Django Client or database.
+- In the private Console, real GET availability for lab 1 on 2026-11-13 returned
+  200, 20 slots; picked its first actual candidate: Poste A id 1, 06:00–07:00 UTC,
+  08:00–09:00 Europe/Sofia. Real POST /api/bookings JSON with those three fields,
+  same-origin session and CSRF from that page's hidden field returned 201.
+  JSON: booking id 3, created_at 2026-11-12T17:39:04.082188Z, cancelled_at null.
+  Separate PostgreSQL 5433 read: 2 -> 3 rows, owner id 2, exactly one added, all previous
+  row fields unchanged. Snapshot .local/http-manual-after-create.json.
+- Explicit duplicate POST from same session/body/CSRF: 409, message Ce poste est
+  deja reserve sur ce creneau (actual accented body in guide). 3 -> 3, every Booking
+  field equal before/after. No raw SQL failure, timeout or false success.
+- In normal window as student-ui id 1, real POST /api/bookings/3/cancel with {}
+  and that session's own CSRF: 403, Tu ne peux annuler que tes propres reservations.
+  Actual accented response in guide. Message is NotBookingOwner, distinct from
+  csrf_failure security message. DB confirms 3 -> 3, all fields identical, row 3
+  owned by id 2 and still not cancelled. No security control bypassed.
+- Final eligible cancellation from owner student-http, same endpoint/{} and its
+  own CSRF: 200, row 3 retained, cancelled_at 2026-11-12T17:44:39.439591Z. Only this
+  field changed; old rows 1/2 and all other row 3 fields unchanged, total 3. After
+  explicit page reload, Codex observed one historical row Annulee/Poste en service
+  in private UI. Console requests bypass the UI controller, so no automatic UI
+  refresh claimed. Native clicks attempted did not show an observable effect in
+  the tool; reload used, no demonstrated application defect inferred. DevTools
+  closed, both authenticated sessions retained. Tool images not archived.
+- Supplementary anonymous POST checks: fresh in-memory urllib CookieJar, real
+  GET /login CSRF, no authenticated session; POST creation and POST cancel each
+  returned 401/Connexion requise. All three Booking rows identical before/after.
+  Cookies/CSRF existed only in process memory, never printed/persisted. Safe
+  results .local/http-manual-anonymous-posts.json. This completes the requested
+  live HTTP statuses; not substituted automated pytest results or mocks.
+- No API defect demonstrated; five docs only, no new app/helper/CI code, test
+  weakening, dependency, migration, provider call, data transfer or 5432 action.
+  SQLite SHA256 still matches the pre-task value. No booking deleted. Note and
+  personal diff review, UI widths/accessibility remainder, absent IA/MCP/Google
+  and professor ambiguities remain explicitly open. Codex-assisted evidence,
+  not student-written architecture or whole TP3 acceptance.
+- Final documentary checks: ex2 passed 32/32; git diff --check clean; no app,
+  dependency, migration or CI diff. Existing local profiles, snapshots and demo
+  database remain ignored and untracked; SQLite hash unchanged.
+- One independent read-only custom reviewer before the milestone evidence
+  commit: no blocking/important finding, snapshots confirm stated DB effects.
+  Retained optional readability improvement: separate routes/status codes and
+  adjacent numbers in the new evidence paragraphs. No finding rejected. No
+  full local test rerun for documentation alone; verify CI after normal push.

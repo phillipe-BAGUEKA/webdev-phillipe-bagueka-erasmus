@@ -17,6 +17,8 @@ One row per agent session. In Gemini CLI, type `/stats` before you quit and copy
 | 2026-11-04 | Codex, AC-48 browser withdrawal/restoration verification (entry added during finalization) | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-12 | Codex, checkpoint 4 Edge availability/confirmation/history/cancellation and evidence documentation | non disponible | non disponible | sans objet (no provider call) | non calculable |
 | 2026-11-12 | Codex, Slice 2 browser/contrast checks, sourced TP3 audit, PostgreSQL CI and publication | non disponible | non disponible | sans objet (no provider call) | non calculable |
+| 2026-11-12 | Codex, real HTTP observation preparation and second demo student | non disponible | non disponible | sans objet (no provider call) | non calculable |
+| 2026-11-12 | Codex, real Edge HTTP 201/409/403, anonymous 401 and retained demo cancellation | non disponible | non disponible | sans objet (no provider call) | non calculable |
 | 2026-11-04 | Codex, TP2 documentation and local CI/publication preparation | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-04 | Codex, authorized TP2 publication and GitHub Actions verification | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-11 | Codex, checkpoint 2B transactional creation and direct PostgreSQL tests | non disponible | non disponible | sans objet | non calculable |

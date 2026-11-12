@@ -142,3 +142,12 @@ diff vérifié sans erreur. Empreintes SQLite/marqueur/migration initiale conser
 services et accès aux données inchangés. Profils privés, journaux de tests,
 rapports de couverture, bases locales et .venv restent ignorés et non suivis.
 Aucun secret lu pour le compte rendu, affiché ou destiné au commit.
+
+Complément du 12 novembre 2026 : observations sur le serveur réel et PostgreSQL
+de démonstration, distinctes des tests ci-dessus. Création : 201 par student-http,
+conflit : 409 sans mutation, GET anonyme : 401 sans données, annulation par student-ui
+refusée : 403 avec le message métier de propriété et CSRF valide. Les POST anonymes
+de création/annulation ont aussi répondu 401 avec CSRF valide. Ligne 3 ensuite
+annulée par son propriétaire avec 200, conservée dans l'historique ; les deux
+anciennes lignes restent identiques. Tableau, méthode et limites :
+docs/SLICE2_FINALIZATION.md, « Complément HTTP réel ». Aucune modification de code.

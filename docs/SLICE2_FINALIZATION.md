@@ -90,7 +90,7 @@ brouillon susceptible d'évoluer ; ces constats sont datés.
 | TP3 Steps 1–5, autonomie, plan revu, petits commits | Huit jalons et commits conservés, décisions/autorisations dans AGENT_LOG. Codex/Windows et commits délégués sont des adaptations explicitement autorisées par l'étudiant ; l'énoncé réserve critères, revue et commits à l'étudiant : faire confirmer cette méthode au professeur. Aucune compréhension personnelle présumée. |
 | TP3 What you build : migration, endpoints, règles en service, autorisation, UI | Construits ; guides 1B à 4 et tests PostgreSQL. 401/403 distincts, refus 409/422 ; données inchangées sur refus. |
 | TP3 Prove the tests bite | Preuve conservée au jalon 2C : neutralisation temporaire du quota, test échoue, code restauré. Pas rejouée ici. |
-| TP3 Check status codes by hand | Statuts testés automatiquement ; seul GET availability 200 relevé manuellement ici. Démonstration manuelle 201/409/401 et propriétaire 403/401 avec deux utilisateurs reste à effectuer sans partager les mots de passe. |
+| TP3 Check status codes by hand | Complément du 12 novembre ci-dessous : requêtes sur le serveur réel, 201 création, 409 conflit, 401 consultation anonyme, 403 autre propriétaire ; aussi POST création/annulation anonymes401 avec CSRF valide. Comptages et champs PostgreSQL comparés avant/après. Aucun secret partagé. |
 | TP3 Architecture note, whole diff, What the agent did that I did not ask for | Note personnelle encore vide ; chemins/questions ci-dessous. La lecture personnelle de tout le diff et le bilan personnel des écarts ne sont pas certifiés par une revue Codex. |
 | TP3 critères/tests | Tous les identifiants de Slice 2 existent dans les titres collectés ; preuves partielles documentées. Les critères du projet futur restent non testés ; détails ci-dessous. |
 | TP3 Step 1 : refus nommant son code | Les contrats HTTP approuvés nomment 409/422 dans la spécification et les tests. Les formulations originales AC-17/20 ne nomment pas elles-mêmes le statut : faire valider par l'étudiant/professeur si cette correspondance suffit, sans les réécrire silencieusement. |
@@ -253,3 +253,114 @@ n'est utilisé. La condition Docker existante n'a pas été supprimée ou désac
 Ce relevé porte sur le SHA cité. Le commit documentaire qui l'enregistre est
 vérifié séparément après publication ; son résultat final doit être rapporté
 avec son propre SHA, sans déduire sa réussite de ce premier run.
+
+## Complément HTTP réel — observations du 12 novembre 2026
+
+Point de départ propre : 8910a6c454e91d321d9d0e9ddc8236f8908974b0. L'utilisateur
+reporte explicitement l'accompagnement, la rédaction et la revue personnelles.
+Architecture reste une exigence en attente ; aucun texte personnel ni validation
+de compréhension n'est produit par Codex.
+
+Le processus à l'écoute sur 127.0.0.1:8000 utilise la commande de ce dépôt,
+sa .venv et --settings=src.config.postgres --insecure --noreload. Lecture réelle
+PostgreSQL : lab_booking_1a, rôle lab_booking_1a_dev, port 5433. Aucun redémarrage,
+provisionnement, transfert SQLite ou accès à l'instance 5432.
+
+L'unique compte dédié existant pour ce parcours était student-ui@demo.example.
+Sur autorisation explicite, Codex a créé student-http@demo.example (id 2), actif,
+role=student, is_staff=False, is_superuser=False, initialement sans mot de passe
+utilisable. Aucun compte ou mot de passe existant modifié. Laboratoire DEMO UI,
+postes A/B et deux réservations historiques conservés. L'utilisateur a confirmé
+avoir défini le mot de passe neuf dans l'invite masquée et s'être connecté dans
+Edge InPrivate. Commande fournie pour cette préparation initiale uniquement,
+**à ne pas répéter pour modifier un mot de passe existant** :
+
+```powershell
+.\.venv\Scripts\python.exe manage.py changepassword student-http@demo.example --settings=src.config.postgres
+```
+
+Connexion dans cette fenêtre : http://127.0.0.1:8000/login. La session régulière
+student-ui est conservée séparément. Codex a observé les deux identités affichées
+sur /labs dans leurs fenêtres distinctes. La saisie du mot de passe reste un fait
+rapporté par l'utilisateur ; aucune valeur n'a été lue, affichée ou enregistrée.
+
+| Méthode et route | Attendu | Réellement observé | Effet vérifié |
+| --- | --- | --- | --- |
+| POST /api/bookings, student-http connecté en InPrivate | 201, réservation créée pour la session | **201**, JSON booking id 3, poste 1, début 2026-11-13T06:00:00Z, fin 07:00:00Z, cancelled_at=null | **2 → 3 lignes**, une seule nouvelle réservation, propriétaire id2 ; les deux lignes antérieures identiques sur tous leurs champs |
+| POST /api/bookings, même poste/créneau et même session | 409, refus métier | **409**, {"error":"Ce poste est déjà réservé sur ce créneau."} | **3 → 3 lignes**, comparaison de tous les champs de toutes les lignes : identiques |
+| GET /api/bookings, aucun cookie fourni | 401, aucune donnée personnelle | **401**, application/json, {"error": "Connexion requise."} | **2 → 2 réservations**, comparaison de tous les champs de toutes les lignes : identiques |
+| POST /api/bookings/3/cancel, student-ui connecté en fenêtre normale | 403 métier avec CSRF valide | **403**, {"error":"Tu ne peux annuler que tes propres réservations."} | **3 → 3 lignes**, tous les champs identiques ; réservation 3 encore non annulée et toujours propriété de student-http |
+
+Le 401 provient d'une requête réseau volontaire contre le serveur réel, envoyée
+par urllib (code standard Python) hors pytest, sans Django Client, mock ou base
+de test. Comparaison en lecture seule PostgreSQL avant/après : id, propriétaire,
+poste, début, fin, création et annulation. Le corps d'erreur est le seul contenu
+reçu ; aucune liste ni identité. Relevé non sensible local ignoré :
+.local/http-manual-401-20261112.json. Les tests automatisés antérieurs ne sont
+pas utilisés comme preuve de ces observations.
+
+### Méthode des mutations et distinction CSRF/propriété
+
+Codex a saisi volontairement des appels fetch dans la Console DevTools de chaque
+fenêtre, sur l'origine http://127.0.0.1:8000, credentials=same-origin. En-têtes :
+Content-Type application/json et X-CSRFToken alimenté en mémoire depuis
+document.querySelector('#booking-csrf').value de **la même page/session**.
+Seuls le statut HTTP et le JSON de réponse étaient affichés. Aucun cookie,
+jeton, en-tête sensible ou profil n'a été copié dans les échanges ou relevés.
+
+Le créneau vient du GET réel /api/labs/1/availability?date=2026-11-13 : HTTP 200,
+20 créneaux, premier poste DEMO UI - Poste A. Corps exact des deux demandes :
+{"workstation_id":1,"starts_at":"2026-11-13T06:00:00Z","ends_at":"2026-11-13T07:00:00Z"}.
+Cela correspond à 08:00–09:00 Europe/Sofia le 13 novembre, strictement futur
+au moment de l'essai. La création a renvoyé created_at=2026-11-12T17:39:04.082188Z.
+L'annulation interdite depuis l'autre session envoyait le JSON vide {}.
+
+Le message reçu en 403 est celui de NotBookingOwner, traduit par l'adaptateur
+HTTP. Il diffère du corps que produirait csrf_failure : « La vérification de
+sécurité a échoué. Recharge la page puis réessaie. ». Le middleware CSRF a donc
+laissé atteindre la règle de propriété ; il n'a pas été désactivé ou contourné.
+Le 201 dans la session de création confirme aussi un POST réellement accepté.
+
+Ces requêtes réseau réelles ne passent ni par Django Client, ni par une fixture,
+ni par une invocation directe du service. La vérification des effets est une
+lecture indépendante de la base de développement 5433, avant/après chaque
+étape. Relevés non sensibles ignorés : .local/http-manual-before-create.json,
+after-create.json, after-conflict.json, after-forbidden.json et after-owner-cancel.json
+(ces quatre derniers noms ont aussi le préfixe http-manual-).
+
+### Refus anonymes complémentaires et état final
+
+Pour couvrir aussi les mutations sans session, Codex a utilisé un CookieJar
+urllib **neuf**, uniquement en mémoire, obtenu le CSRF d'un GET réel /login,
+vérifié l'absence de session authentifiée, puis envoyé les deux POST avec ce
+CSRF valide : /api/bookings et /api/bookings/3/cancel ont chacun répondu **401**,
+{"error":"Connexion requise."}. Trois lignes avant/après, tous les champs
+identiques. Le jeton et les cookies n'ont été ni imprimés ni sauvegardés.
+Relevé expurgé : .local/http-manual-anonymous-posts.json. Il s'agit de sondes
+HTTP ponctuelles contre l'application en marche, hors suite de tests automatisés.
+
+Après le refus 403, le propriétaire student-http a envoyé le même POST
+/api/bookings/3/cancel avec sa propre session/CSRF : **HTTP 200**, id 3 conservé,
+cancelled_at=2026-11-12T17:44:39.439591Z. La comparaison confirme que seul ce champ
+a changé sur la nouvelle ligne ; propriétaire, poste, créneau et date de création
+restent identiques, les deux réservations anciennes aussi. **Trois réservations
+conservées au total, toutes annulées ; aucune suppression.** Dans Edge InPrivate,
+après rechargement explicite, Codex a observé « 1 réservation(s), historique
+compris. » et le poste A « Annulée · Poste en service ». Les requêtes Console
+n'utilisaient pas le contrôleur de l'écran : aucune actualisation automatique
+de celui-ci n'est revendiquée. Les clics natifs tentés n'ont pas donné de changement
+observable dans l'outil ; le résultat a été vérifié après rechargement, sans
+attribuer ce comportement à un défaut applicatif non démontré. DevTools refermés,
+sessions conservées. Captures affichées par l'outil, non archivées au dépôt.
+
+380 pixels, limites UI, IA/MCP absents et ambiguïtés professorales restent ouverts.
+Pas de défaut de l'API démontré, ni changement applicatif ou de CI ; pas de
+relance locale complète des tests pour cette documentation seule. Contrôles et
+publication de ce complément consignés après leur exécution réelle.
+
+Contrôles locaux de ce complément : ex2 **32/32**, git diff --check réussi,
+aucun changement applicatif ou de configuration. Revue indépendante en lecture
+seule : aucun problème bloquant ou important ; amélioration de lisibilité
+routes/statuts retenue, aucun constat écarté. Cette revue de preuves ne remplace
+pas la revue personnelle reportée. La CI sera vérifiée sur le SHA publié ; aucun
+résultat distant nouveau n'est présumé à partir du commit précédent.

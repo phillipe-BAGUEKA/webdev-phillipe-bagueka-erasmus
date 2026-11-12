@@ -255,9 +255,9 @@ Slice 2 référence AC-11 et AC-13 à AC-28 ; leurs formulations restent dans le
 | AC-11 (partiel, services et HTTP) | Tests directs/HTTP : poste hors service exclu, HTTP 409 sans mutation ; `tests/booking_ui.test.mjs` : refus affiché comme texte. Parcours navigateur en attente. |
 | AC-13 (partiel) | Tests directs/HTTP : créneaux canoniques issus de la base ; `tests/booking_ui.test.mjs` : date, affichage, vide et réessai en DOM simulé. Codex dans Edge le 12 novembre : 20 créneaux pour les deux postes de démonstration le 13 novembre ; coupure réseau et réessai 200 observés à la finalisation. Week-end/vide non essayés en navigateur. |
 | AC-14 (partiel) | Tests de schéma/lecture et `tests/test_booking_api.py` : conversions hiver/été, entrée avec offset, stockage et réponse UTC. Edge : 13 novembre 2026, 08:00–09:00 affiché Europe/Sofia ; conversion estivale non essayée en navigateur. |
-| AC-15 (partiel) | Tests directs/HTTP : propriétaire de session et 201 ; `tests/booking_ui.test.mjs` : choix puis confirmation, CSRF, double clic, actualisation et incertitude réseau. Edge : confirmation explicite, succès et une entrée À venir sans rechargement ; statut réseau non relevé. |
+| AC-15 (partiel) | Tests directs/HTTP : propriétaire de session et 201 ; `tests/booking_ui.test.mjs` : choix puis confirmation, CSRF, double clic, actualisation et incertitude réseau. Premier parcours UI Edge sans relevé de statut ; complément Console Edge : POST réel : 201, une ligne ajoutée, bon propriétaire confirmé en base. |
 | AC-16 (partiel) | Tests directs/HTTP : forme et créneau refusés sans mutation ; UI affiche les erreurs du serveur sans en reproduire les règles. Parcours navigateur en attente. |
-| AC-17 (partiel) | Tests directs/HTTP : conflit préexistant 409 ; UI affiche le refus en DOM simulé, concurrence de service sous AC-22. Parcours navigateur en attente. |
+| AC-17 (partiel) | Tests directs/HTTP : conflit préexistant : 409 ; complément Console Edge : rejeu réel : 409, message de conflit du poste, toutes les lignes inchangées. UI du refus seulement testée en DOM simulé ; concurrence de service sous AC-22. |
 | AC-18 (partiel) | Tests directs cross-lab et HTTP : conflit personnel 409 ; UI générique de refus, concurrence de service sous AC-23. Parcours navigateur en attente. |
 | AC-19 (partiel) | Tests de schéma, lecture et `tests/test_booking_creation.py` : intervalles [début, fin) et création de créneaux consécutifs. Aucun parcours HTTP. |
 | AC-20 (partiel) | Tests directs/HTTP : quota transactionnel, HTTP 409 ; UI affiche le quota refusé en DOM simulé. Concurrence de service sous AC-24, parcours navigateur en attente. |
@@ -265,9 +265,9 @@ Slice 2 référence AC-11 et AC-13 à AC-28 ; leurs formulations restent dans le
 | AC-22 (service concurrent) | `tests/test_booking_concurrency.py` : deux étudiants, même poste/créneau ; backends distincts et attente PostgreSQL prouvée ; une création, WorkstationConflict et une ligne finale. Aucun HTTP. |
 | AC-23 (service concurrent) | `tests/test_booking_concurrency.py` : même étudiant, deux postes/créneau commun ; attente du verrou utilisateur observée ; une création, PersonalConflict et une ligne finale. Aucun HTTP. |
 | AC-24 (service concurrent) | `tests/test_booking_concurrency.py` : deux réservations initiales, deux demandes sans chevauchement ; une création, QuotaExceeded et trois lignes finales. Mutation du quota détectée par quatre lignes au lieu de trois. Aucun HTTP. |
-| AC-25 (partiel) | Tests directs/concurrents/HTTP : propriétaire et timestamp conservés ; `tests/booking_ui.test.mjs` : annulation puis historique rafraîchi en DOM simulé. Edge : annulation confirmée, ligne conservée Annulée, disponibilités 18 → 20 ; répétition non essayée en navigateur. |
+| AC-25 (partiel) | Tests directs/concurrents/HTTP : propriétaire et timestamp conservés ; `tests/booking_ui.test.mjs` : historique rafraîchi en DOM simulé. Edge : annulation, ligne conservée Annulée, disponibilités 18 → 20. Complément HTTP réel : propriétaire autorisé, statut 200, seul cancelled_at de la nouvelle ligne change ; répétition non essayée manuellement. |
 | AC-26 (partiel) | Tests directs/HTTP : refus temporel sans mutation ; UI affiche le refus d'annulation tardive en DOM simulé. Parcours navigateur en attente. |
-| AC-27 (partiel) | Tests directs/HTTP : autre propriétaire 403, même après annulation ; UI utilise uniquement l'historique personnel. Parcours navigateur en attente. |
+| AC-27 (partiel) | Tests directs/HTTP : autre propriétaire : 403, même après annulation. Complément Console Edge : student-ui tente d'annuler la réservation active de student-http avec son propre CSRF : 403 métier de propriété ; tous les champs de toutes les réservations restent identiques. Cas déjà annulé couvert automatiquement, pas rejoué manuellement. |
 | AC-28 (partiel) | Tests directs/HTTP : historique sans fuite ; UI rend les quatre états et le poste en/hors service comme texte en DOM simulé. Edge : historique vide → une entrée À venir → une entrée Annulée, poste en service ; autres états et absence de fuite non essayés en navigateur. |
 | AC-46 | `tests/test_access.py`, `tests/test_labs.py` : redirection de page et JSON 401 de l’API pour sessions absentes, invalides, expirées ou inactives. |
 | AC-47 | `tests/test_auth.py` : connexion locale HTTP, refus uniformes, CSRF et retours internes sur comptes isolés. |
@@ -279,14 +279,31 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
 
+Complément HTTP du 12 novembre 2026 : l'utilisateur reporte la note et la revue
+personnelles ; aucune compréhension n'est déclarée validée. Codex a observé
+GET /api/bookings sans cookie sur le serveur PostgreSQL réel : HTTP 401, uniquement
+{"error": "Connexion requise."}, deux réservations avant/après, tous leurs champs
+inchangés. Preuve complémentaire de la protection de l'historique, pas une nouvelle
+preuve complète d'AC-46/49 qui portent sur les laboratoires. Le compte étudiant
+secondaire autorisé est créé sans privilèges ; sa préparation de mot de passe et
+sa connexion ont été confirmées par l'utilisateur. Codex a ensuite observé dans
+les sessions Edge réelles : POST /api/bookings : 201 (ligne 3, propriétaire id 2,
+total 2 → 3), rejeu : 409 (3 → 3, tous champs identiques), puis POST /api/bookings/3/cancel
+depuis student-ui : 403 métier de propriété (3 → 3, tous champs identiques), avec
+CSRF de chaque session, sans exposer sa valeur. Les POST anonymes munis d'un CSRF
+valide ont aussi donné 401. Annulation finale par le propriétaire : 200 ; seul
+cancelled_at de la nouvelle ligne change ; trois lignes conservées. Après
+rechargement, historique du second étudiant : une entrée Annulée. Ces observations
+ne sont pas déduites des tests automatisés. Voir docs/SLICE2_FINALIZATION.md.
+
 Finalisation Slice 2, 12 novembre 2026 : le regroupement AC-11/13–28 ci-dessus
 fait autorité ; les mentions « regroupement ouvert » dans les bilans historiques
 des jalons antérieurs décrivent leur état à cette date. Le parcours Edge a été
 complété pour la partie réservation/annulation au clavier, le focus, l'erreur
 réseau avec réessai et la mesure de palette/contraste. Aucun comportement métier
-modifié pour cette finalisation. 380 pixels reste reporté ; note personnelle,
-démonstration manuelle complète des codes de refus et exigences IA/MCP du TP3
-restent ouvertes. Voir docs/SLICE2_FINALIZATION.md pour les sources actuelles,
+modifié pour cette finalisation. 380 pixels reste reporté ; note personnelle et
+exigences IA/MCP du TP3 restent ouvertes. Les statuts HTTP demandés ont été
+complétés par les observations ci-dessus. Voir docs/SLICE2_FINALIZATION.md pour les sources actuelles,
 les limites de l'ex3 et les preuves locales/distantes distinctes.
 
 Publication initiale Slice 2 : 2011d95d6d711dd0ee84d60af7eb2135801ae9de sur
