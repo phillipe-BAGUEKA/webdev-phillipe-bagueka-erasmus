@@ -197,7 +197,7 @@ Les états ont été lus dans l'arbre accessible et le rendu observé pendant le
 parcours. Aucun statut réseau ou Console n'a été relevé pour ces mutations.
 Les captures affichées par l'outil ne sont pas archivées dans le dépôt.
 
-Restent non effectués dans ce navigateur : week-end/vide, erreurs/refus,
+À la fin du premier essai restaient non effectués dans ce navigateur : week-end/vide, erreurs/refus,
 incertitude réseau, parcours complet au clavier, contraste et contrôles de
 largeur. Le contrôle à 380 pixels reste explicitement reporté. Les observations
 clavier TP2 ne sont pas étendues au nouveau parcours. Aucun coût ou nombre de
@@ -208,3 +208,8 @@ l'alignement CI PostgreSQL pour la finalisation TP3, après vérifications. Cett
 autorisation ne transforme ni le présent jalon ni une future CI verte en clôture
 complète : note d'architecture personnelle, preuves UI restantes et exigences à
 confirmer avec le professeur restent distinctes. Pas de publication prématurée.
+
+Complément de finalisation du 12 novembre : parcours réservation/annulation au
+clavier, erreur réseau/réessai et mesure de contraste observés et détaillés dans
+SLICE2_FINALIZATION.md. Une seconde réservation de démonstration y a été créée
+puis annulée, sans supprimer la première. Les autres limites y restent explicites.

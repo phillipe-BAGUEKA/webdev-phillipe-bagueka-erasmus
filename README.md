@@ -2,7 +2,7 @@
 
 This repository contains Exercise 1 in `mcp-server/` and Lab booking in the rest of it. The first slice was developed locally on Windows with Python 3.13, Django 5.2 LTS, SQLite and plain JavaScript. The course Codespaces template remains available; its Python 3.12 environment has not been validated in this work.
 
-The final target in [SPEC.md](SPEC.md) includes workstation reservations, staff management, Google sign-in, a model suggestion and project MCP tools. Slice 1 provides local sign-in/sign-out and a protected database-backed laboratory list. TP3 now provides PostgreSQL booking services, protected HTTP APIs and the student journey on /labs. See [student checkpoint 4](docs/STUDENT_UI_4.md) for commands, authorized demo preparation, automated evidence and the creation/history/cancellation journey observed by Codex in Edge on 2026-11-12. Keyboard, error-state and width checks remain incomplete; 380 pixels is deferred. Staff management, Google, AI and project MCP tools remain future work. Specification wording and code were prepared with ChatGPT/Codex assistance, recorded in AGENT_LOG.md and USAGE.md; they are not presented as wholly independent student work.
+The final target in [SPEC.md](SPEC.md) includes workstation reservations, staff management, Google sign-in, a model suggestion and project MCP tools. Slice 1 provides local sign-in/sign-out and a protected database-backed laboratory list. TP3 now provides PostgreSQL booking services, protected HTTP APIs and the student journey on /labs. See [student checkpoint 4](docs/STUDENT_UI_4.md) and [Slice 2 finalization](docs/SLICE2_FINALIZATION.md) for commands, automated evidence and the Edge creation/history/cancellation, keyboard, network retry and palette checks on 2026-11-12. Full accessibility and width checks remain incomplete; 380 pixels is deferred. Staff management, Google, AI and project MCP tools remain future work. Specification wording and code were prepared with ChatGPT/Codex assistance, recorded in AGENT_LOG.md and USAGE.md; they are not presented as wholly independent student work.
 
 ## Start
 
@@ -13,8 +13,9 @@ in the actual port-8000 browser after the module MIME/cache correction. See
 [checkpoint 3](docs/CHECKPOINT3.md) for the running-server details and the observed
 AC-48 demonstration: **3 → 2 → 3**, with Beta restored identically. The student
 reported the API error body after logout, without an observed HTTP status.
-The 380-pixel check is explicitly deferred, not passed. These browser observations
-concern slice 1; the new booking APIs have automated HTTP evidence only.
+The 380-pixel check is explicitly deferred, not passed. The booking journey also
+has real Edge evidence (creation/cancellation, keyboard and network retry), kept
+separate from automated HTTP status checks in [Slice 2 finalization](docs/SLICE2_FINALIZATION.md).
 
 The [checkpoint 1](docs/CHECKPOINT1.md) guide records the original TP2 foundation.
 Preserve existing SQLite data and accounts; do not run the current PostgreSQL
@@ -38,16 +39,20 @@ Tests and coverage use isolated settings, without the local secret or demo datab
 
 ```powershell
 .\.venv\Scripts\python.exe manage.py check --settings=tests.settings
-.\.venv\Scripts\python.exe manage.py makemigrations --check --dry-run --settings=tests.settings
-.\.venv\Scripts\python.exe tools/check_coverage.py
-node --test tests/labs_ui.test.mjs
+.\.venv\Scripts\python.exe manage.py makemigrations --check --dry-run --settings=tests.settings_postgres
+npm test
+.\.venv\Scripts\python.exe tools/check_coverage.py --postgresql
+node --test tests/labs_ui.test.mjs tests/booking_ui.test.mjs tests/test_runner.test.mjs
 node mcp-server/check.mjs -- .\.venv\Scripts\python.exe mcp-server/server.py
 node checks/ex2.mjs
 git diff --check
 ```
 
-The coverage command runs both the Django tests and the existing TP1 Python tests.
-For application tests alone: `.\.venv\Scripts\python.exe -m pytest tests -q`.
+The coverage command runs Django/PostgreSQL and TP1, with unchanged service/global
+gates. `npm test` also runs the historical SQLite guard on an isolated original
+schema and all Node tests; it no longer runs only TP1. Provision the dedicated
+test profile first using the PostgreSQL guides. For application tests alone:
+`.\.venv\Scripts\python.exe -m pytest tests --ds=tests.settings_postgres --reuse-db -k 'not test_guard_refuses_unmarked_or_wrong_database' -q`.
 See [TP2 finalization](docs/TP2_FINALIZATION.md) for the CI commands, measured scope,
 results and publication file list. Delivery commit
 [`4243d71`](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/commit/4243d717716142b45ab8304abf21c2056f28fdb7)

@@ -10,8 +10,8 @@ Lab booking's final goal is workstation reservations and staff catalogue managem
 
 ## Commands
 
-TP3 authorization now covers checkpoint 4: student booking/cancellation UI on
-/labs, reusing the existing session/CSRF APIs. See docs/STUDENT_UI_4.md.
+TP3 authorization now covers reservation-slice finalization and normal publication,
+including PostgreSQL CI alignment. See docs/SLICE2_FINALIZATION.md and docs/STUDENT_UI_4.md.
 Business decisions remain in shared services. Never automatically resend a POST
 after an uncertain network result. Distinguish DOM tests from real browser proof.
 The user additionally authorized one dedicated PostgreSQL development demo;
@@ -36,11 +36,12 @@ Restart it manually after Windows reboot; no service was registered. Existing
 - Current application tests: `.\.venv\Scripts\python.exe -m pytest --ds=tests.settings_postgres --reuse-db -k 'not test_guard_refuses_unmarked_or_wrong_database' -v`
 - Run current booking UI (PostgreSQL): `.\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000 --settings=src.config.postgres --insecure --noreload` (restart with Ctrl+C after code changes)
 - Preserved TP2 SQLite catalogue only: `.\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000 --insecure --noreload`
-- Test: `python -m unittest discover -s mcp-server -p "test_*.py" -v`
+- Complete test command: `npm test` (local .venv preferred; PostgreSQL application/concurrency, isolated historical SQLite guard, TP1, all Node tests)
+- TP1 only: `python -m unittest discover -s mcp-server -p "test_*.py" -v`
 - Current coverage (PostgreSQL and TP1 subprocesses): `.\.venv\Scripts\python.exe tools/check_coverage.py --postgresql`
 - Catalogue UI logic (simulated DOM/network): `node --test tests/labs_ui.test.mjs`
 - Current student UI and catalogue tests: `node --test tests/labs_ui.test.mjs tests/booking_ui.test.mjs`
-- JavaScript coverage (loaded catalogue module only): `node --test --experimental-test-coverage --test-coverage-include='src/**' --test-coverage-exclude='tests/**' --test-coverage-lines=80 tests/labs_ui.test.mjs`
+- JavaScript coverage (loaded catalogue/booking modules): `node --test --experimental-test-coverage --test-coverage-include='src/**' --test-coverage-exclude='tests/**' --test-coverage-lines=80 tests/labs_ui.test.mjs tests/booking_ui.test.mjs`
 - MCP server: `python mcp-server/server.py` (from the repository root)
 - MCP check: `node mcp-server/check.mjs -- python mcp-server/server.py`
 

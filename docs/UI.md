@@ -38,7 +38,10 @@ A screen that only handles "it worked" is a screen that lies to the user on the 
 - [ ] **The focused element is visible.** A `:focus-visible` outline that is not switched off.
   - how I checked:
 - [ ] **Text contrast is at least 4.5:1.** Name the tool you measured with.
-  - how I checked:
+  - how I checked: 12 novembre 2026, Codex : Edge DevTools CSS overview sur /labs,
+    puis calcul WCAG 2 en Python. Palette applicative mesurée de 7,463:1 à
+    15,520:1 ; associations et limites dans SLICE2_FINALIZATION.md. La case globale
+    reste ouverte pour les autres écrans/états et contrôles natifs.
 - [ ] **Every input has a label** a screen reader reads, not just placeholder text.
   - how I checked:
 - [ ] **The page has a correct `<title>` and `lang`.**
@@ -72,6 +75,13 @@ le choix d'un créneau, sa confirmation, son ajout à l'historique puis son éta
 Annulée conservé, avec actualisation sans rechargement manuel. Ce parcours ne
 valide pas tous les états, le clavier complet, le contraste ou les largeurs.
 Aucune capture n'est archivée ; 380 pixels reste reporté.
+
+Finalisation du 12 novembre : Codex a observé la réservation et l'annulation
+au clavier, le contour de focus, une erreur réseau simulée puis le réessai
+HTTP 200. Pas de nouvel essai unique connexion/action/déconnexion ; observations
+utilisateur TP2 conservées séparément. Les mesures de palette ci-dessus ne
+valident pas les largeurs ni tous les aspects d'accessibilité. Guide détaillé :
+SLICE2_FINALIZATION.md. Les anciennes limites du jalon 4 sont historiques.
 
 <!-- Screenshots of at least the four states of one screen, and of the model feature
      thinking and failing. A link to them is enough; they do not have to be in the repo. -->

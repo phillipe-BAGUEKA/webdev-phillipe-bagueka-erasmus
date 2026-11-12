@@ -1,0 +1,30 @@
+import assert from "node:assert/strict";
+import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import test from "node:test";
+import { runSuite, testCommands } from "../tools/run_tests.mjs";
+
+test("test launcher includes PostgreSQL application, TP1 and every UI test", () => {
+  const root = mkdtempSync(join(tmpdir(), "lab-test-runner-"));
+  mkdirSync(join(root, "tests"));
+  writeFileSync(join(root, "tests", "ui.test.mjs"), "");
+  const commands = testCommands(root);
+  assert.equal(commands.length, 4);
+  assert.ok(commands[0][1].includes("pytest"));
+  assert.ok(commands[0][1].includes("--ds=tests.settings_postgres"));
+  assert.ok(commands[1][1].includes("--ds=tests.settings_sqlite_legacy"));
+  assert.ok(commands[2][1].includes("mcp-server"));
+  assert.deepEqual(commands[3][1], ["--test", join("tests", "ui.test.mjs")]);
+  const localPython = join(root, ".venv", "Scripts", "python.exe");
+  mkdirSync(join(root, ".venv", "Scripts"), { recursive: true });
+  writeFileSync(localPython, "");
+  assert.equal(testCommands(root)[0][0], localPython);
+  const calls = [];
+  assert.equal(runSuite(root, (...args) => { calls.push(args); return { status: 0 }; }), 0);
+  assert.equal(calls.length, 4);
+  let failedCalls = 0;
+  assert.equal(runSuite(root, () => { failedCalls += 1; return { status: 7 }; }), 7);
+  assert.equal(failedCalls, 1);
+  assert.equal(runSuite(root, () => ({ status: null, signal: "SIGTERM" })), 1);
+});

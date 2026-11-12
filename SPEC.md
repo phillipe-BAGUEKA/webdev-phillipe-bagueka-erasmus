@@ -71,7 +71,7 @@ dans les services partagés à un jalon ultérieur ; il n'est pas assuré par le
 #### Shared enforcement and concurrent requests
 
 - Ces règles doivent être appliquées dans les services partagés par HTTP et MCP.
-- La tranche de réservation sur PostgreSQL devra prévoir la vérification de ces règles lors de créations simultanées : aucun double usage d’un même poste, aucun chevauchement pour un même étudiant et aucun dépassement du quota. Ces vérifications restent à planifier et à exécuter ; aucun résultat fonctionnel n’est acquis à ce stade.
+- La tranche de réservation sur PostgreSQL doit vérifier ces règles lors de créations simultanées : aucun double usage d’un même poste, aucun chevauchement pour un même étudiant et aucun dépassement du quota. Les trois scénarios de services sont désormais vérifiés au jalon 2C ; cela ne prouve pas tous les entrelacements ou les parcours HTTP simultanés.
 
 ### Slice 2 — regroupement de livraison finalisé au jalon 4
 
@@ -168,6 +168,10 @@ Statut des critères ci-dessous : cible fonctionnelle retenue par l’utilisateu
      plus one place where your own code does not match this layering. -->
 
 ## Acceptance criteria
+
+### Slice 2: disponibilités, réservation et annulation propriétaire
+
+Slice 2 référence AC-11 et AC-13 à AC-28 ; leurs formulations restent dans les rubriques projet ci-dessous, sans doublon ni renumérotation. AC-40 à AC-45 sont transversaux, AC-46/47/49 concernent les sessions. Les critères futurs restent conservés et non validés. Preuves et écarts : docs/SLICE2_FINALIZATION.md et Traceability ; Architecture reste personnelle.
 <!-- Every criterion carries an id. A test proves it by naming that id in its title, for example
      test('AC-3 a booking that overlaps another is refused with 409', ...).
      Say who acts, what they see, and what must be true in the database. -->
@@ -246,10 +250,10 @@ Statut des critères ci-dessous : cible fonctionnelle retenue par l’utilisateu
 | Criterion | Test |
 | --- | --- |
 | AC-1 |  |
-| AC-40/41/42 (partiels) | `tests/booking_ui.test.mjs` : navigation catalogue/disponibilités/historique, états, confirmation, erreurs et doubles clics en DOM simulé ; `tests/test_booking_page.py` : HTML protégé, labels, régions accessibles et MIME principal/import. Clavier réel et rendu non validés. |
-| AC-43/44/45 (limites) | CSS réutilise les jetons et prévoit l'adaptation ; ni largeurs réelles, ni contrastes mesurés ne sont validés par les tests DOM. Contrôle 380 pixels reporté. |
+| AC-40/41/42 (partiels) | `tests/booking_ui.test.mjs` : navigation, états, confirmation, erreurs et doubles clics en DOM simulé ; `tests/test_booking_page.py` : HTML/labels/MIME. Edge : réservation/annulation et erreur réseau suivie d'un réessai 200 observées. Largeurs 380/768/1280 non validées ; 380 reporté. Écrans Google/personnel et IA non construits. |
+| AC-43/44/45 (partiels, pas de titre automatisé exact) | Codex dans Edge : partie réservation/annulation au clavier et focus visibles ; connexion/déconnexion clavier rapportées précédemment par l'utilisateur, pas un nouveau parcours complet unique. CSS overview + calcul WCAG : palette de texte ≥7,463:1. Jetons inspectés dans app.css ; ce n'est pas un audit de toute l'accessibilité, des cibles ou des futurs écrans. Détails et limites dans SLICE2_FINALIZATION. |
 | AC-11 (partiel, services et HTTP) | Tests directs/HTTP : poste hors service exclu, HTTP 409 sans mutation ; `tests/booking_ui.test.mjs` : refus affiché comme texte. Parcours navigateur en attente. |
-| AC-13 (partiel) | Tests directs/HTTP : créneaux canoniques issus de la base ; `tests/booking_ui.test.mjs` : date, affichage, vide et réessai en DOM simulé. Codex dans Edge le 12 novembre : 20 créneaux pour les deux postes de démonstration le 13 novembre ; vide/réessai non essayés en navigateur. |
+| AC-13 (partiel) | Tests directs/HTTP : créneaux canoniques issus de la base ; `tests/booking_ui.test.mjs` : date, affichage, vide et réessai en DOM simulé. Codex dans Edge le 12 novembre : 20 créneaux pour les deux postes de démonstration le 13 novembre ; coupure réseau et réessai 200 observés à la finalisation. Week-end/vide non essayés en navigateur. |
 | AC-14 (partiel) | Tests de schéma/lecture et `tests/test_booking_api.py` : conversions hiver/été, entrée avec offset, stockage et réponse UTC. Edge : 13 novembre 2026, 08:00–09:00 affiché Europe/Sofia ; conversion estivale non essayée en navigateur. |
 | AC-15 (partiel) | Tests directs/HTTP : propriétaire de session et 201 ; `tests/booking_ui.test.mjs` : choix puis confirmation, CSRF, double clic, actualisation et incertitude réseau. Edge : confirmation explicite, succès et une entrée À venir sans rechargement ; statut réseau non relevé. |
 | AC-16 (partiel) | Tests directs/HTTP : forme et créneau refusés sans mutation ; UI affiche les erreurs du serveur sans en reproduire les règles. Parcours navigateur en attente. |
@@ -274,6 +278,16 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
+
+Finalisation Slice 2, 12 novembre 2026 : le regroupement AC-11/13–28 ci-dessus
+fait autorité ; les mentions « regroupement ouvert » dans les bilans historiques
+des jalons antérieurs décrivent leur état à cette date. Le parcours Edge a été
+complété pour la partie réservation/annulation au clavier, le focus, l'erreur
+réseau avec réessai et la mesure de palette/contraste. Aucun comportement métier
+modifié pour cette finalisation. 380 pixels reste reporté ; note personnelle,
+démonstration manuelle complète des codes de refus et exigences IA/MCP du TP3
+restent ouvertes. Voir docs/SLICE2_FINALIZATION.md pour les sources actuelles,
+les limites de l'ex3 et les preuves locales/distantes distinctes.
 
 Jalon 4, 11 novembre 2026 : parcours étudiant construit sur /labs, API et services
 inchangés. Confirmation explicite avant création, historique et annulation,

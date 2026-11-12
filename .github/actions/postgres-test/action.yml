@@ -1,0 +1,44 @@
+name: Prepare isolated PostgreSQL tests
+description: Create a restricted test role and empty database in the job's ephemeral service
+runs:
+  using: composite
+  steps:
+    - name: Provision only the ephemeral test database
+      shell: bash
+      env:
+        PGHOST: 127.0.0.1
+        PGPORT: '5433'
+        PGUSER: postgres
+        # Public fixture credential, valid only in this ephemeral CI service.
+        PGPASSWORD: ci-only-postgres
+      run: |
+        psql -v ON_ERROR_STOP=1 -d postgres <<'SQL'
+        CREATE ROLE lab_booking_1a_test LOGIN PASSWORD 'ci-only-application' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
+        CREATE DATABASE test_lab_booking_1a OWNER lab_booking_1a_test;
+        SQL
+        python - <<'PY'
+        import json
+        from pathlib import Path
+        directory = Path('.local')
+        directory.mkdir(exist_ok=True)
+        profile = directory / 'postgres-1a-test.json'
+        with profile.open('x', encoding='utf-8') as stream:
+            json.dump({'name': 'test_lab_booking_1a', 'user': 'lab_booking_1a_test',
+                       'password': 'ci-only-application', 'django_key': 'ci-only-django'}, stream)
+        profile.chmod(0o600)
+        PY
+    - name: Prove empty schema and apply every migration as the test role
+      shell: bash
+      env:
+        PGHOST: 127.0.0.1
+        PGPORT: '5433'
+        PGUSER: lab_booking_1a_test
+        PGPASSWORD: ci-only-application
+      run: |
+        tables=$(psql -At -d test_lab_booking_1a -c "SELECT count(*) FROM pg_tables WHERE schemaname='public'")
+        echo "Public tables before migrations: $tables"
+        test "$tables" = 0
+        psql -v ON_ERROR_STOP=1 -d test_lab_booking_1a -c "SELECT current_database(), current_user, inet_server_port(); SELECT rolsuper, rolcreatedb, rolcreaterole FROM pg_roles WHERE rolname=current_user;"
+        python manage.py migrate --noinput --settings=tests.settings_postgres
+        python manage.py check --settings=tests.settings_postgres
+        python manage.py makemigrations --check --dry-run --settings=tests.settings_postgres

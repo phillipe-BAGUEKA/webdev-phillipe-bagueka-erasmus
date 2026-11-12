@@ -11,6 +11,18 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: ci-only-postgres
+          POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+          PGPORT: '5433'
+        ports:
+          - 5433:5433
+        options: >-
+          --health-cmd "pg_isready -U postgres -p 5433"
+          --health-interval 5s --health-timeout 5s --health-retries 12
     steps:
       - uses: actions/checkout@v4
 
@@ -31,18 +43,12 @@ jobs:
         run: |
           python -m pip check
           python manage.py check --settings=tests.settings
-          python manage.py makemigrations --check --dry-run --settings=tests.settings
 
-      - name: Django application tests
-        run: python -m pytest tests -q
+      - name: Empty PostgreSQL migrations and restricted test role
+        uses: ./.github/actions/postgres-test
 
-      # package.json's existing test command runs the TP1 Python unittest suite.
-      - name: Existing TP1 tests
+      - name: Application including concurrency, TP1 and JavaScript tests
         run: npm test
-
-      # The frontend tests use Node's built-in runner, without npm dependencies.
-      - name: JavaScript catalogue tests
-        run: node --test tests/labs_ui.test.mjs
 
       # From Exercise 4 on. An image that does not build is the most common reason a
       # deploy fails, and finding it here takes a minute instead of waiting for the
@@ -56,6 +62,18 @@ jobs:
   # files in the existing inventory. Node coverage remains a separate frontend check.
   coverage:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: ci-only-postgres
+          POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+          PGPORT: '5433'
+        ports:
+          - 5433:5433
+        options: >-
+          --health-cmd "pg_isready -U postgres -p 5433"
+          --health-interval 5s --health-timeout 5s --health-retries 12
     steps:
       - uses: actions/checkout@v4
 
@@ -68,7 +86,7 @@ jobs:
         run: |
           node --test --experimental-test-coverage \
             --test-coverage-include='src/**' --test-coverage-exclude='tests/**' \
-            --test-coverage-lines=80 tests/labs_ui.test.mjs
+            --test-coverage-lines=80 tests/labs_ui.test.mjs tests/booking_ui.test.mjs
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -78,8 +96,11 @@ jobs:
       - name: Install declared Python dependencies
         run: python -m pip install -r requirements.txt -r requirements-dev.txt
 
+      - name: Empty PostgreSQL migrations and restricted test role
+        uses: ./.github/actions/postgres-test
+
       - name: Python coverage (Django and TP1, blocking gates)
-        run: python tools/check_coverage.py
+        run: python tools/check_coverage.py --postgresql
 
   # Keep the course's original MCP checker and the package.json launch command.
   mcp:

@@ -2,6 +2,6 @@
   "private": true,
   "scripts": {
     "mcp": "python mcp-server/server.py",
-    "test": "python -m unittest discover -s mcp-server -p test_*.py -v"
+    "test": "node tools/run_tests.mjs"
   }
 }

@@ -715,3 +715,93 @@ One entry per agent session, newest at the bottom. Be honest: what went wrong is
   SHA256 still matches the pre-checkpoint value; .venv, demo DB and local reports
   ignored, none tracked under .local/data/.venv. No new production code change
   after the previously measured tests/coverage and independent review.
+
+### 2026-11-12 — reservation Slice 2 finalization and publication
+
+- Initial state clean at 64bc12a1f0c0ee8b6a5af44111fceaa6afe74e07, main eight
+  commits ahead of origin/main; fetch confirmed 8 ahead, 0 behind. User explicitly
+  authorized browser/error/keyboard/contrast checks, CI PostgreSQL alignment,
+  targeted fixes, commits and normal pushes, preserving existing history/data.
+  No new IA/MCP feature, provider call, deployment or 380-pixel check authorized.
+- Plan: record browser facts, source current TP3/project requirements, finalize
+  existing-AC grouping and personal-note pointers, align ephemeral PostgreSQL CI
+  and complete npm launcher, run tests/gates, one read-only custom reviewer,
+  commit/push and inspect Actions on the exact published SHA. Personal note and
+  comprehension are not delegated; a green delivery CI does not close TP3.
+- Computer-use skill used in native Edge. User interaction interrupted keyboard
+  input; stopped and resumed after explicit AVAILABLE confirmation. Observed
+  visible skip-link/focus and keyboard creation/cancellation for demo Poste A,
+  2026-11-13 08:00–09:00 Europe/Sofia. History 1 cancelled -> 2 entries with one
+  future -> 2 cancelled; slots 20 -> 18 -> 20. Existing entry preserved, new one
+  retained cancelled. This is the core action at keyboard, not a fresh combined
+  sign-in/action/sign-out test; previous TP2 user keyboard reports stay separate.
+- DevTools Offline made availability fetch fail with a readable network message.
+  Restored No throttling; explicit retry showed HTTP200 and 20 slots. Closed
+  DevTools. Actual backend was not stopped; no claim of manual 201/409/401/403.
+  CSS overview observed actual palette; Python WCAG luminance ratios range
+  7.463:1 to 15.520:1 for application text pairs. Detailed values/tool/limits in
+  docs/SLICE2_FINALIZATION.md. No screenshots archived, widths still unverified,
+  380 explicitly deferred. No demonstrated application defect or production fix.
+- Official TP3 and project pages reconsulted by curl after Web/sandbox failure,
+  dated 2026-11-12. Sources and requirement matrix recorded in the guide. Important
+  ambiguity: conditional model/MCP prose versus unconditional ex3 checks; no
+  automatic acceptance inferred. Google, model, project MCP, personal architecture
+  and remaining project UI/deploy requirements remain outstanding.
+- Complete npm test now runs PostgreSQL application/concurrency, the unchanged
+  SQLite guard on its own original migration/schema in memory, TP1 and all Node
+  tests. tools/run_tests.mjs selects the local venv or CI Python, propagates the
+  first failure. A direct launcher test proves command selection and fail-fast.
+  No production Python inventory/coverage-policy change or booking migration edit.
+- CI test/coverage each get isolated postgres:16 service and fresh restricted test
+  role/database, verify empty public schema, apply migrations, check model drift,
+  run application/concurrent tests and real Python coverage. .local CI profile
+  created exclusively with mode0600. Public ci-only fixture credentials belong
+  only to disposable services, not the user's profiles. MCP/spec and conditional
+  Docker steps retained. Empty-schema CI proof awaits actual remote run.
+- Pre-publication inspection caught the container-port distinction: a host mapping
+  5433:5432 would leave inet_server_port() at5432 and fail the unchanged concurrency
+  identity guard. Services now set server PGPORT5433, map5433:5433 and healthcheck
+  that port, consistent with PostgreSQL16 official postgres documentation.
+- Local final npm test: 319 PostgreSQL pytest passed, 1 deselected in45.64s;
+  that exact SQLite-specific test passed separately in0.17s; 9 TP1 tests passed
+  in0.747s; 23 Node tests passed. No pertinent test silently skipped.
+- PostgreSQL Python coverage rerun: 319 passed, 1 deselected in62.09s and 9 TP1
+  in7.473s; services220/220 lines74/74 branches100%; global1206/1283 lines94.00%,
+  branches290/32090.625%. Existing49-file production inventory/exclusions and
+  thresholds preserved. Report .local/coverage/af6059615acd4319bbe4eda12f280239/coverage.json.
+  No fresh SQLite application coverage claim. Separate Node coverage98.18% lines,
+  90.91% branches for loaded src modules, not visual/whole frontend coverage.
+- MCP12/12, Django check/model drift and pip check passed. ex2 initially31/32
+  because line-wrapped grouping prose was treated as extra criteria; fixed the
+  metadata paragraph format, without changing criteria/checks; final32/32.
+  git diff --check passed. Sandbox Node spawn/scandir EPERM required authorized
+  reruns. No threshold or check weakened.
+- ex3 unchanged:11/18, exit1; Windows npm ENOENT inside its shell:false helper,
+  future ACs absent, model fallback/project MCP/architecture genuinely absent.
+  IA positives are heuristic false positives. Strict collected-title comparison
+  also finds AC1/2/4 absent despite substring successes. Full list/limitations in
+  guide. It is not replaced, made green or silently treated as TP3 acceptance.
+- SQLite hash unchanged; sensitive/local profiles, demo DB/backup and .venv
+  ignored and untracked, no secret contents read for audit. Existing 5432 and
+  business data untouched except the explicitly authorized demo booking cycle.
+  Docs and formulations assisted by Codex, not student-authored architecture.
+
+### What the agent did that I did not ask for — assistant inventory for student review
+
+This is Codex's comparison aid, not a claim that the student personally read and
+approved the whole feature diff. User must supply their own assessment.
+
+- Supporting files beyond the named workflow: local composite action and npm
+  launcher/test, needed to run real PostgreSQL tests consistently in both jobs.
+- Test-only SQLite settings/migration alias added to keep the original guard's
+  assertion running without adapting PostgreSQL booking constraints to SQLite.
+- Extra test edits during checkpoint4 included the exact versioned JS import to
+  avoid duplicate Node coverage instances, and a 401-history-refresh assertion
+  after reviewer feedback. Logged in that checkpoint, no rule assertion weakened.
+- No dependency, application feature, existing migration, model/provider/MCP
+  implementation or user's architecture text added during finalization.
+- One custom read-only reviewer completed after tests: no blocking/important
+  finding. Retained optional improvement: explicit synthetic test proving the
+  local Windows .venv Python is preferred by the npm launcher. Targeted Node
+  rerun passed1/1 after that assertion; no production change or second review.
+  No finding rejected. Remote ephemeral PostgreSQL/CI remains to observe.
