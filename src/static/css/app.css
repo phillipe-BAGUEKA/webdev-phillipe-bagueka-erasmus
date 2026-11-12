@@ -72,3 +72,13 @@ a {
 h2 { font-size: 1.25rem; line-height: 1.4; }
 .labs-list { padding-left: var(--space-3); }
 .labs-list li { margin-bottom: var(--space-1); }
+.journey-nav { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.booking-list { padding: 0; list-style: none; }
+.booking-list li { border-bottom: 1px solid var(--border); padding: var(--space-2) 0; }
+.booking-list button, .labs-list button { text-align: left; white-space: normal; }
+#availability, #personal-bookings { margin-block: var(--space-3); }
+#availability-form { display: grid; gap: var(--space-1); }
+.confirmation { border: 1px solid var(--accent); padding: var(--space-2); margin-block: var(--space-2); }
+.confirmation button + button { margin-top: var(--space-1); }
+.secondary { background: var(--paper); color: var(--accent); }
+.message:empty { min-height: 0; margin: 0; }

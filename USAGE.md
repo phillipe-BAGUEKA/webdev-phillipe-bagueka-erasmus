@@ -15,12 +15,14 @@ One row per agent session. In Gemini CLI, type `/stats` before you quit and copy
 | 2026-11-04 | Codex, checkpoint 3 module MIME diagnosis and correction | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-04 | Codex, actual port-8000 browser diagnosis and module cache correction | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-04 | Codex, AC-48 browser withdrawal/restoration verification (entry added during finalization) | non disponible | non disponible | sans objet | non calculable |
+| 2026-11-12 | Codex, checkpoint 4 Edge availability/confirmation/history/cancellation and evidence documentation | non disponible | non disponible | sans objet (no provider call) | non calculable |
 | 2026-11-04 | Codex, TP2 documentation and local CI/publication preparation | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-04 | Codex, authorized TP2 publication and GitHub Actions verification | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-11 | Codex, checkpoint 2B transactional creation and direct PostgreSQL tests | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-11 | Codex, checkpoint 2C real PostgreSQL concurrency and quota mutation test | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-11 | Codex, checkpoint 2D owner-only cancellation and PostgreSQL tests | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-11 | Codex, checkpoint 3 HTTP booking APIs, CSRF and PostgreSQL integration | non disponible | non disponible | sans objet | non calculable |
+| 2026-11-11 | Codex, checkpoint 4 student booking UI, tests and authorized PostgreSQL demo preparation | non disponible | non disponible | sans objet | non calculable |
 
 These are statistics reported by the student from Gemini CLI, not measurements
 of the single lecture lookup. In trial 1, `/stats model` showed:

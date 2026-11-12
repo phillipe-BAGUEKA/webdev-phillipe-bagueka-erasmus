@@ -62,5 +62,16 @@ A screen that only handles "it worked" is a screen that lies to the user on the 
 
 ## Evidence
 
+Jalon 4 : interface sur /labs, tests dans tests/booking_ui.test.mjs et
+tests/test_booking_page.py. Il s'agit de DOM/réseau simulé et d'intégration
+Django, pas d'une validation visuelle ou clavier. Guide : STUDENT_UI_4.md.
+Les cases restent non cochées tant que leurs vérifications réelles ne sont pas
+effectuées ; 380 pixels explicitement reporté. Démo PostgreSQL préparée sur
+autorisation supplémentaire. Le 12 novembre 2026, Codex a observé dans Edge
+le choix d'un créneau, sa confirmation, son ajout à l'historique puis son état
+Annulée conservé, avec actualisation sans rechargement manuel. Ce parcours ne
+valide pas tous les états, le clavier complet, le contraste ou les largeurs.
+Aucune capture n'est archivée ; 380 pixels reste reporté.
+
 <!-- Screenshots of at least the four states of one screen, and of the model feature
      thinking and failing. A link to them is enough; they do not have to be in the repo. -->

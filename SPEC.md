@@ -73,13 +73,16 @@ dans les services partagés à un jalon ultérieur ; il n'est pas assuré par le
 - Ces règles doivent être appliquées dans les services partagés par HTTP et MCP.
 - La tranche de réservation sur PostgreSQL devra prévoir la vérification de ces règles lors de créations simultanées : aucun double usage d’un même poste, aucun chevauchement pour un même étudiant et aucun dépassement du quota. Ces vérifications restent à planifier et à exécuter ; aucun résultat fonctionnel n’est acquis à ce stade.
 
-### Slice 2 — périmètre technique et contrat HTTP du jalon 3
+### Slice 2 — regroupement de livraison finalisé au jalon 4
 
 Disponibilités, création pour soi, historique et annulation propriétaire sont
 exposés par HTTP sur PostgreSQL, en complément des services existants. Périmètre
 référencé : AC-11 et AC-13 à AC-28, avec AC-46/49 pour les preuves de session
-applicables. Ce regroupement technique ne vaut pas validation par l'étudiant du
-regroupement définitif Slice 2. Aucun critère approuvé n'est réécrit ou renuméroté.
+applicables. Sur instruction de finaliser le regroupement, Slice 2 rassemble
+AC-11 et AC-13 à AC-28 ; les AC-40 à AC-45 sont transversaux à l'interface et
+AC-46/49 à la session. Le regroupement de livraison est consigné ici, sans
+inventer la validation des critères ni une rédaction personnelle de l'étudiant.
+Aucun critère approuvé n'est réécrit ou renuméroté.
 
 | Route | Contrat |
 | --- | --- |
@@ -98,9 +101,9 @@ en charge, 500 erreur interne sans détail sensible. Les mutations exigent
 application/json et le CSRF Django ; celui-ci peut refuser avant la vue. Les
 statuts de service sont traduits uniquement dans l'adaptateur HTTP.
 
-Contrats détaillés, champs, tests et vérifications : docs/HTTP_API_3.md. Les
-écrans de réservation restent absents ; aucune validation navigateur n'est
-déduite des tests HTTP. La section Architecture reste à rédiger personnellement
+Contrats détaillés : docs/HTTP_API_3.md. L'interface de réservation et d'historique
+est livrée au jalon 4, docs/STUDENT_UI_4.md ; aucun succès navigateur n'est
+déduit des tests HTTP/DOM simulé. La section Architecture reste à rédiger personnellement
 par l'étudiant ; elle n'est pas remplie par les assistants.
 
 ## The model feature
@@ -147,7 +150,14 @@ Ces quatre outils sont prévus en complément de `find_lecture` et `search_lectu
 - Final-project screens: connexion locale ou Google ; liste des laboratoires ; disponibilités d’un laboratoire avec suggestion IA intégrée ; « mes réservations » avec historique ; « espace du personnel » pour gérer laboratoires et postes et consulter les réservations ; espace de compte authentifié pour la liaison Google après réauthentification locale.
 - States: prévoir les états chargement, vide, erreur et succès lorsqu’ils s’appliquent. Les erreurs doivent être compréhensibles ; la suggestion IA doit signaler son chargement et ses échecs tout en laissant la sélection manuelle disponible.
 
-Ces écrans sont prévus, non construits. La connexion Google, l’espace de compte, les réservations, la gestion du personnel et la suggestion IA restent hors de la première tranche.
+Catalogue, disponibilités, confirmation et historique/annulation sont construits
+sur /labs au jalon 4. États et données fetch sont testés en DOM simulé, et le HTML
+protégé avec Django. Codex a observé dans Edge le 12 novembre 2026 le parcours
+disponibilités, confirmation, historique puis annulation conservée, sur la démo
+PostgreSQL autorisée. Le parcours clavier complet et les erreurs en navigateur
+restent à vérifier ; 380 pixels reste reporté. Google, espace de compte,
+personnel, IA et MCP projet restent non construits. L'absence d'écran du personnel
+n'est pas présentée comme une réalisation complète d'AC-40.
 
 Attribution des exigences UI : `docs/UI.md` contient les largeurs 380/768/1280 pixels, l’absence de défilement horizontal et de déplacements au chargement, les états d’écran, le clavier et le focus, les libellés accessibles, le contraste 4,5:1, le titre et la langue, les cibles tactiles de 44 pixels et l’identification des suggestions IA. Il cite explicitement les jetons d’espacement et de typographie ; les jetons de couleurs et de rayons d’AC-45 sont une extension de conception retenue, pas une citation de cette checklist. L’organisation des espaces d’AC-40 est propre au projet. La checklist demande les quatre états sur chaque écran, alors qu’AC-41 conserve « lorsqu’ils s’appliquent » : cette correspondance devra être explicitée pour chaque écran. Elle ajoute un indicateur de chargement vers 100 ms, un succès visible sans rechargement, des preuves visuelles et une décision sur le mode sombre, que les critères ci-dessous ne remplacent pas. Aucun élément de la checklist n’est déclaré vérifié.
 
@@ -236,23 +246,25 @@ Statut des critères ci-dessous : cible fonctionnelle retenue par l’utilisateu
 | Criterion | Test |
 | --- | --- |
 | AC-1 |  |
-| AC-11 (partiel, services et HTTP) | Tests de lecture/création et `tests/test_booking_api.py` : poste hors service exclu, création HTTP 409 sans mutation. Écran absent. |
-| AC-13 (partiel) | `tests/test_read_services.py` et `tests/test_booking_api.py` : créneaux canoniques et réponse HTTP issue de la base, cas vide/week-end ; aucun écran de disponibilité. |
-| AC-14 (partiel) | Tests de schéma/lecture et `tests/test_booking_api.py` : conversions hiver/été, entrée avec offset, stockage et réponse UTC ; affichage navigateur non validé. |
-| AC-15 (partiel) | Tests directs et `tests/test_booking_api.py` : HTTP 201, une ligne pour le propriétaire de session, personnel 403 et propriétaire client refusé ; confirmation visuelle absente. |
-| AC-16 (partiel) | Tests directs et `tests/test_booking_api.py` : contraintes temporelles/forme refusées sans mutation, HTTP 422 ; JSON mal formé 400, Content-Type 415. Écran absent. |
-| AC-17 (partiel) | Tests directs et `tests/test_booking_api.py` : conflit préexistant HTTP 409 sans mutation ; scénario concurrent de service séparé sous AC-22. Écran absent. |
-| AC-18 (partiel) | Tests directs cross-lab et `tests/test_booking_api.py` : conflit personnel HTTP 409 ; concurrence de service sous AC-23. Écran absent. |
+| AC-40/41/42 (partiels) | `tests/booking_ui.test.mjs` : navigation catalogue/disponibilités/historique, états, confirmation, erreurs et doubles clics en DOM simulé ; `tests/test_booking_page.py` : HTML protégé, labels, régions accessibles et MIME principal/import. Clavier réel et rendu non validés. |
+| AC-43/44/45 (limites) | CSS réutilise les jetons et prévoit l'adaptation ; ni largeurs réelles, ni contrastes mesurés ne sont validés par les tests DOM. Contrôle 380 pixels reporté. |
+| AC-11 (partiel, services et HTTP) | Tests directs/HTTP : poste hors service exclu, HTTP 409 sans mutation ; `tests/booking_ui.test.mjs` : refus affiché comme texte. Parcours navigateur en attente. |
+| AC-13 (partiel) | Tests directs/HTTP : créneaux canoniques issus de la base ; `tests/booking_ui.test.mjs` : date, affichage, vide et réessai en DOM simulé. Codex dans Edge le 12 novembre : 20 créneaux pour les deux postes de démonstration le 13 novembre ; vide/réessai non essayés en navigateur. |
+| AC-14 (partiel) | Tests de schéma/lecture et `tests/test_booking_api.py` : conversions hiver/été, entrée avec offset, stockage et réponse UTC. Edge : 13 novembre 2026, 08:00–09:00 affiché Europe/Sofia ; conversion estivale non essayée en navigateur. |
+| AC-15 (partiel) | Tests directs/HTTP : propriétaire de session et 201 ; `tests/booking_ui.test.mjs` : choix puis confirmation, CSRF, double clic, actualisation et incertitude réseau. Edge : confirmation explicite, succès et une entrée À venir sans rechargement ; statut réseau non relevé. |
+| AC-16 (partiel) | Tests directs/HTTP : forme et créneau refusés sans mutation ; UI affiche les erreurs du serveur sans en reproduire les règles. Parcours navigateur en attente. |
+| AC-17 (partiel) | Tests directs/HTTP : conflit préexistant 409 ; UI affiche le refus en DOM simulé, concurrence de service sous AC-22. Parcours navigateur en attente. |
+| AC-18 (partiel) | Tests directs cross-lab et HTTP : conflit personnel 409 ; UI générique de refus, concurrence de service sous AC-23. Parcours navigateur en attente. |
 | AC-19 (partiel) | Tests de schéma, lecture et `tests/test_booking_creation.py` : intervalles [début, fin) et création de créneaux consécutifs. Aucun parcours HTTP. |
-| AC-20 (partiel) | Tests directs : quota transactionnel, postes hors service inclus ; `tests/test_booking_api.py` : quota HTTP 409 sans mutation. Concurrence de service sous AC-24, écran absent. |
+| AC-20 (partiel) | Tests directs/HTTP : quota transactionnel, HTTP 409 ; UI affiche le quota refusé en DOM simulé. Concurrence de service sous AC-24, parcours navigateur en attente. |
 | AC-21 (partiel, services) | Lectures et `tests/test_booking_creation.py` : annulations/passé/en cours exclus du quota ; troisième réservation future créée. Aucun parcours HTTP. |
 | AC-22 (service concurrent) | `tests/test_booking_concurrency.py` : deux étudiants, même poste/créneau ; backends distincts et attente PostgreSQL prouvée ; une création, WorkstationConflict et une ligne finale. Aucun HTTP. |
 | AC-23 (service concurrent) | `tests/test_booking_concurrency.py` : même étudiant, deux postes/créneau commun ; attente du verrou utilisateur observée ; une création, PersonalConflict et une ligne finale. Aucun HTTP. |
 | AC-24 (service concurrent) | `tests/test_booking_concurrency.py` : deux réservations initiales, deux demandes sans chevauchement ; une création, QuotaExceeded et trois lignes finales. Mutation du quota détectée par quatre lignes au lieu de trois. Aucun HTTP. |
-| AC-25 (partiel) | Tests directs/concurrents et `tests/test_booking_api.py` : annulation et réannulation HTTP 200, timestamp inchangé, poste hors service accepté ; historique conservé. Écran absent. |
-| AC-26 (partiel) | Tests directs : limites et heure après verrous ; `tests/test_booking_api.py` : HTTP 409 au début, sans mutation. Écran absent. |
-| AC-27 (partiel) | Tests directs et `tests/test_booking_api.py` : propriétaire issu de session, autre propriétaire HTTP 403, même après annulation ; aucun effet en base. Écran absent. |
-| AC-28 (partiel) | Tests directs et `tests/test_booking_api.py` : historique HTTP propre, annulation et état du poste, aucune fuite ; écran absent. |
+| AC-25 (partiel) | Tests directs/concurrents/HTTP : propriétaire et timestamp conservés ; `tests/booking_ui.test.mjs` : annulation puis historique rafraîchi en DOM simulé. Edge : annulation confirmée, ligne conservée Annulée, disponibilités 18 → 20 ; répétition non essayée en navigateur. |
+| AC-26 (partiel) | Tests directs/HTTP : refus temporel sans mutation ; UI affiche le refus d'annulation tardive en DOM simulé. Parcours navigateur en attente. |
+| AC-27 (partiel) | Tests directs/HTTP : autre propriétaire 403, même après annulation ; UI utilise uniquement l'historique personnel. Parcours navigateur en attente. |
+| AC-28 (partiel) | Tests directs/HTTP : historique sans fuite ; UI rend les quatre états et le poste en/hors service comme texte en DOM simulé. Edge : historique vide → une entrée À venir → une entrée Annulée, poste en service ; autres états et absence de fuite non essayés en navigateur. |
 | AC-46 | `tests/test_access.py`, `tests/test_labs.py` : redirection de page et JSON 401 de l’API pour sessions absentes, invalides, expirées ou inactives. |
 | AC-47 | `tests/test_auth.py` : connexion locale HTTP, refus uniformes, CSRF et retours internes sur comptes isolés. |
 | AC-48 | `tests/test_labs.py`, `tests/test_demo_labs.py`, `tests/labs_ui.test.mjs` : lecture, retrait/restauration et liste vide isolés ; états du client avec DOM/réseau simulés. `tests/test_static_assets.py` : type MIME JavaScript du module. `tests/test_access.py` : l’URL extraite du HTML évite la revalidation 304 de l’ancienne réponse text/plain. |
@@ -262,6 +274,24 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
+
+Jalon 4, 11 novembre 2026 : parcours étudiant construit sur /labs, API et services
+inchangés. Confirmation explicite avant création, historique et annulation,
+rafraîchissement sans rechargement, fuseau Europe/Sofia, états et erreurs textuels,
+aucune relance automatique d'une mutation incertaine. Preuves automatisées et
+limites : docs/STUDENT_UI_4.md. Démonstration PostgreSQL préparée une fois sur
+autorisation supplémentaire (un étudiant sans privilèges, un laboratoire, deux
+postes), sans transfert SQLite ni changement d'un compte existant. Mot de passe
+et connexion effectués par l'utilisateur selon son retour. Le 12 novembre 2026,
+Codex a observé dans Edge le laboratoire dédié et l'historique vide, puis les
+20 créneaux du 13 novembre. Choix du poste A, 08:00–09:00 Europe/Sofia : un
+écran de confirmation précède la création. Après confirmation, succès visible,
+une réservation « À venir » dans l'historique et 18 créneaux disponibles.
+Après annulation, la même entrée reste « Annulée » et 20 créneaux sont proposés,
+sans rechargement manuel. Aucun statut HTTP n'a été relevé dans ce parcours
+navigateur. Les captures affichées par l'outil ne sont pas archivées au dépôt.
+Ces observations ne valident pas les refus, tous les états ou l'accessibilité.
+Clavier complet, contraste et largeurs restent à vérifier ; 380 pixels reporté.
 
 Jalon 3, 11 novembre 2026 : quatre contrats HTTP exposés par trois vues, services
 existants inchangés. Tests d'intégration PostgreSQL avec sessions/CSRF réels,

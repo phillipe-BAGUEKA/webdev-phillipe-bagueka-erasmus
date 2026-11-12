@@ -1,6 +1,8 @@
 "use strict";
 
-export function createCatalogue(document, fetcher) {
+import { createBookingJourney } from "./booking.mjs?v=1";
+
+export function createCatalogue(document, fetcher, onSelect = null) {
   const section = document.querySelector("#laboratory-catalogue");
   const status = document.querySelector("#labs-status");
   const error = document.querySelector("#labs-error");
@@ -47,6 +49,13 @@ export function createCatalogue(document, fetcher) {
       for (const lab of payload.laboratories) {
         const item = document.createElement("li");
         item.textContent = lab.name;
+        if (onSelect) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.textContent = `Voir les disponibilités — ${lab.name}`;
+          button.addEventListener("click", () => onSelect(lab));
+          item.append(button);
+        }
         list.append(item);
       }
       list.hidden = payload.laboratories.length === 0;
@@ -69,5 +78,9 @@ export function createCatalogue(document, fetcher) {
 }
 
 if (typeof document !== "undefined") {
-  createCatalogue(document, window.fetch.bind(window)).load();
+  const fetcher = window.fetch.bind(window);
+  const journey = document.querySelector("#booking-journey")
+    ? createBookingJourney(document, fetcher) : null;
+  createCatalogue(document, fetcher, journey ? (lab) => journey.selectLaboratory(lab) : null).load();
+  if (journey) journey.loadHistory();
 }

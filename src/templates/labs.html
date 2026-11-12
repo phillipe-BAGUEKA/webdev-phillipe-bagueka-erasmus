@@ -4,6 +4,11 @@
 {% block content %}
   <h1>Laboratoires</h1>
   <p>Connecté avec <strong>{{ actor.email }}</strong>.</p>
+  <nav class="journey-nav" aria-label="Parcours étudiant">
+    <a href="#laboratory-catalogue">Laboratoires</a>
+    <a id="availability-nav" href="#availability" hidden>Disponibilités</a>
+    <a href="#personal-bookings">Mes réservations</a>
+  </nav>
   <section id="laboratory-catalogue" aria-labelledby="catalogue-title">
     <h2 id="catalogue-title">Liste des laboratoires</h2>
     <p id="labs-status" class="message" role="status" aria-live="polite"></p>
@@ -13,6 +18,36 @@
     <button id="labs-retry" type="button" hidden>Réessayer</button>
     <noscript><p>Active JavaScript pour charger les laboratoires.</p></noscript>
   </section>
+  <div id="booking-journey">
+    <p>Horaires affichés en <strong>Europe/Sofia</strong>.</p>
+    <input id="booking-csrf" type="hidden" value="{{ csrf_token }}">
+    <p id="booking-feedback" class="message" role="status" aria-live="polite" tabindex="-1"></p>
+    <a id="booking-login" href="{% url 'login' %}?next=/labs" hidden>Se reconnecter</a>
+    <section id="availability" aria-labelledby="availability-title" hidden>
+      <h2 id="availability-title">Disponibilités</h2>
+      <p>Toutes les heures sont affichées dans le fuseau <strong>Europe/Sofia</strong>.</p>
+      <form id="availability-form">
+        <label for="booking-date">Date des disponibilités</label>
+        <input id="booking-date" type="date" required>
+        <button id="availability-load" type="submit">Afficher les créneaux</button>
+      </form>
+      <p id="availability-status" class="message" role="status" aria-live="polite"></p>
+      <ul id="slots-list" class="booking-list"></ul>
+      <div id="booking-selection" class="confirmation" hidden>
+        <h3>Confirmer cette réservation</h3>
+        <p id="booking-summary"></p>
+        <button id="booking-confirm" type="button" disabled>Confirmer la réservation</button>
+        <button id="booking-dismiss" type="button" class="secondary">Revenir au choix du créneau</button>
+      </div>
+    </section>
+    <section id="personal-bookings" aria-labelledby="history-title">
+      <h2 id="history-title">Mes réservations</h2>
+      <p>Réservations à venir, en cours, passées et annulées. Les règles sont revérifiées par le serveur.</p>
+      <button id="history-refresh" type="button">Consulter l’état actuel / réessayer</button>
+      <p id="history-status" class="message" role="status" aria-live="polite"></p>
+      <ul id="bookings-list" class="booking-list"></ul>
+    </section>
+  </div>
   <form id="logout-form" action="{% url 'sign-out' %}" method="post">
     {% csrf_token %}
     <p id="logout-error" class="error message" role="alert" tabindex="-1"></p>

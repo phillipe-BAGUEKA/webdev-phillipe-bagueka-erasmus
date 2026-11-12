@@ -10,13 +10,19 @@ Lab booking's final goal is workstation reservations and staff catalogue managem
 
 ## Commands
 
-TP3 authorization now covers checkpoint 3 only: session-protected HTTP booking
-and availability APIs calling existing services. See docs/HTTP_API_3.md for
-schemas, statuses and CSRF precedence. No ORM or duplicated booking rules in
-routes. Preserve HTML session forms and the 2C/2D concurrency regressions.
-Stop before UI, MCP, AI, migrations, dependencies or CI changes. SQLite remains
-preserved. Local commit authorized, no push. Final Slice 2 grouping and the
-student's personal architecture note are not assumed approved or written.
+TP3 authorization now covers checkpoint 4: student booking/cancellation UI on
+/labs, reusing the existing session/CSRF APIs. See docs/STUDENT_UI_4.md.
+Business decisions remain in shared services. Never automatically resend a POST
+after an uncertain network result. Distinguish DOM tests from real browser proof.
+The user additionally authorized one dedicated PostgreSQL development demo;
+student-ui@demo.example was created without a usable password. User sets its
+password locally and signed in. Codex observed the authorized Edge journey on
+2026-11-12: availability, explicit creation, own history and retained cancellation.
+SQLite and 5432 remain preserved. No Google, AI, MCP or deployment.
+Local checkpoint commit authorized. The user also authorized PostgreSQL CI
+alignment and normal pushes for TP3 finalization after its checks; do not publish
+prematurely or equate green CI with complete TP3 acceptance. Keep the student's
+architecture note personal. The 380-pixel check remains deferred.
 PostgreSQL commands are opt-in: --settings=src.config.postgres for development,
 --ds=tests.settings_postgres --reuse-db for tests, after local provisioning.
 Never run the SQLite demonstration seed against PostgreSQL.
@@ -28,10 +34,12 @@ Restart it manually after Windows reboot; no service was registered. Existing
 - Install (PowerShell, local venv): `.\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-dev.txt`
 - Django check without local secrets: `.\.venv\Scripts\python.exe manage.py check --settings=tests.settings`
 - Current application tests: `.\.venv\Scripts\python.exe -m pytest --ds=tests.settings_postgres --reuse-db -k 'not test_guard_refuses_unmarked_or_wrong_database' -v`
-- Run locally: `.\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000 --insecure --noreload` (serves local static files with DEBUG=False; see checkpoint 2 guide)
+- Run current booking UI (PostgreSQL): `.\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000 --settings=src.config.postgres --insecure --noreload` (restart with Ctrl+C after code changes)
+- Preserved TP2 SQLite catalogue only: `.\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000 --insecure --noreload`
 - Test: `python -m unittest discover -s mcp-server -p "test_*.py" -v`
 - Current coverage (PostgreSQL and TP1 subprocesses): `.\.venv\Scripts\python.exe tools/check_coverage.py --postgresql`
 - Catalogue UI logic (simulated DOM/network): `node --test tests/labs_ui.test.mjs`
+- Current student UI and catalogue tests: `node --test tests/labs_ui.test.mjs tests/booking_ui.test.mjs`
 - JavaScript coverage (loaded catalogue module only): `node --test --experimental-test-coverage --test-coverage-include='src/**' --test-coverage-exclude='tests/**' --test-coverage-lines=80 tests/labs_ui.test.mjs`
 - MCP server: `python mcp-server/server.py` (from the repository root)
 - MCP check: `node mcp-server/check.mjs -- python mcp-server/server.py`

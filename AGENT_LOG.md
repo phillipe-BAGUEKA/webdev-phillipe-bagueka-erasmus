@@ -626,3 +626,92 @@ One entry per agent session, newest at the bottom. Be honest: what went wrong is
   reporting; private profiles, local logs/reports/database and venv ignored and
   untracked. No remote CI result, provider call or browser claim; 380-pixel check
   remains deferred. Staged scope is limited to HTTP adapters, tests and docs.
+
+## 2026-11-11 — TP3 checkpoint 4 — student booking/cancellation journey
+
+- Initial Git clean at 514b8ad618756c54d97eb31ec52d8cea865bd22c, ahead seven local
+  commits. Read attached request, AGENTS, SPEC, UI checklist and prior guides.
+  Announced short plan: catalogue, availability and personal history on /labs,
+  existing HTML/CSS tokens and fetch/session/CSRF APIs; no business rule duplication.
+- Added booking.mjs controller, catalogue selection callback, explicit confirmation,
+  safe text nodes, Europe/Sofia display, statuses/retries, own history/cancellation,
+  no reload after success. Global mutation guard prevents double submissions;
+  network/invalid successful response keeps outcome uncertain and blocks mutations
+  until explicit state consultation. No automatic POST retry or login redirect.
+- API, services, ORM, schema, migrations and provider logic unchanged. No Google,
+  AI, MCP, CI, dependency or deployment added. Existing MIME correction and v2
+  root module URL preserved; imported module also tested as text/javascript.
+- Tests: first 19 Node passed; extended final suite 22 passed. First process launch
+  blocked by sandbox spawn EPERM, authorized rerun worked. Initial JS coverage
+  failed at 57.34% because versioned/unversioned imports created two instances
+  reported as the same file by Node. Matched tests to browser's ?v=1 import,
+  without excluding production or reducing threshold. Final loaded-module lines
+  98.18% (booking100%, labs93.02%); simulated DOM/network, not whole frontend/UI.
+- Django targeted tests: 11 passed in 5.74 s, real protected HTML/labels/CSRF and
+  MIME principal/import, preserving previous cache regression. Full unchanged
+  PostgreSQL runner: 319 pytest passed, 1 deselected, no skips, 97.49 s; 9 TP1
+  unittest passed in 6.488 s. Services 220/220 lines and 74/74 branches; global
+  1206/1283 lines (94.00%), 290/320 branches (90.625%), TP1 included. Inventory
+  unchanged49 production Python files; thresholds/exclusions unchanged. Sole
+  deselection remains historical SQLite target guard, unchanged and tested1A.
+  Report .local/coverage/ae6753610bc846d49bd53f3789b65ff4/coverage.json.
+- One independent custom reviewer, read-only, found no blocking/important defect.
+  Retained minor improvement: disable history refresh after 401 and return early;
+  extended session test proves no repeated GET. Retained grouping nuance: final
+  delivery scope AC11/13-28 per user's explicit instruction, not a claim every AC
+  or personal writing was validated. No valid finding ignored, no second review.
+- Computer-use skill used only for inventory so far: Edge accessible. Initially
+  no implicit demonstration preparation. User then explicitly authorized dedicated
+  PostgreSQL development demo on5433, preserving all existing data/passwords.
+  Verified current_database/port/current_user, transactionally created one DEMO UI
+  laboratory, two operational workstations and student-ui@demo.example (active
+  student, not staff/superuser), initially with unusable password. Existing rows,
+  roles/passwords not modified; existing user query omits password field. No SQLite
+  transfer, no5432 intervention. Interactive masked changepassword command and
+  explicit PostgreSQL runserver command supplied to user, never requested password.
+- User has not yet confirmed Edge login; requested commands again and received
+  them. Browser journey remains pending; 380 pixels explicitly deferred. No
+  browser outcome attributed to user or Codex. Data prep is observed by Codex;
+  password entry/login are user actions not assumed completed. UI checklist boxes
+  stay unticked. Guide STUDENT_UI_4 lists remaining manual steps and three
+  architecture questions for later; student's personal Architecture stays blank.
+- Docs/code/tests assisted by Codex, not wholly personal student work. Local
+  commit authorized after checks; no push. Finalization continues while awaiting
+  user confirmation required before browser trials.
+- Final pre-browser checks: Node syntax and Django check passed; ex2 32/32;
+  git diff --check clean. Latest protected-template/MIME targeted repeat:
+  11 passed in 7.33 s. SQLite/marker/initial migration hashes unchanged; no
+  Python application, services/API, dependency, CI, coverage-policy or TP1 change.
+  Private profiles/local databases/venv untracked. Local commit not yet created:
+  awaiting user's explicit Edge-login confirmation, then real observations and
+  final documentation before the already authorized local commit. No push.
+
+### 2026-11-12 — checkpoint 4, real Edge journey
+
+- User confirmed personal password entry and login as student-ui@demo.example;
+  no password requested, read or entered by Codex. Then explicitly authorized
+  availability, creation, own history and cancellation on dedicated demo data.
+- Computer-use skill: direct tab host unavailable; native Edge window used after
+  user brought /labs to foreground. Calendar selected 2026-11-13; native date
+  text automation was ineffective, not interpreted as an application defect.
+- Codex observed the dedicated laboratory and empty history, then 20 slots.
+  Selected Poste A 08:00–09:00 Europe/Sofia; explicit confirmation appeared
+  before creation. Confirmed once: success, one future history entry, 18 slots.
+  Cancelled once: cancellation success, same history entry now Annulée, 20 slots.
+  No manual reload. Personal overlap explains the two unavailable candidates
+  after creation; this interpretation is separate from the visible counts.
+- No browser HTTP status or Console evidence collected for these mutations.
+  Screenshots displayed by the tool were not archived. No claim of browser
+  testing for refusals, errors, keyboard journey, contrast or widths; 380 pixels
+  explicitly deferred. Automated results above reused: code/config unchanged.
+- SPEC, guide, README, UI evidence and agent instructions updated by Codex with
+  observed facts, student actions and limits distinguished. Student architecture
+  note and comprehension remain personal, not supplied or validated here.
+- User granted future TP3 normal publication and PostgreSQL CI alignment after
+  final checks, preserving controls and history. Current checkpoint concludes
+  locally; no CI modification, push, provider call, new dependency or migration.
+- Final documentary rerun initially hit sandbox EPERM on a pytest temporary
+  directory; authorized rerun passed ex2 32/32. git diff --check passed. SQLite
+  SHA256 still matches the pre-checkpoint value; .venv, demo DB and local reports
+  ignored, none tracked under .local/data/.venv. No new production code change
+  after the previously measured tests/coverage and independent review.
