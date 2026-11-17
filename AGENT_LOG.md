@@ -1117,3 +1117,56 @@ approved the whole feature diff. User must supply their own assessment.
   runtime docstring finding: corrected module/current_actor and bootstrap-test
   docstrings only. No finding rejected. Production behavior unchanged since
   the full coverage run; test assertions/titles were strengthened, not weakened.
+
+## 2026-11-17 · MCP finalization — client launch and publication
+
+- Initial HEAD 524370db1f0b4e7b89d6c291d3ecda2fcc37851a, clean main, three MCP
+  commits ahead. Fetch confirmed origin/main is an ancestor (0/3 divergence).
+  User authorized MCP finalization, scoped CI changes and normal publication;
+  no provider, Google, deployment or unrelated feature. Rotation not repeated.
+- Identified installed Gemini CLI package0.65.0. Read its bundled CLI mcp/list
+  implementation and MCP configuration/environment docs, not auth credentials.
+  Existing repo config still launched TP1; updated only its command/args/cwd/env
+  to direct Windows .venv/server.py --project, explicit src.config.postgres and
+  a LAB_BOOKING_MCP_SESSION placeholder. Context AGENTS.md preserved.
+- Actual Gemini CLI entrypoint ran mcp list with isolated home/settings, empty
+  diagnostic dotenv and a generated fake token in child environment only. Node
+  guard denied external networking; embedded data URLs allowed. Final receipt:
+  exit0, Connected, right venv/cwd/profile, fake-token forwarding true, protocol
+  stdout only, server stderr empty, no token leak, no personal dotenv read and
+  zero external network attempts. Methods initialize/initialized/ping only.
+- Diagnostic failures retained: preload Windows path corrected, new fake folder
+  initially untrusted, overly strict guard blocked a data URL. Wrapper prototypes
+  using exec replacement / child relay timed out; direct venv command succeeded.
+  Prototypes and test text preserved only as ignored operational artifacts in
+  .local/mcp-client-probe, not production or publication files. No app Python,
+  rule, dependency, migration, coverage inventory/exclusion/threshold changed.
+- This is a real Gemini launch/healthcheck, not proof it discovers/calls all six
+  tools. No direct non-model invocation command identified. Provider-based agent
+  tool use stopped at this boundary; no real token requested, cookie read, demo
+  consultation or mutation performed. A masked client launcher is not needed
+  for healthcheck and remains pending for an authorized usable call path.
+- Rechecked real AC-37/38/39: automated stdio schemas/auth + HTTP/service parity
+  remain evidence for their tested scenarios; client healthcheck does not replace
+  tools/list/call, personal session, human consent or whole-project acceptance.
+- CI already runs every Python test on ephemeral PG with migrations from empty
+  schema, SQLite guard, TP1, Node and coverage gates. Added only -rA reporting in
+  test job so executed AC titles are visible; preserved mcp TP1 job and all gates.
+- Intermediate local run415 passed during prototype; its coverage included
+  operational artifacts, so not used as publication-scope metric. Final run on
+  retained scope:411PGpassed1SQLiteguarddeselected+9TP1; services227/227+76/76=100%,
+  global1438/1524 lines94.36% +342/378 branches90.48%, projectadapter90/90+30/30.
+  Report03682cbfb4df40b4a35085dc211c8d00. Node23, MCP12/12 and ex2 32/32 passed.
+- SQLite SHA256 identical to task start. Metadata checks keep local profiles,
+  rotation receipt, demo database, .venv and Gemini dotenv ignored/untracked.
+  No real value copied into tracked files. docs/MCP_FINALIZATION.md distinguishes
+  automated tests, actual launch, untried final tool use and remaining Lab03 work.
+  Assistance remains attributed; no personal architecture note written.
+- Final independent custom reviewer ran once, read-only: no significant finding,
+  no retained/rejected issue and no correction requested. JSON launch settings,
+  ignored secrets, reporting-only CI change and separation of client/test proof
+  were confirmed. Ready for normal publication; verify all four remote jobs on
+  the actual pushed SHA rather than infer CI from local tests.
+- Separate historical SQLite guard passed1 and Django check reported no issues.
+  Final local ex2 32/32 and diff check clean. Only configuration/reporting/docs
+  in the finalization commit; the three existing MCP commits remain intact.

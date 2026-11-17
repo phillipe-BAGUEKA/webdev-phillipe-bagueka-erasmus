@@ -14,6 +14,11 @@ never automatically retry a mutation after a lost response. The default TP1
 command stays independent of Django/PostgreSQL. See
 [MCP mutation checkpoint](docs/MCP_MUTATIONS_3.md) for commands and limits.
 
+Gemini CLI 0.65.0 MCP-only launch/connection has now been observed without a
+provider call, using an isolated home and a fake token. Actual Gemini tool use
+and personal-session handoff remain unverified. See
+[MCP finalization](docs/MCP_FINALIZATION.md) for evidence and publication status.
+
 Historical slice 1 progress: **checkpoints 1–3** are implemented. The student reported
 the [foundation checks](docs/CHECKPOINT1.md) and the session/keyboard observations
 for [checkpoint 2](docs/CHECKPOINT2.md). Codex has now observed all three laboratories

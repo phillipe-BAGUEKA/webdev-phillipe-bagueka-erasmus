@@ -4,9 +4,13 @@
   },
   "mcpServers": {
     "my-project": {
-      "command": "python",
-      "args": ["mcp-server/server.py"],
-      "env": { "MCP_TOKEN": "$MCP_TOKEN" }
+      "command": ".venv/Scripts/python.exe",
+      "args": ["mcp-server/server.py", "--project"],
+      "cwd": ".",
+      "env": {
+        "DJANGO_SETTINGS_MODULE": "src.config.postgres",
+        "LAB_BOOKING_MCP_SESSION": "$LAB_BOOKING_MCP_SESSION"
+      }
     }
   }
 }

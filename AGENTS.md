@@ -19,11 +19,13 @@ student-ui@demo.example was created without a usable password. User sets its
 password locally and signed in. Codex observed the authorized Edge journey on
 2026-11-12: availability, explicit creation, own history and retained cancellation.
 SQLite and 5432 remain preserved. No Google, AI or deployment. Project MCP is
-approved through substep 3 only: the four shared-service project tools,
-tests/docs and local commit, no push. One-time rotation of the
+approved for MCP finalization and normal publication after checks/review:
+the four shared-service tools, client launch verification, docs and CI reporting.
+No provider call, real-token handoff or demo mutation was performed. One-time rotation of the
 exposed local PostgreSQL test-role password was authorized and verified; do not
-repeat it. See docs/MCP_MUTATIONS_3.md. Final-client execution and real-token
-handoff remain unverified; prepare their procedure only, no provider call.
+repeat it. See docs/MCP_FINALIZATION.md. Gemini CLI 0.65.0 MCP-only connection
+was observed with a synthetic token and isolated home; its actual tool calls
+and real-token handoff remain unverified because no provider call is authorized.
 Use synthetic test sessions only at this checkpoint.
 Local checkpoint commit authorized. The user also authorized PostgreSQL CI
 alignment and normal pushes for TP3 finalization after its checks; do not publish

@@ -159,6 +159,15 @@ de consentement humain. Aucune mutation n'est relancée automatiquement après u
 résultat de transport incertain : consulter l'historique avant une nouvelle
 décision. Détails, résultats et limites : `docs/MCP_MUTATIONS_3.md`.
 
+Finalisation : Gemini CLI 0.65.0 a réellement connecté le serveur avec
+`gemini mcp list`, configuration/domicile isolés et jeton factice. Répertoire,
+profil PostgreSQL et transfert d'environnement vérifiés, zéro sortie réseau
+externe. Cette commande ne fait que initialize/notification/ping : aucune
+découverte ni utilisation des outils par Gemini, aucune vraie session ou
+confirmation humaine n'est déclarée validée. Les preuves AC-37/38/39 restent
+celles des tests automatisés stdio/parité, avec leurs limites. État détaillé et
+publication : `docs/MCP_FINALIZATION.md`.
+
 ## UI
 <!-- Stack, and the three or more screens. The graded checklist lives in docs/UI.md. -->
 

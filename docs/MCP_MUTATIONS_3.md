@@ -1,5 +1,11 @@
 # MCP — sous-étape 3 : création et annulation
 
+Finalisation ultérieure : connexion MCP-only de Gemini CLI observée avec identité
+factice, sans appel fournisseur ; les appels d'outils et la vraie remise du jeton
+restent en attente. Configuration et publication :
+[MCP_FINALIZATION.md](MCP_FINALIZATION.md). Les preuves ci-dessous restent celles
+de la sous-étape 3.
+
 ## Livraison et contrats
 
 Le mode `--project` ajoute `book_slot` et `cancel_booking` aux quatre outils

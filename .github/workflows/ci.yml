@@ -47,7 +47,10 @@ jobs:
       - name: Empty PostgreSQL migrations and restricted test role
         uses: ./.github/actions/postgres-test
 
-      - name: Application including concurrency, TP1 and JavaScript tests
+      - name: Application, project MCP stdio/parity, concurrency, TP1 and JavaScript
+        env:
+          # Show exact executed AC titles, including the real project stdio tests.
+          PYTEST_ADDOPTS: '-rA'
         run: npm test
 
       # From Exercise 4 on. An image that does not build is the most common reason a
