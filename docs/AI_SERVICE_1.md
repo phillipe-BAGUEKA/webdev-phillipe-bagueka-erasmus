@@ -1,5 +1,8 @@
 # IA — sous-étape 1 : service injectable seulement
 
+Ce bilan historique reste conservé. La sous-étape 2 ajoute transport borné et
+API, toujours sans interface ni fournisseur réel : voir `AI_TRANSPORT_2.md`.
+
 Le 17 novembre 2026, l'utilisateur a approuvé le besoin textuel de 1 à 1 000
 caractères après trim, le laboratoire et la date sélectionnés, les dix candidats
 distincts maximum dans l'ordre existant, zéro appel sans candidat et aucune

@@ -32,6 +32,10 @@ class ClientQuotaExceeded(ClientError):
     """The provider quota prevents this attempt."""
 
 
+class ClientInvalidOutput(ClientError):
+    """The adapter rejected malformed or incomplete provider output."""
+
+
 @dataclass(frozen=True)
 class Candidate:
     """Minimal application facts permitted to leave the suggestion service."""
@@ -103,6 +107,8 @@ def _ask(
         return None, "timeout"
     except ClientQuotaExceeded:
         return None, "quota"
+    except ClientInvalidOutput:
+        return None, "invalid_output"
     except Exception:
         # This boundary alone catches arbitrary client errors. Never expose
         # their messages (which may contain prompts or connection secrets).

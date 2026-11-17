@@ -6,7 +6,9 @@ Codex fondée sur les décisions de l'utilisateur. Mise à jour : l'utilisateur 
 approuvé uniquement la sous-étape 1, la borne 1–1 000 après trim, les filtres
 laboratoire/date, l'ordre existant et les dix candidats distincts maximum. Son
 service injectable est désormais construit ; voir `AI_SERVICE_1.md` pour les
-preuves. Adaptateur réseau, processus et UI restent proposés/non implémentés.
+preuves. La sous-étape 2 est ensuite autorisée : adaptateur, processus et API
+sont construits et testés hors fournisseur (`AI_TRANSPORT_2.md`). UI toujours
+proposée/non implémentée ; conditions Google à résoudre avant usage réel.
 Aucun AC n'est réécrit ou renuméroté.
 
 ## Périmètre et origine des exigences
@@ -39,9 +41,9 @@ les précisions techniques demandées, à examiner avant toute construction.
 | 2. Adaptateur et API | Un appel REST borné, endpoint session/CSRF, tests entièrement hors fournisseur | AC-29 à AC-36, preuves API partielles |
 | 3. Écran existant | Demande explicite, suggestion identifiée, confirmation existante et preuves navigateur distinctes | AC-29 à AC-36 et parties pertinentes AC-41/42/43/44 |
 
-Arrêt pour revue à chaque sous-étape. L'autorisation suivante couvre le service,
-ses tests et son commit local seulement. Aucune installation, migration, lecture
-de secret, appel modèle, CI ou push ; sous-étapes 2 et 3 non autorisées.
+Arrêt pour revue à chaque sous-étape. L'autorisation courante couvre la sous-étape
+2 et son commit local : transport borné/API/tests hors réseau. Aucune installation,
+migration, clé réelle, appel modèle, CI ou push ; sous-étape 3 non autorisée.
 La note personnelle, la validation complète Gemini MCP et les UI reportées,
 notamment 380 pixels, restent ouvertes ; cette préparation ne clôt pas le Lab 03.
 
@@ -292,9 +294,10 @@ qu'aucun nouvel essai n'a été autorisé et observé.
   grâce à une chaîne de caractères reconnue par le vérificateur.
 - **Sous-étape 1 approuvée et construite** : borne de 1 000 caractères,
   laboratoire/date sélectionnés, dix premiers slots distincts et service fake.
-  **À valider avant construction suivante** : transport REST isolé, marge de
-  nettoyage et contrats de statuts proposés. Ces recommandations des étapes
-  suivantes ne sont pas attribuées comme des décisions acquises de l'étudiant.
+  **Sous-étape 2 autorisée et construite ensuite** : adaptateur REST isolé,
+  marge de nettoyage incluse et contrats API ; détails et preuves dans
+  `AI_TRANSPORT_2.md`. **Avant la suivante** : validation du travail livré puis
+  autorisation de l'interface, sans présenter celle-ci comme acquise.
 - **Avant un essai fournisseur seulement** : conditions EEE et niveau gratuit,
   accès effectif/quotas du compte, remise autorisée d'une clé applicative sans
   lecture de secrets existants et autorisation explicite d'appel. Aucun de ces
@@ -306,4 +309,6 @@ qu'aucun nouvel essai n'a été autorisé et observé.
 Revue indépendante du plan : aucun blocage, un risque retenu sur le temps de
 nettoyage du worker après expiration. Proposition corrigée ci-dessus : réserver
 ce temps **dans** les cinq secondes, avec test incluant un nettoyage lent. La
-marge et la faisabilité restent à valider, aucune preuve d'exécution revendiquée.
+marge et la faisabilité restaient à valider à cette revue du plan. Les mesures
+locales obtenues ensuite en sous-étape 2 sont dans `AI_TRANSPORT_2.md` ; elles
+ne constituent pas une preuve d'accès au fournisseur ou de rendu navigateur.

@@ -12,6 +12,7 @@ from django.http import HttpRequest, JsonResponse
 from django.views.decorators.cache import never_cache
 
 from src.services.access import AuthenticationRequired
+from src.services.ai_suggestion import InvalidSuggestionInput
 from src.services.booking_cancellation import (
     BookingChanged, BookingNotFound, CancellationResult, CancellationTooLate,
     NotBookingOwner,
@@ -25,7 +26,7 @@ from src.services.booking_reads import (
     AvailableSlot, InvalidReadInput, LaboratoryNotFound, PersonalBooking,
 )
 
-API_ROUTE_NAMES = {"availability-api", "bookings-api", "cancel-booking-api"}
+API_ROUTE_NAMES = {"availability-api", "bookings-api", "cancel-booking-api", "suggestion-api"}
 LOGGER = logging.getLogger(__name__)
 ERRORS = {
     AuthenticationRequired: (401, "Connexion requise."),
@@ -43,6 +44,7 @@ ERRORS = {
     SlotNotFuture: (422, "Le créneau doit commencer dans le futur."),
     InvalidBookingInput: (422, "Identifiant ou créneau invalide."),
     InvalidReadInput: (422, "Date ou identifiant invalide."),
+    InvalidSuggestionInput: (422, "Décris ton besoin en 1 à 1 000 caractères, sans caractère nul."),
 }
 
 
@@ -88,8 +90,12 @@ def no_query(request: HttpRequest) -> None:
 def requested_day(request: HttpRequest) -> date:
     if set(request.GET) != {"date"} or len(request.GET.getlist("date")) != 1:
         raise PayloadError("Fournis une seule date au format YYYY-MM-DD.")
-    value = request.GET["date"]
-    if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value):
+    return calendar_date(request.GET["date"])
+
+
+def calendar_date(value: object) -> date:
+    """Parse one canonical calendar date, for query strings or JSON bodies."""
+    if not isinstance(value, str) or not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value):
         raise PayloadError("Date attendue au format YYYY-MM-DD.")
     try:
         return date.fromisoformat(value)
@@ -97,12 +103,21 @@ def requested_day(request: HttpRequest) -> date:
         raise PayloadError("Date invalide.") from error
 
 
-def json_object(request: HttpRequest, fields: set[str]) -> dict[str, Any]:
+def json_object(
+    request: HttpRequest, fields: set[str], *, max_bytes: int | None = None,
+) -> dict[str, Any]:
     if request.content_type != "application/json":
         raise PayloadError("Content-Type application/json requis.", 415)
+    if max_bytes is not None:
+        try:
+            declared_length = int(request.META.get("CONTENT_LENGTH") or 0)
+        except (ValueError, TypeError):
+            raise PayloadError("Longueur du corps invalide.", 400) from None
+        if declared_length > max_bytes or len(request.body) > max_bytes:
+            raise PayloadError("Corps de requête trop volumineux.")
     try:
         value = json.loads(request.body.decode("utf-8"))
-    except (ValueError, UnicodeDecodeError) as error:
+    except (ValueError, UnicodeDecodeError, RecursionError) as error:
         raise PayloadError("JSON mal formé.", 400) from error
     if not isinstance(value, dict) or set(value) != fields:
         raise PayloadError("Champs JSON manquants ou non autorisés.")

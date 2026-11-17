@@ -27,11 +27,11 @@ repeat it. See docs/MCP_FINALIZATION.md. Gemini CLI 0.65.0 MCP-only connection
 was observed with a synthetic token and isolated home; its actual tool calls
 and real-token handoff remain unverified because no provider call is authorized.
 Use synthetic test sessions only at this checkpoint.
-Current AI authorization is limited to substep 1: injectable suggestion service,
-direct fake-client tests and documentation; local commit allowed, no push.
-No AI route/UI, real provider adapter, transport process, key access, dependency
-or migration. See docs/AI_SUGGESTION_PLAN.md and docs/AI_SERVICE_1.md.
-The five-second deadline contract is not proof of a future network timeout.
+Current AI authorization covers substep 2 only: bounded REST adapter, protected
+suggestion API, offline tests and docs; local commit allowed, no push. No AI UI,
+real provider call, real key access, installation or migration. The provider is
+disabled by default; do not enable it during this task. See docs/AI_TRANSPORT_2.md.
+Local controlled-process timing is not Google access or browser latency proof.
 Local checkpoint commit authorized. The user also authorized PostgreSQL CI
 alignment and normal pushes for TP3 finalization after its checks; do not publish
 prematurely or equate green CI with complete TP3 acceptance. Keep the student's
@@ -61,6 +61,7 @@ Restart it manually after Windows reboot; no service was registered. Existing
 - MCP reads/security tests: `.\.venv\Scripts\python.exe -m pytest tests/test_mcp_reads.py tests/test_secret_error_safety.py --ds=tests.settings_postgres --reuse-db -q`
 - MCP mutation tests: `.\.venv\Scripts\python.exe -m pytest tests/test_mcp_mutations.py --ds=tests.settings_postgres --reuse-db -q`
 - AI service tests (fake clients only): `.\.venv\Scripts\python.exe -m pytest tests/test_ai_suggestion.py --ds=tests.settings_postgres --reuse-db -q`
+- AI transport/API (offline only): `.\.venv\Scripts\python.exe -m pytest tests/test_gemini_adapter.py tests/test_ai_suggestion_api.py tests/test_ai_suggestion.py tests/test_ai_json_limits.py --ds=tests.settings_postgres --reuse-db -q`
 
 The existing demo accounts are configured by the student; do not rerun password preparation. Checkpoint 3 commands and the backup/withdraw/restore procedure are in `docs/CHECKPOINT3.md`. Do not execute that procedure on the demo database during automated work. On Linux use `.venv/bin/python`. Never read the local key or any Gemini secret to report status; tests load separate non-secret settings.
 
@@ -87,10 +88,14 @@ that talks to the database directly is a second, unguarded way into your data: n
 
 ## The model feature
 <!-- Provider, env var, and the call site. -->
-- Only the injectable, read-only suggestion service is implemented at AI substep 1.
+- The injectable read-only suggestion service, bounded REST adapter and protected
+  POST /api/labs/{id}/suggestion are implemented through AI substep 2, without UI.
   `src/services/ai_suggestion.py` reuses availability, validates the candidate and
-  rechecks account/availability. No provider adapter, route or UI is delivered.
-  The future provider call site must be isolated in one file, as described in SPEC.md.
+  rechecks account/availability. src/integrations/gemini_http.py is the sole REST
+  call site; gemini.py supervises a stdlib-only worker without Django/database.
+  LAB_BOOKING_AI_ENABLED defaults off; only explicit future enablement may read
+  GEMINI_API_KEY from the app environment. Never read Gemini CLI dotenv files.
+  Tests disable real clients, inject fakes and use local controlled workers only.
 - The key comes from an environment variable and is never committed or logged.
 - Every call has a timeout and a deterministic fallback, so the app still works when the provider is down or rate-limited.
 - The model's output is re-checked against real data before anything is saved or shown.

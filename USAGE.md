@@ -31,6 +31,7 @@ One row per agent session. In Gemini CLI, type `/stats` before you quit and copy
 | 2026-11-11 | Codex, checkpoint 3 HTTP booking APIs, CSRF and PostgreSQL integration | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-11 | Codex, checkpoint 4 student booking UI, tests and authorized PostgreSQL demo preparation | non disponible | non disponible | sans objet | non calculable |
 | 2026-11-17 | Codex, AI planning and injectable suggestion service with offline tests | non disponible | non disponible | sans objet (no provider call) | non calculable |
+| 2026-11-17 | Codex, bounded AI REST transport and protected API, offline tests and local process timing | non disponible | non disponible | sans objet (no provider call) | non calculable |
 
 These are statistics reported by the student from Gemini CLI, not measurements
 of the single lecture lookup. In trial 1, `/stats model` showed:

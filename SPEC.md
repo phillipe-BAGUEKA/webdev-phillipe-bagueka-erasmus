@@ -132,6 +132,17 @@ d'identité/session/historique et aucune journalisation du besoin/résultat brut
 Guide des preuves et limites : `docs/AI_SERVICE_1.md`. Les conditions Google EEE
 restent à clarifier avant tout usage réel ; aucune facturation activée.
 
+Sous-étape IA 2 : adaptateur REST et `POST /api/labs/{id}/suggestion` construits,
+sans interface ni appel Google. Client désactivé par défaut ; activation future
+explicite via LAB_BOOKING_AI_ENABLED et clé applicative d'environnement uniquement,
+sans lecture des fichiers CLI. Processus enfant sans Django/base, communication
+privée bornée, tentative unique, échéance monotone incluant lancement et nettoyage.
+Sorties structurées et candidats revérifiés ; aucune mutation de réservation.
+Tests REST simulés, vrais processus locaux contrôlés et API/PostgreSQL avec client
+substitué. Ce ne sont ni une preuve d'accès du compte au fournisseur, ni une
+validation du rendu UI. Conditions Google EEE, statut et limites :
+`docs/AI_TRANSPORT_2.md`. Aucun critère approuvé n'est modifié.
+
 ## Auth
 <!-- Local sign-in plus at least one provider. Say how an account signing in both ways stays one account. -->
 - Local: Email and password, using a user model defined in the first migrations and Django's password hashing and session mechanisms.
@@ -313,13 +324,13 @@ Slice 2 référence AC-11 et AC-13 à AC-28 ; leurs formulations restent dans le
 | AC-27 (partiel) | Tests directs/HTTP : autre propriétaire : 403, même après annulation. Complément Console Edge : student-ui tente d'annuler la réservation active de student-http avec son propre CSRF : 403 métier de propriété ; tous les champs de toutes les réservations restent identiques. Cas déjà annulé couvert automatiquement, pas rejoué manuellement. |
 | AC-28 (partiel) | Tests directs/HTTP : historique sans fuite ; UI rend les quatre états et le poste en/hors service comme texte en DOM simulé. Edge : historique vide → une entrée À venir → une entrée Annulée, poste en service ; autres états et absence de fuite non essayés en navigateur. |
 | AC-29 (service) | `tests/test_ai_suggestion.py` : trois candidats, plafond dix, ordre/dédoublonnage, laboratoire/date, permissions et saisie ; aucun appel réel ni écran. |
-| AC-30 (partiel) | Même fichier : aucun candidat implique zéro appel et aucune mutation ; message UI non construit. |
-| AC-31 (partiel) | Même fichier : faux client reçoit seulement besoin et caractéristiques existantes ; avertissement UI, modèle/transport réels non livrés. |
-| AC-32 (partiel) | Même fichier : un seul candidat validé et relu depuis l'application, aucune réservation ; affichage non construit. |
-| AC-33 (partiel) | Même fichier : forme/type/appartenance refusés, candidat périmé et acteur relus ; explication UI non construite. |
+| AC-30 (partiel) | Service et `tests/test_ai_suggestion_api.py` : aucun candidat implique zéro appel, message JSON et aucune mutation ; UI non construite. |
+| AC-31 (partiel) | Service et `tests/test_gemini_adapter.py` : payload minimal et cible modèle fixe inspectés avec HTTP simulé ; avertissement UI et accès réel non vérifiés. |
+| AC-32 (partiel) | Service/API : un seul candidat validé et relu depuis l'application, JSON 200 sans réservation ; affichage non construit. |
+| AC-33 (partiel) | Service, transport et API : forme/type/appartenance refusés, JSON dupliqué/tronqué/bloqué et candidat périmé ; explication JSON, aucune preuve UI. |
 | AC-34 (en attente IA) | Service de création existant inchangé ; aucun test de confirmation de suggestion IA ni parcours UI à cette sous-étape. |
-| AC-35 (partiel) | Même fichier : client absent/indisponible, quota et erreur simulés, une tentative au plus, aucune mutation ; lecture de clé/adaptateur/UI absents. |
-| AC-36 (partiel) | Même fichier : échéance monotone transmise, timeout simulé et réponses tardives refusés sans retry ; aucun budget réseau/processus réellement mesuré. |
+| AC-35 (partiel) | Service/transport/API : configurations synthétiques sans clé et erreurs HTTP simulées, une tentative au plus, aucune mutation, manuelle API maintenue ; clé réelle/UI non testées. |
+| AC-36 (partiel) | Service et `tests/test_gemini_adapter.py` : deadline monotone, vrais processus locaux bornés/reapés (blocage, entrée non lue, sortie excessive, crash, nettoyage lent), API 504 simulé ; pas de preuve Google ni délai navigateur. |
 | AC-46 | `tests/test_access.py`, `tests/test_labs.py` : redirection de page et JSON 401 de l’API pour sessions absentes, invalides, expirées ou inactives. |
 | AC-47 | `tests/test_auth.py` : connexion locale HTTP, refus uniformes, CSRF et retours internes sur comptes isolés. |
 | AC-48 | `tests/test_labs.py`, `tests/test_demo_labs.py`, `tests/labs_ui.test.mjs` : lecture, retrait/restauration et liste vide isolés ; états du client avec DOM/réseau simulés. `tests/test_static_assets.py` : type MIME JavaScript du module. `tests/test_access.py` : l’URL extraite du HTML évite la revalidation 304 de l’ancienne réponse text/plain. |
@@ -329,6 +340,19 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
+
+IA sous-étape 2, 17 novembre 2026 : API protégée et adaptateur REST borné livrés,
+désactivés par défaut, sans clé réelle ni appel Google. Tests ciblés 129 réussis ;
+régression PostgreSQL 540 réussis/1 garde SQLite désélectionné et réussi à part,
+puis 9 tests TP1. Services 322/322 lignes et 108/108 branches ; global Python
+1 765/1 865 lignes (94,64 %), TP1 et intégrations inclus, périmètre inchangé.
+Processus locaux contrôlés : 13 cas terminés/reapés, dont blocage et nettoyage
+retardé, maximum observé 4,763058 s dans le relevé final (budget 5 s, tolérance
+d'assertion 350 ms non ajoutée au budget). Les contrôles Node23/MCP12/ex232
+réussissent. Aucun rendu IA, réseau Google, statut du compte fournisseur ou
+conformité de mise à disposition EEE n'est déduit de ces preuves. Détails :
+`docs/AI_TRANSPORT_2.md`. AC-34 et les parties UI restent à construire/vérifier ;
+note personnelle et 380 pixels restent reportés. Aucun push pour ce jalon.
 
 IA sous-étape 1, 17 novembre 2026 : 51 tests directs avec faux client réussis ;
 régression PostgreSQL 462 réussis/1 garde SQLite désélectionné puis réussi

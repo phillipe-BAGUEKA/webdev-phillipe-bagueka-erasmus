@@ -1278,3 +1278,75 @@ approved the whole feature diff. User must supply their own assessment.
   check clean. Existing SQLite SHA256 remains identical to the pre-task value;
   .venv/.local/demo.sqlite3/Gemini.env remain ignored and untracked. No demo write,
   5432 operation, applied migration, CI change, key read or provider call.
+
+## 2026-11-17 · AI substep 2 — bounded provider adapter and protected API
+
+- User authorized only REST adapter, bounded execution, protected API, offline
+  tests/docs and a local commit; no push/UI/install/migration/provider call,
+  real key/billing/Google OIDC/MCP change/deployment. Initial HEAD3fa6ecb and clean
+  worktree. No prior changes to preserve beyond that commit.
+- Codex reread instructions, SPEC/actual AC29–36 and AI guides. Official Google
+  model/REST/schema/errors/terms reread. Model unchanged. AI_TRANSPORT_2 cites
+  the EEA Paid Services restriction verbatim and separates interpretation for
+  a university website from account access, which remains untested. No billing
+  or real provider authorization inferred from a free tariff.
+- Tests first: initial REST test failed with missing src.integrations. Added
+  stdlib-only REST module, isolated worker, supervising adapter and thin session/
+  CSRF route. Factory defaults off and reads no key until explicit enablement;
+  test configurations are supplied synthetic mappings, never CLI dotenv data.
+- Private stdin packet (key never argv/env/log), minimal child environment,
+  16KiB request/64KiB response bounds, fixed endpoint/model/schema, one attempt,
+  no redirect/auth/proxy/retry handlers. JSON duplicates, blocked, truncated,
+  empty, unknown or invalid outputs refused. ClientInvalidOutput maps to an
+  explicit service result, with direct-test coverage added.
+- First target run found excessive child stdout still waiting for natural exit;
+  moved size refusal before process.wait. Fixed the anonymous API test setup
+  by obtaining a fresh CSRF token after logout (not changing authentication).
+  A temporary Mock environment in a test broke pytest's terminal code; replaced
+  it with explicit mapping injection. No real environment key read in this fix.
+- Dedicated oversized-request regression failed with Django RequestDataTooBig
+  instead of our input refusal; added Content-Length check before request.body,
+  then test passed. Changed only optional bounded parsing, not other routes'
+  existing body limits. Malformed/nested JSON is safely refused.
+- Targeted service/adapter/API tests passed126; additional oversized-body test
+  passed1. JUnit timing .local/ai-transport-2.xml ignored. Controlled process
+  measurements (seconds): normal0.180582, blocked4.518268, unread-stdin4.517513,
+  excessive0.151316, crash0.239979, closed-stdout/slow-exit4.505264,
+  delayed-cleanup250ms4.758038. All children reaped/pipes closed. Tolerance350ms
+  is for scheduling/instrumentation, not an extension of the five-second budget.
+  No browser latency, Google access or universal real-time OS guarantee claimed.
+- API uses real sessions/CSRF/services and PostgreSQL test rows; no owner supplied
+  by client, no business mutation, no transaction during wait (even with request
+  atomicity enabled in a test). Safe typed failures keep manual availability API
+  working. Test suite forces ambient AI off; API forbids real adapter calls,
+  HTTP tests block sockets and simulate responses, child tests use local fixtures.
+- Required read-only reviewer launched once after implementation/targeted tests.
+  Its HTTPError point was clarified: current HTTPSHandler-only opener has no
+  HTTPErrorProcessor, so non200 responses normally retain response.status.
+  Nevertheless retained the robustness improvement for injected/evolved openers:
+  HTTPError429 classified as quota and error bodies closed unread; tests red2
+  then green2, no retry or sensitive message exposed.
+- Preliminary full run537PGpass1deselected+9TP1 passed before final parser/HTTPError
+  changes; not used as the final coverage claim. A fresh full measurement is
+  required on the frozen source. Node regressions23, MCP checker12/12, isolated
+  SQLite guard1 and Django check passed. No CI/remote success inferred locally.
+- Frozen final version:129targeted passed, then540PGpassed1deselected and9TP1
+  passed via unchanged coverage launcher. Only the historical SQLite guard
+  deselected on PostgreSQL; separately passed1 under tests.settings_sqlite_legacy.
+  Services322/322lines+108/108branches100%; global1765/1865lines94.64%,
+  445/488branches91.19%, TP1 included. All new production files inventoried,
+  no threshold/exclusion change. Actual local report:
+  .local/coverage/6b37ecda75914bd59dc49b85ec9da0cb/coverage.json.
+- Final timing JUnit refreshed: normal0.262753s, blocked4.512714, unread-stdin
+  4.517720, excessive0.187992, crash0.192865, slow-exit4.510447,
+  delayed-cleanup4.763058. Remaining six error IPC cases0.150987–0.235163s.
+  All13 child scenarios reaped/closed. Local Windows only; no Google or Linux
+  execution inferred. Parent unittest no-data-collected warning is expected;
+  TP1 server subprocess lines are present in the measured combined report.
+- Reviewer final: no blocking/important finding, retained HTTPError robustness
+  improvement already fixed and tested; no finding rejected. Final tests ran
+  after production fixes. Only documentary evidence updated afterwards.
+  Node23/MCP12/ex232/SQLiteguard1/Django checks pass; final diff clean.
+  SQLite demo hash unchanged; secrets/profiles/.venv/bases/timing/coverage remain
+  ignored/untracked. Existing demo/5432/MCP/migrations preserved. No new
+  functional/visual proof for UI, AC34 or the personal architecture note.

@@ -2,15 +2,16 @@
 
 This repository contains Exercise 1 in `mcp-server/` and Lab booking in the rest of it. The first slice was developed locally on Windows with Python 3.13, Django 5.2 LTS, SQLite and plain JavaScript. The course Codespaces template remains available; its Python 3.12 environment has not been validated in this work.
 
-The final target in [SPEC.md](SPEC.md) includes workstation reservations, staff management, Google sign-in, a model suggestion and project MCP tools. Slice 1 provides local sign-in/sign-out and a protected database-backed laboratory list. TP3 now provides PostgreSQL booking services, protected HTTP APIs and the student journey on /labs. See [student checkpoint 4](docs/STUDENT_UI_4.md) and [Slice 2 finalization](docs/SLICE2_FINALIZATION.md) for commands, automated evidence and the Edge creation/history/cancellation, keyboard, network retry and palette checks on 2026-11-12. Full accessibility and width checks remain incomplete; 380 pixels is deferred. Staff management, Google and full AI integration (provider adapter, API, UI and real calls) remain future work; the injectable AI service and the four project MCP tools are implemented, with final MCP-client validation still pending. Specification wording and code were prepared with ChatGPT/Codex assistance, recorded in AGENT_LOG.md and USAGE.md; they are not presented as wholly independent student work.
+The final target in [SPEC.md](SPEC.md) includes workstation reservations, staff management, Google sign-in, a model suggestion and project MCP tools. Slice 1 provides local sign-in/sign-out and a protected database-backed laboratory list. TP3 now provides PostgreSQL booking services, protected HTTP APIs and the student journey on /labs. See [student checkpoint 4](docs/STUDENT_UI_4.md) and [Slice 2 finalization](docs/SLICE2_FINALIZATION.md) for commands, automated evidence and the Edge creation/history/cancellation, keyboard, network retry and palette checks on 2026-11-12. Full accessibility and width checks remain incomplete; 380 pixels is deferred. Staff management, Google, the AI interface and real-provider validation remain future work; the AI service, bounded adapter, protected suggestion API and four project MCP tools are implemented, with final MCP-client validation still pending. Specification wording and code were prepared with ChatGPT/Codex assistance, recorded in AGENT_LOG.md and USAGE.md; they are not presented as wholly independent student work.
 
 ## Start
 
-AI substep 1 adds only a read-only injectable suggestion service, tested with
-fake clients on PostgreSQL. No AI endpoint, UI, provider adapter or real call is
-implemented. The five-second deadline contract is not network-timeout proof.
-See [AI service checkpoint](docs/AI_SERVICE_1.md) for contracts and partial AC
-evidence; provider conditions for EEA users remain to be clarified.
+AI substeps 1–2 provide the injectable read-only suggestion service, a bounded
+REST adapter and POST /api/labs/{id}/suggestion. The adapter defaults off; no real
+key or provider call has been used. Tests use simulated HTTP, controlled local
+processes and PostgreSQL with fake clients. No AI UI or Google access proof.
+See [AI transport checkpoint](docs/AI_TRANSPORT_2.md) for timing, API contracts
+and the documented EEA restriction requiring clarification before actual use.
 
 Project MCP substeps 1–3 add an opt-in Django/PostgreSQL bootstrap, session
 authentication and four tools: list_free_slots, my_bookings, book_slot and

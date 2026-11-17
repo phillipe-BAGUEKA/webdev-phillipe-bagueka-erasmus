@@ -2,7 +2,7 @@
 
 from django.urls import path
 
-from src.routes import auth, bookings, labs, pages
+from src.routes import ai_suggestion, auth, bookings, labs, pages
 
 urlpatterns = [
     path("login", pages.login_page, name="login"),
@@ -10,6 +10,8 @@ urlpatterns = [
     path("api/labs", labs.laboratories_api, name="laboratories-api"),
     path("api/labs/<int:laboratory_id>/availability", bookings.availability_api,
          name="availability-api"),
+    path("api/labs/<int:laboratory_id>/suggestion", ai_suggestion.suggestion_api,
+         name="suggestion-api"),
     path("api/bookings", bookings.bookings_api, name="bookings-api"),
     path("api/bookings/<int:booking_id>/cancel", bookings.cancel_api,
          name="cancel-booking-api"),

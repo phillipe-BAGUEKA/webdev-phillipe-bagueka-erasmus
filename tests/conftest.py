@@ -6,6 +6,12 @@ from django.test import Client
 from src.data.models import User
 
 
+@pytest.fixture(autouse=True)
+def disable_real_ai(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Never enable a real AI client from a developer's ambient configuration."""
+    monkeypatch.setenv("LAB_BOOKING_AI_ENABLED", "0")
+
+
 @pytest.fixture
 def generated_password() -> str:
     """An ephemeral test credential, unrelated to local demonstration accounts."""

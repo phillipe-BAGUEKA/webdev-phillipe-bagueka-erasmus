@@ -247,7 +247,8 @@ def test_recheck_actor(world: tuple[Any, ...], case: str) -> None:
     ("ClientUnavailable", "not_configured"), ("ClientQuotaExceeded", "quota"),
     ("ClientError", "provider_error"), ("TimeoutError", "timeout"),
     ("RuntimeError", "provider_error"),
-], ids=[f"AC-35-AC-36-error-{n}" for n in range(5)])
+    ("ClientInvalidOutput", "invalid_output"),
+], ids=[f"AC-35-AC-36-error-{n}" for n in range(6)])
 def test_errors_are_safe_and_never_retried(
     world: tuple[Any, ...], kind: str, reason: str, caplog: Any,
 ) -> None:
