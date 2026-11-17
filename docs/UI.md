@@ -85,3 +85,12 @@ SLICE2_FINALIZATION.md. Les anciennes limites du jalon 4 sont historiques.
 
 <!-- Screenshots of at least the four states of one screen, and of the model feature
      thinking and failing. A link to them is enough; they do not have to be in the repo. -->
+
+IA sous-étape 3, 17 novembre 2026 : Codex a observé dans Edge l'avertissement,
+le chargement et le repli de l'adaptateur désactivé sur le serveur normal, puis
+le choix manuel jusqu'au panneau de confirmation sans création. Sur le seul
+serveur isolé avec faux client : suggestion identifiée, historique vide avant
+confirmation, réservation après clic, délai/quota/sortie invalide simulés,
+aucun candidat et session révoquée. Aucun accès Google ni largeur précise
+validés ; 380 pixels reste reporté. Aucun nouvel audit clavier/contraste global
+ni capture archivée. Méthode, tests DOM distincts et limites : `AI_UI_3.md`.

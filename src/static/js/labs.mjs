@@ -1,6 +1,6 @@
 "use strict";
 
-import { createBookingJourney } from "./booking.mjs?v=1";
+import { createBookingJourney } from "./booking.mjs?v=2";
 
 export function createCatalogue(document, fetcher, onSelect = null) {
   const section = document.querySelector("#laboratory-catalogue");

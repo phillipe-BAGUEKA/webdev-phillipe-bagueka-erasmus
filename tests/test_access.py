@@ -40,7 +40,7 @@ def test_AC_46_authenticated_page_has_fetch_container_without_embedded_catalogue
     assert "Se déconnecter" in html and 'method="post"' in html
     assert lab.name not in html
     assert 'id="labs-list"' in html
-    assert '<script src="/static/js/labs.mjs?v=2" type="module"></script>' in html
+    assert '<script src="/static/js/labs.mjs?v=3" type="module"></script>' in html
     assert response.headers["X-Frame-Options"] == "DENY"
     assert "no-store" in response.headers["Cache-Control"]
     assert Laboratory.objects.get(pk=lab.pk).name == lab.name

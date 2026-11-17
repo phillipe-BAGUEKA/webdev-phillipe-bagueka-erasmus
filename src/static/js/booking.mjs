@@ -29,8 +29,15 @@ export function createBookingJourney(document, fetcher) {
   const selection = node("booking-selection");
   const refresh = node("history-refresh");
   const loadButton = node("availability-load");
+  const aiForm = node("ai-form");
+  const aiNeed = node("ai-need");
+  const aiButton = node("ai-request");
+  const aiStatus = node("ai-status");
   let laboratory = null;
   let selected = null;
+  let selectedSource = null;
+  let aiPending = false;
+  let aiRevision = 0;
   let busy = false;
   let uncertain = false;
   let sessionLost = false;
@@ -44,6 +51,8 @@ export function createBookingJourney(document, fetcher) {
     loadButton.disabled = busy || sessionLost;
     day.disabled = busy || sessionLost;
     refresh.disabled = busy || historyLoading || sessionLost;
+    aiButton.disabled = aiPending || busy || historyLoading || uncertain || sessionLost || !laboratory;
+    aiNeed.disabled = busy || sessionLost;
     for (const button of [...slotButtons, ...cancelButtons]) {
       button.disabled = busy || historyLoading || uncertain || sessionLost;
     }
@@ -73,6 +82,7 @@ export function createBookingJourney(document, fetcher) {
     if (response.status === 401) {
       sessionLost = true;
       login.hidden = false;
+      invalidateAi("Ta session a expiré. Reconnecte-toi avec le lien proposé.", true);
       controls();
       throw new Error("Ta session a expiré. Reconnecte-toi avec le lien proposé.");
     }
@@ -84,13 +94,100 @@ export function createBookingJourney(document, fetcher) {
 
   function clearSelection() {
     selected = null;
+    selectedSource = null;
     selection.hidden = true;
+    node("booking-summary").textContent = "";
     controls();
+  }
+
+  function invalidateAi(text = "", error = false) {
+    ++aiRevision;
+    aiStatus.textContent = text || (aiPending ? "La réponse précédente sera ignorée. Le choix manuel reste disponible." : "");
+    aiStatus.className = error ? "error message" : "message";
+    if (selectedSource === "ai") clearSelection();
+  }
+
+  function selectSlot(slot, source) {
+    selected = slot;
+    selectedSource = source;
+    selection.hidden = false;
+    node("booking-summary").textContent = `${source === "ai" ? "Suggestion IA — " : ""}${slot.workstation_name} — ${slotLabel(slot)} (Europe/Sofia)`;
+    controls();
+    confirm.focus();
+  }
+
+  async function suggest() {
+    if (aiPending || busy || historyLoading || uncertain || sessionLost || !laboratory) return;
+    invalidateAi();
+    const need = aiNeed.value.trim();
+    if (!need || need.length > 1000) {
+      aiStatus.textContent = "Décris ton besoin en 1 à 1 000 caractères.";
+      aiStatus.className = "error message";
+      aiNeed.focus();
+      return;
+    }
+    if (!day.value) {
+      aiStatus.textContent = "Choisis une date avant de demander une suggestion.";
+      day.focus();
+      return;
+    }
+    const revision = aiRevision;
+    aiPending = true;
+    controls();
+    aiForm.setAttribute("aria-busy", "true");
+    aiStatus.textContent = "Demande de suggestion IA en cours… Le choix manuel reste disponible.";
+    try {
+      const { response, payload } = await request(`/api/labs/${laboratory.id}/suggestion`, "POST", {
+        date: day.value, need,
+      });
+      if (revision !== aiRevision) return;
+      if (!response.ok) {
+        const messages = {
+          not_configured: "La suggestion IA est désactivée ou non configurée. Choisis manuellement.",
+          quota: "Le quota de suggestion IA est atteint. Choisis manuellement.",
+          provider_error: "La suggestion IA est indisponible. Choisis manuellement.",
+          timeout: "La suggestion IA a dépassé le délai. Choisis manuellement.",
+          invalid_output: "La réponse de suggestion IA est invalide. Choisis manuellement.",
+          candidate_unavailable: "Ce créneau n'est plus disponible. Consulte les choix manuels.",
+        };
+        const fallback = response.status === 403
+          ? "Vérification de sécurité ou autorisation refusée. Recharge la page."
+          : response.status === 422 ? "Vérifie ton besoin et la date, ou choisis manuellement."
+            : response.status === 504 ? messages.timeout : messages.provider_error;
+        throw new Error(typeof payload?.code === "string" && Object.hasOwn(messages, payload.code)
+          ? messages[payload.code] : fallback);
+      }
+      if (response.status === 200 && payload?.status === "no_candidates" && payload.candidate === null) {
+        aiStatus.textContent = "Aucun créneau réservable pour cette recherche. Consulte les disponibilités manuelles ou change de date.";
+        return;
+      }
+      const slot = payload?.candidate;
+      if (response.status !== 200 || payload?.status !== "suggested" || !slot
+          || !Number.isSafeInteger(slot.workstation_id) || slot.workstation_id <= 0
+          || typeof slot.workstation_name !== "string" || !slot.workstation_name.trim()
+          || typeof slot.starts_at !== "string" || !Number.isFinite(Date.parse(slot.starts_at))
+          || typeof slot.ends_at !== "string" || !Number.isFinite(Date.parse(slot.ends_at))) {
+        throw new Error("Réponse de suggestion IA invalide. Choisis manuellement.");
+      }
+      aiStatus.textContent = `Suggestion IA : ${slot.workstation_name} — ${slotLabel(slot)}. Rien n'est réservé : vérifie le poste et le créneau avant de confirmer.`;
+      aiStatus.className = "success message";
+      selectSlot(slot, "ai");
+    } catch (error) {
+      if (revision === aiRevision) {
+        aiStatus.textContent = error.message;
+        aiStatus.className = "error message";
+      }
+    } finally {
+      aiPending = false;
+      aiForm.removeAttribute("aria-busy");
+      controls();
+    }
   }
 
   async function loadSlots() {
     if (!laboratory || busy || sessionLost) return;
     const current = ++generation;
+    invalidateAi();
     clearSelection();
     slotButtons = [];
     slots.replaceChildren();
@@ -110,11 +207,8 @@ export function createBookingJourney(document, fetcher) {
         button.textContent = `${slot.workstation_name} — ${slotLabel(slot)}`;
         button.addEventListener("click", () => {
           if (busy || uncertain || sessionLost) return;
-          selected = slot;
-          selection.hidden = false;
-          node("booking-summary").textContent = `${slot.workstation_name} — ${slotLabel(slot)} (Europe/Sofia)`;
-          controls();
-          confirm.focus();
+          invalidateAi();
+          selectSlot(slot, "manual");
         });
         slotButtons.push(button);
         item.append(button);
@@ -175,6 +269,7 @@ export function createBookingJourney(document, fetcher) {
   async function mutate(kind, row) {
     if (busy || historyLoading || uncertain || sessionLost) return;
     busy = true;
+    invalidateAi();
     ++generation;
     availability.removeAttribute("aria-busy");
     if (laboratory) status.textContent = "Disponibilités à actualiser après cette demande.";
@@ -221,15 +316,27 @@ export function createBookingJourney(document, fetcher) {
   }
 
   dateForm.addEventListener("submit", (event) => { event.preventDefault(); return loadSlots(); });
-  day.addEventListener("change", () => { ++generation; availability.removeAttribute("aria-busy"); clearSelection(); slots.replaceChildren(); status.textContent = "Affiche les créneaux pour la nouvelle date."; });
+  function changeDate() {
+    ++generation;
+    invalidateAi();
+    availability.removeAttribute("aria-busy");
+    clearSelection();
+    slots.replaceChildren();
+    status.textContent = "Affiche les créneaux pour la nouvelle date.";
+  }
+  day.addEventListener("input", changeDate);
+  day.addEventListener("change", changeDate);
+  aiForm.addEventListener("submit", (event) => { event.preventDefault(); return suggest(); });
+  aiNeed.addEventListener("input", () => invalidateAi());
   confirm.addEventListener("click", () => selected ? mutate("create", selected) : undefined);
-  node("booking-dismiss").addEventListener("click", clearSelection);
+  node("booking-dismiss").addEventListener("click", () => { invalidateAi(); clearSelection(); });
   refresh.addEventListener("click", loadHistory);
   return {
     loadHistory, loadSlots, mutate,
     selectLaboratory(lab) {
       if (busy) return;
       laboratory = lab;
+      invalidateAi();
       ++generation;
       availability.removeAttribute("aria-busy");
       availability.hidden = false;

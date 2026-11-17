@@ -33,6 +33,21 @@
       </form>
       <p id="availability-status" class="message" role="status" aria-live="polite"></p>
       <ul id="slots-list" class="booking-list"></ul>
+      <section class="confirmation" aria-labelledby="ai-title">
+        <h3 id="ai-title">Suggestion IA facultative</h3>
+        <form id="ai-form">
+          <label for="ai-need">Décris ton besoin (1 000 caractères maximum)</label>
+          <p id="ai-privacy">Ne saisis pas de données personnelles ou confidentielles.
+            Si le fournisseur est activé, ton besoin et les caractéristiques utiles
+            de dix candidats au maximum sont transmis à Google. Le texte libre peut
+            contenir des informations personnelles malgré cet avertissement.</p>
+          <textarea id="ai-need" name="need" maxlength="1000" required rows="3"
+                    aria-describedby="ai-privacy"></textarea>
+          <button id="ai-request" type="submit">Demander une suggestion IA</button>
+        </form>
+        <p id="ai-status" class="message" role="status" aria-live="polite" aria-atomic="true"></p>
+        <p>Une suggestion ne réserve rien. Tu peux toujours choisir un créneau dans la liste manuelle.</p>
+      </section>
       <div id="booking-selection" class="confirmation" hidden>
         <h3>Confirmer cette réservation</h3>
         <p id="booking-summary"></p>
@@ -58,5 +73,5 @@
 {% block scripts %}
   <script src="{% static 'js/logout.js' %}" defer></script>
   {# Fetch fresh MIME metadata instead of revalidating the old text/plain URL. #}
-  <script src="{% static 'js/labs.mjs' %}?v=2" type="module"></script>
+  <script src="{% static 'js/labs.mjs' %}?v=3" type="module"></script>
 {% endblock %}

@@ -1350,3 +1350,57 @@ approved the whole feature diff. User must supply their own assessment.
   SQLite demo hash unchanged; secrets/profiles/.venv/bases/timing/coverage remain
   ignored/untracked. Existing demo/5432/MCP/migrations preserved. No new
   functional/visual proof for UI, AC34 or the personal architecture note.
+
+## IA sous-étape 3 — interface hors fournisseur, 17 novembre 2026
+
+- Départ aeba6daa3e375412767b9904224d13128b5287a1, main propre. Périmètre
+  utilisateur : UI seulement, tests et simulation isolée, commit local sans push.
+  Choix de l'utilisateur ; formulation, code et tests préparés par Codex.
+- Lecture AGENTS/SPEC/plan/guide transport/UI. AGENTS actualisé pour cette
+  autorisation limitée ; aucun secret lu, fournisseur activé, changement CI,
+  dépendance, migration, règle métier ou serveur MCP modifié.
+- 19 tests DOM ajoutés et observés rouges avant code (handlers absents), puis
+  verts. Trim 1–1 000, demande volontaire, double clic bloqué, CSRF/session,
+  statuts, erreurs fixes, texte sûr, réponse obsolète et invalidation du besoin,
+  date/labo ; confirmation existante, zéro retry. Helper DOM partagé sans
+  retrait d'assertion historique. Cache modules labs v3/booking v2.
+- 5 tests HTTP PostgreSQL avec faux client : suggestion sans mutation, puis
+  confirmation valide ou refus poste occupé/hors service/quota/conflit personnel.
+  Ciblage confirmation/page/accès : 16 réussis ; Node complet : 42 réussis.
+- Couverture existante PostgreSQL : 545 réussis, 1 garde SQLite désélectionné,
+  puis 9 TP1. Services 322/322 lignes + 108/108 branches, global 1765/1865 lignes
+  (94,64 %), branches 445/488 ; aucun seuil, inventaire ou exclusion modifié.
+  JS 41 tests et 97,71 % lignes / 95,59 % branches des modules chargés seulement.
+- L'utilisateur a confirmé serveur lancé et session Edge prête. Avec le skill
+  computer-use, Codex a observé le repli désactivé sur 8000, 20 créneaux manuels
+  le 18 novembre puis la confirmation sélectionnée sans cliquer pour créer.
+  Les deux anciennes entrées annulées sont restées visibles ; aucune mutation
+  de réservation de démonstration effectuée pendant cette étape.
+- Serveur de simulation explicite sur 8011 : identité vérifiée test_lab_booking_1a,
+  rôle test, port 5433 ; cookies distincts, compte isolé inutilisable par mot de
+  passe, faux client uniquement. Edge : succès identifié, vide avant clic puis
+  une réservation À venir après confirmation ; délai, sortie invalide, quota
+  simulés ; samedi sans candidat et session test révoquée. Le mode change via
+  fichier non sensible ignoré ; bannière au chargement. Pas de capture archivée.
+  Serveur arrêté par fichier dédié : nettoyage de ses seules lignes confirmé.
+- Outils navigateur directs indisponibles ; fenêtre native Edge accessible.
+  Les saisies de date par API d'accessibilité n'ont pas abouti ; sélection au
+  calendrier observée ensuite. Aucun échec de produit déduit de cette limite.
+- SQLite SHA256 inchangé. Instance 5432 et données conservées préservées.
+  Google réel/conditions d'usage, note personnelle, client Gemini complet et
+  contrôles UI reportés dont 380 pixels restent ouverts. Lab03 non clos.
+  Guide détaillé : docs/AI_UI_3.md. Contrôles finaux et revue consignés ci-dessous.
+- Contrôles complémentaires : garde SQLite historique
+  test_guard_refuses_unmarked_or_wrong_database exécutée à part et réussie1,
+  Django check sans problème, MCP12/12 et ex2 32/32. Aucun autre test pertinent
+  ignoré. git diff --check a d'abord signalé une ligne vide finale du journal,
+  corrigée ; ses avertissements LF/CRLF ne sont pas des erreurs de contenu.
+- Reviewer personnalisé déclenché une fois, lecture seule : aucun défaut
+  fonctionnel bloquant ; corruption d'accents dans deux ajouts documentaires
+  et ligne vide EOF retenues puis corrigées. Recherche des séquences corrompues
+  et diff --check relancés, sans erreur. Aucun constat écarté. Tests déjà
+  exécutés sur le même code de production ; aucune CI distante déduite.
+- Après revue : 42 Node et 16 tests PostgreSQL ciblés relancés, tous réussis.
+  Présentation PEP8 des nouveaux tests finalisée ; lecture UTF-8/BOM du fichier
+  de scénario vérifiée sans base ni réseau. .local, .venv et data/demo.sqlite3
+  confirmés ignorés, aucun profil/base suivi. Aucun push.

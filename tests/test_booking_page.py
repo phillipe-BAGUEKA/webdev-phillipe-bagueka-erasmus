@@ -25,7 +25,11 @@ def test_student_journey_template_keeps_session_csrf_and_navigation(db: None, cr
     assert "Europe/Sofia" in html
     assert 'aria-live="polite"' in html
     assert 'id="booking-confirm" type="button" disabled' in html
-    assert 'src="/static/js/labs.mjs?v=2" type="module"' in html
+    assert 'src="/static/js/labs.mjs?v=3" type="module"' in html
+    assert 'for="ai-need"' in html
+    assert 'maxlength="1000" required' in html
+    assert 'aria-describedby="ai-privacy"' in html
+    assert html.index('id="ai-privacy"') < html.index('id="ai-request"')
 
 
 @pytest.mark.parametrize("asset", ["labs.mjs", "booking.mjs"], ids=["AC-48-root", "AC-40-import"])

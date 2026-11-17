@@ -1,32 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 // Match the browser's versioned import so Node measures one module instance.
-import { createBookingJourney, slotLabel } from "../src/static/js/booking.mjs?v=1";
+import { slotLabel } from "../src/static/js/booking.mjs?v=2";
 import { createCatalogue } from "../src/static/js/labs.mjs";
-
-function setup(fetcher) {
-  const make = () => ({
-    textContent: "", hidden: false, disabled: false, children: [], attributes: {},
-    value: "2030-01-07", focused: false,
-    set innerHTML(value) { throw new Error("HTML insertion forbidden"); },
-    setAttribute(name, value) { this.attributes[name] = value; },
-    removeAttribute(name) { delete this.attributes[name]; },
-    replaceChildren() { this.children = []; },
-    append(item) { this.children.push(item); },
-    addEventListener(name, handler) { this[name] = handler; },
-    focus() { this.focused = true; },
-  });
-  const ids = ["booking-journey", "availability", "availability-title", "booking-date",
-    "availability-form", "slots-list", "availability-status", "history-status", "bookings-list",
-    "booking-feedback", "booking-login", "booking-confirm", "booking-selection", "history-refresh",
-    "availability-load", "personal-bookings", "booking-summary", "booking-dismiss", "booking-csrf",
-    "availability-nav", "laboratory-catalogue", "labs-status", "labs-error", "labs-list", "labs-retry", "labs-login"];
-  const nodes = Object.fromEntries(ids.map((id) => [id, make()]));
-  nodes["booking-csrf"].value = "isolated-test-csrf";
-  const document = { querySelector: (selector) => nodes[selector.slice(1)], createElement: make };
-  const journey = createBookingJourney(document, fetcher);
-  return { nodes, journey, document };
-}
+import { setupJourney as setup } from "./booking_ui_helpers.mjs";
 const slot = { workstation_id: 2, workstation_name: "<img src=x onerror=boom>",
   starts_at: "2030-01-07T07:00:00Z", ends_at: "2030-01-07T08:00:00Z" };
 const booking = { ...slot, id: 4, laboratory_name: "<script>lab</script>",

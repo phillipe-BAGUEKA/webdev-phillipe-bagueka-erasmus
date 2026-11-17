@@ -27,10 +27,10 @@ repeat it. See docs/MCP_FINALIZATION.md. Gemini CLI 0.65.0 MCP-only connection
 was observed with a synthetic token and isolated home; its actual tool calls
 and real-token handoff remain unverified because no provider call is authorized.
 Use synthetic test sessions only at this checkpoint.
-Current AI authorization covers substep 2 only: bounded REST adapter, protected
-suggestion API, offline tests and docs; local commit allowed, no push. No AI UI,
-real provider call, real key access, installation or migration. The provider is
-disabled by default; do not enable it during this task. See docs/AI_TRANSPORT_2.md.
+Current AI authorization covers substep 3 only: suggestion UI, offline tests,
+isolated fake-client browser fixture and documentation; local commit, no push.
+No real provider call, key access, installation, migration or CI change. The
+provider stays disabled by default. See docs/AI_UI_3.md and AI_TRANSPORT_2.md.
 Local controlled-process timing is not Google access or browser latency proof.
 Local checkpoint commit authorized. The user also authorized PostgreSQL CI
 alignment and normal pushes for TP3 finalization after its checks; do not publish
@@ -53,8 +53,8 @@ Restart it manually after Windows reboot; no service was registered. Existing
 - TP1 only: `python -m unittest discover -s mcp-server -p "test_*.py" -v`
 - Current coverage (PostgreSQL and TP1 subprocesses): `.\.venv\Scripts\python.exe tools/check_coverage.py --postgresql`
 - Catalogue UI logic (simulated DOM/network): `node --test tests/labs_ui.test.mjs`
-- Current student UI and catalogue tests: `node --test tests/labs_ui.test.mjs tests/booking_ui.test.mjs`
-- JavaScript coverage (loaded catalogue/booking modules): `node --test --experimental-test-coverage --test-coverage-include='src/**' --test-coverage-exclude='tests/**' --test-coverage-lines=80 tests/labs_ui.test.mjs tests/booking_ui.test.mjs`
+- Current student UI and catalogue tests: `node --test tests/labs_ui.test.mjs tests/booking_ui.test.mjs tests/ai_suggestion_ui.test.mjs`
+- JavaScript coverage (loaded catalogue/booking modules): `node --test --experimental-test-coverage --test-coverage-include='src/**' --test-coverage-exclude='tests/**' --test-coverage-lines=80 tests/labs_ui.test.mjs tests/booking_ui.test.mjs tests/ai_suggestion_ui.test.mjs`
 - MCP server: `python mcp-server/server.py` (from the repository root)
 - MCP check: `node mcp-server/check.mjs -- python mcp-server/server.py`
 - MCP auth/bootstrap tests: `.\.venv\Scripts\python.exe -m pytest tests/test_mcp_session_auth.py tests/test_project_mcp.py --ds=tests.settings_postgres --reuse-db --tb=short -q`

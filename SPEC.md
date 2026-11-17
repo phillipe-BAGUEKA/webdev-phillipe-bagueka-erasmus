@@ -143,6 +143,12 @@ substitué. Ce ne sont ni une preuve d'accès du compte au fournisseur, ni une
 validation du rendu UI. Conditions Google EEE, statut et limites :
 `docs/AI_TRANSPORT_2.md`. Aucun critère approuvé n'est modifié.
 
+Sous-étape IA 3 : formulaire facultatif sur /labs, avertissement, sélection
+manuelle conservée et confirmation explicite via la création existante.
+Besoin/contexte modifiés : suggestion invalidée et réponse tardive ignorée.
+Adaptateur toujours désactivé par défaut ; aucun fournisseur réel essayé.
+Preuves DOM, HTTP PostgreSQL et Edge désactivé/simulé : `docs/AI_UI_3.md`.
+
 ## Auth
 <!-- Local sign-in plus at least one provider. Say how an account signing in both ways stays one account. -->
 - Local: Email and password, using a user model defined in the first migrations and Django's password hashing and session mechanisms.
@@ -206,7 +212,8 @@ protégé avec Django. Codex a observé dans Edge le 12 novembre 2026 le parcour
 disponibilités, confirmation, historique puis annulation conservée, sur la démo
 PostgreSQL autorisée. Le parcours clavier complet et les erreurs en navigateur
 restent à vérifier ; 380 pixels reste reporté. Google, espace de compte,
-personnel et IA restent non construits ; les quatre outils MCP sont construits,
+personnel restent non construits ; UI IA construite hors fournisseur
+(docs/AI_UI_3.md) ; les quatre outils MCP sont construits,
 leur essai avec le client final reste à faire. L'absence d'écran du personnel
 n'est pas présentée comme une réalisation complète d'AC-40.
 
@@ -304,7 +311,7 @@ Slice 2 référence AC-11 et AC-13 à AC-28 ; leurs formulations restent dans le
 | AC-38 (automatisé stdio) | `tests/test_mcp_reads.py` et `tests/test_mcp_mutations.py` : chacun des quatre outils refuse les sessions absentes/inconnues, puis révoquées entre appels au même processus, sans données ni mutation. Authentification Django détaillée dans `tests/test_mcp_session_auth.py`. Vraie session utilisateur non utilisée. |
 | AC-39 (automatisé, scénarios comparés) | `tests/test_mcp_reads.py` et `tests/test_mcp_mutations.py` : mêmes fonctions de services, comparaison HTTP/MCP des lectures et de 14 cas de création + 8 cas d'annulation depuis des états initiaux identiques (IDs générés normalisés), CSRF actif côté HTTP. Rôle, quota, horaires/futur, conflits, propriétaire, annulation tardive/hors service et répétition ; aucun changement sur refus. Ce sont des preuves de ces scénarios, pas une preuve de tout comportement possible ni de nouveaux ordonnancements concurrents MCP. Client final en attente. |
 | AC-1 |  |
-| AC-40/41/42 (partiels) | `tests/booking_ui.test.mjs` : navigation, états, confirmation, erreurs et doubles clics en DOM simulé ; `tests/test_booking_page.py` : HTML/labels/MIME. Edge : réservation/annulation et erreur réseau suivie d'un réessai 200 observées. Largeurs 380/768/1280 non validées ; 380 reporté. Écrans Google/personnel et IA non construits. |
+| AC-40/41/42 (partiels) | `tests/booking_ui.test.mjs` et `tests/ai_suggestion_ui.test.mjs` : navigation, états, confirmation, erreurs et doubles clics en DOM simulé ; `tests/test_booking_page.py` : HTML/labels/MIME. Edge : réservation/annulation et erreur réseau suivie d'un réessai 200 observées ; UI IA désactivée/simulée dans AI_UI_3.md. Largeurs 380/768/1280 non validées ; 380 reporté. Écrans Google/personnel non construits. |
 | AC-43/44/45 (partiels, pas de titre automatisé exact) | Codex dans Edge : partie réservation/annulation au clavier et focus visibles ; connexion/déconnexion clavier rapportées précédemment par l'utilisateur, pas un nouveau parcours complet unique. CSS overview + calcul WCAG : palette de texte ≥7,463:1. Jetons inspectés dans app.css ; ce n'est pas un audit de toute l'accessibilité, des cibles ou des futurs écrans. Détails et limites dans SLICE2_FINALIZATION. |
 | AC-11 (partiel, services et HTTP) | Tests directs/HTTP : poste hors service exclu, HTTP 409 sans mutation ; `tests/booking_ui.test.mjs` : refus affiché comme texte. Parcours navigateur en attente. |
 | AC-13 (partiel) | Tests directs/HTTP : créneaux canoniques issus de la base ; `tests/booking_ui.test.mjs` : date, affichage, vide et réessai en DOM simulé. Codex dans Edge le 12 novembre : 20 créneaux pour les deux postes de démonstration le 13 novembre ; coupure réseau et réessai 200 observés à la finalisation. Week-end/vide non essayés en navigateur. |
@@ -324,13 +331,13 @@ Slice 2 référence AC-11 et AC-13 à AC-28 ; leurs formulations restent dans le
 | AC-27 (partiel) | Tests directs/HTTP : autre propriétaire : 403, même après annulation. Complément Console Edge : student-ui tente d'annuler la réservation active de student-http avec son propre CSRF : 403 métier de propriété ; tous les champs de toutes les réservations restent identiques. Cas déjà annulé couvert automatiquement, pas rejoué manuellement. |
 | AC-28 (partiel) | Tests directs/HTTP : historique sans fuite ; UI rend les quatre états et le poste en/hors service comme texte en DOM simulé. Edge : historique vide → une entrée À venir → une entrée Annulée, poste en service ; autres états et absence de fuite non essayés en navigateur. |
 | AC-29 (service) | `tests/test_ai_suggestion.py` : trois candidats, plafond dix, ordre/dédoublonnage, laboratoire/date, permissions et saisie ; aucun appel réel ni écran. |
-| AC-30 (partiel) | Service et `tests/test_ai_suggestion_api.py` : aucun candidat implique zéro appel, message JSON et aucune mutation ; UI non construite. |
-| AC-31 (partiel) | Service et `tests/test_gemini_adapter.py` : payload minimal et cible modèle fixe inspectés avec HTTP simulé ; avertissement UI et accès réel non vérifiés. |
-| AC-32 (partiel) | Service/API : un seul candidat validé et relu depuis l'application, JSON 200 sans réservation ; affichage non construit. |
-| AC-33 (partiel) | Service, transport et API : forme/type/appartenance refusés, JSON dupliqué/tronqué/bloqué et candidat périmé ; explication JSON, aucune preuve UI. |
-| AC-34 (en attente IA) | Service de création existant inchangé ; aucun test de confirmation de suggestion IA ni parcours UI à cette sous-étape. |
-| AC-35 (partiel) | Service/transport/API : configurations synthétiques sans clé et erreurs HTTP simulées, une tentative au plus, aucune mutation, manuelle API maintenue ; clé réelle/UI non testées. |
-| AC-36 (partiel) | Service et `tests/test_gemini_adapter.py` : deadline monotone, vrais processus locaux bornés/reapés (blocage, entrée non lue, sortie excessive, crash, nettoyage lent), API 504 simulé ; pas de preuve Google ni délai navigateur. |
+| AC-30 (hors fournisseur) | Service/API : zéro candidat, zéro appel et aucune mutation ; DOM et Edge isolé : message sans candidat sur un samedi. |
+| AC-31 (partiel) | Payload minimal vérifié hors réseau ; avertissement avant envoi dans le HTML, observé dans Edge. Texte libre non garanti anonyme ; fournisseur réel non testé. |
+| AC-32 (hors fournisseur) | Service/API et DOM : candidat réel validé, affichage textuel sans réservation. Edge isolé : suggestion factice identifiée, historique vide avant confirmation. |
+| AC-33 (hors fournisseur) | Validation service/transport/API conservée ; DOM : erreurs et réponse obsolète ignorée. Edge isolé : réponse invalide simulée affichée comme échec. |
+| AC-34 (hors fournisseur) | `tests/test_ai_confirmation.py` : CSRF/session et vrais services PostgreSQL, succès ou refus actuel poste/conflit/quota/personnel sans mutation. DOM : confirmation existante, zéro réservation avant clic. Edge isolé : confirmation puis une entrée À venir. |
+| AC-35 (partiel) | Tests service/transport/API/DOM : erreurs, zéro retry et parcours manuel conservé. Edge développement : adaptateur désactivé puis choix manuel jusqu'à la confirmation, sans création. Edge isolé : quota simulé. Clé réelle non testée. |
+| AC-36 (partiel) | Service et `tests/test_gemini_adapter.py` : deadline monotone, vrais processus locaux bornés/reapés (blocage, entrée non lue, sortie excessive, crash, nettoyage lent), API 504 simulé ; DOM et Edge isolé affichent le délai simulé. Pas de preuve Google ni délai navigateur exact. |
 | AC-46 | `tests/test_access.py`, `tests/test_labs.py` : redirection de page et JSON 401 de l’API pour sessions absentes, invalides, expirées ou inactives. |
 | AC-47 | `tests/test_auth.py` : connexion locale HTTP, refus uniformes, CSRF et retours internes sur comptes isolés. |
 | AC-48 | `tests/test_labs.py`, `tests/test_demo_labs.py`, `tests/labs_ui.test.mjs` : lecture, retrait/restauration et liste vide isolés ; états du client avec DOM/réseau simulés. `tests/test_static_assets.py` : type MIME JavaScript du module. `tests/test_access.py` : l’URL extraite du HTML évite la revalidation 304 de l’ancienne réponse text/plain. |
@@ -340,6 +347,25 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
+
+IA sous-étape 3, 17 novembre 2026 : interface facultative sur /labs construite
+par Codex sur décisions utilisateur. Besoin trim 1–1 000, avertissement avant
+envoi, action explicite, anti-double soumission, invalidation besoin/date/labo,
+réponses obsolètes ignorées, affichage texte et confirmation existante réutilisée.
+19 nouveaux tests DOM d'abord rouges, puis 42 tests Node réussis ; 5 tests HTTP
+PostgreSQL supplémentaires vérifient la confirmation et les refus sans mutation.
+Couverture PostgreSQL : 545 réussis/1 garde SQLite désélectionné, 9 TP1 ; services
+322/322 lignes et 108/108 branches, global 1 765/1 865 lignes (94,64 %), sans
+nouvelle exclusion. Couverture des modules JS chargés : 97,71 % lignes.
+Codex a observé dans Edge le repli désactivé sur le serveur de développement,
+20 choix manuels puis le panneau de confirmation sans soumission. Sur le seul
+serveur isolé de test avec faux client : succès, historique vide avant clic,
+confirmation puis une réservation À venir, délai/quota/réponse invalide simulés,
+aucun candidat et session de test révoquée. Détails et limites : AI_UI_3.md.
+Aucune requête Google, aucun usage autorisé/compte fournisseur validé ; ni délai
+navigateur exact, ni conformité mobile/accessibilité complète déduits de ces
+preuves. Note personnelle et 380 pixels restent reportés ; Lab 03 non clos.
+Les paragraphes des étapes 1–2 ci-dessous sont des comptes rendus historiques.
 
 IA sous-étape 2, 17 novembre 2026 : API protégée et adaptateur REST borné livrés,
 désactivés par défaut, sans clé réelle ni appel Google. Tests ciblés 129 réussis ;

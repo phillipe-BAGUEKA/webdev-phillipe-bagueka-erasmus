@@ -59,3 +59,11 @@ token statistics were confirmed, so no cost is calculated and trial 1's
 numbers are not reused. Codex token counts and a comparable cost were not
 available. The student's screenshots were described but not attached to this
 repository.
+
+## AI UI substep 3 — 17 November 2026
+
+User decisions implemented by Codex, including code, tests and documentation.
+Offline fake-client/API tests and an explicitly labelled isolated Edge simulation
+were used; the normal development adapter stayed disabled. No provider request,
+real key access, token/cost measurement or billing activation. No invented model
+usage statistics. The personal architecture note remains unwritten.

@@ -1,4 +1,4 @@
-# Suggestion IA — plan proposé, aucune construction
+# Suggestion IA — plan et suivi des trois sous-étapes
 
 Date : 17 novembre 2026. Base : `19820723c5babd14d0425ee8b2d0e0abd882ddbb`,
 arbre propre au début de cette préparation. Ce document est une proposition de
@@ -7,8 +7,10 @@ approuvé uniquement la sous-étape 1, la borne 1–1 000 après trim, les filtr
 laboratoire/date, l'ordre existant et les dix candidats distincts maximum. Son
 service injectable est désormais construit ; voir `AI_SERVICE_1.md` pour les
 preuves. La sous-étape 2 est ensuite autorisée : adaptateur, processus et API
-sont construits et testés hors fournisseur (`AI_TRANSPORT_2.md`). UI toujours
-proposée/non implémentée ; conditions Google à résoudre avant usage réel.
+sont construits et testés hors fournisseur (`AI_TRANSPORT_2.md`). UI ensuite
+autorisée puis construite hors fournisseur (`AI_UI_3.md`) ; conditions Google
+à résoudre avant usage réel. Les propositions initiales ci-dessous restent le
+plan historique, les guides de chaque sous-étape précisent les preuves actuelles.
 Aucun AC n'est réécrit ou renuméroté.
 
 ## Périmètre et origine des exigences

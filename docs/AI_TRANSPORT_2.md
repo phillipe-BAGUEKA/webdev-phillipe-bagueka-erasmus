@@ -203,3 +203,8 @@ Le rapport JUnit local de chronométrage est ignoré :
 `.local/ai-transport-2.xml`. Aucun test avec clé réelle et aucune observation
 navigateur à cette sous-étape. Note personnelle, validation complète Gemini MCP,
 Google OIDC et UI reportées, dont 380 pixels, restent ouverts.
+
+## Étape suivante réalisée séparément
+
+Le bilan ci-dessus décrit la sous-étape 2. L'interface est ensuite construite
+et vérifiée hors fournisseur : voir `AI_UI_3.md`, sans appel Google ni activation.
