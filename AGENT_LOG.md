@@ -1184,3 +1184,97 @@ approved the whole feature diff. User must supply their own assessment.
   Verify CI independently on the follow-up published SHA. Client actual tool
   use/real-session handoff, personal note/review, deferred UI and remaining
   project features remain pending; no Lab03 closure or next IA plan implemented.
+
+## 2026-11-17 · AI suggestion planning only
+
+- User authorized preparation of the AI plan, superseding the previous stop
+  before AI only for this documentation task. Initial HEAD was published
+  19820723c5babd14d0425ee8b2d0e0abd882ddbb; working tree was clean.
+- Read applicable instructions, SPEC's model feature and actual AC-29–36,
+  availability/creation services, data projections, session/API helpers and
+  existing booking UI. No repeat HTTP/MCP audit, provisioning or secret rotation.
+- Codex proposed docs/AI_SUGGESTION_PLAN.md, with three review checkpoints:
+  service/fake client, provider adapter/protected API, existing-screen integration.
+  The user's established choices are distinguished from assistant recommendations
+  (1,000-character input, selected lab/date, deterministic first ten, isolated
+  REST worker, status contracts). These are not approved implementation results.
+- Web tool failed for course pages; read current Lab03 and project requirements
+  through curl after the restricted-network failure and approved read-only retry.
+  Google official model, deprecation, structured-output, REST, SDK retry/timeout,
+  pricing, quotas and terms documentation were consulted. Model is documented
+  stable with structured output and standard free-tier pricing; actual account
+  access remains untested. Terms require clarification for API clients offered
+  to EEA users: a free tariff alone is not authorization for this use. No billing
+  or provider account was accessed. No silent model replacement.
+- Plan preserves bounded candidates, no call when empty, output membership and
+  fresh availability checks, explicit confirmation through create_booking,
+  manual fallback, no retry or input/output logging. Five seconds requires an
+  end-to-end deadline and cancellation proof, not only a socket timeout. No DB
+  transaction/lock during the provider wait. No dependency/migration proposed.
+- No application code, tests, CI, settings, secrets or data changed; no model API
+  call, installation, commit or push. SPEC/AC remain unchanged. Personal note,
+  Gemini tool use and deferred UI checks remain pending. User review is required
+  before construction; this entry does not assert student understanding.
+- Documentation checks: initial ex2 run stopped with EPERM while scanning the
+  pre-existing pytest-cache-files-kzcco4xh directory under the sandbox. Retried
+  the unchanged command outside that restriction: 32/32 passed. git diff --check
+  passed. No application suite or coverage rerun: documentation only, no new
+  functional evidence or coverage result claimed.
+- Required read-only custom reviewer ran once for this architectural plan. No
+  blocker; retained its important finding that worker cleanup after the deadline
+  could extend the wait. Clarified the recommendation: reserve cleanup inside
+  the same five-second budget (proposed 500 ms), never append a blocking wait,
+  and require a wall-time test including slow cleanup before delivery. No finding
+  rejected. Feasibility and plan approval remain open, not an executed guarantee.
+
+## 2026-11-17 · AI substep 1 — injectable read-only suggestion service
+
+- User approved substep 1 only: trimmed 1–1,000-character need, selected lab/date,
+  up to ten distinct candidates in existing order, no call without candidates,
+  and no booking creation. Local commit authorized; no push, real provider,
+  transport worker, API, UI, migration, dependency, billing or key access.
+- Initial HEAD19820723; pre-existing AGENT_LOG.md edits and untracked
+  docs/AI_SUGGESTION_PLAN.md from the preceding planning turn were preserved,
+  updated rather than replaced, and belong to this AI checkpoint. No other
+  pre-existing worktree changes. AGENTS.md authorization now matches this scope.
+- Codex wrote direct refusal tests first. Initial command on dedicated
+  PostgreSQL test settings failed AC-29-access-anonymous with ModuleNotFoundError
+  for src.services.ai_suggestion. Implemented the service and account-state
+  projection in data/users.py; no ORM/SQL in the service or duplicated booking
+  rules. The first full target run exposed a test-data hour error (two future
+  slots at13UTC instead of expected three); changed the test clock to12UTC,
+  preserving the three-slot assertion and production temporal rules.
+- Targeted tests then passed51. Fake clients inspect bounded/minimal payloads,
+  shape/type/membership validation, current application values, rechecks after
+  occupation/quota/personal conflict/time/offline/account changes, explicit safe
+  failures, no retry and no creation/cancellation. A real PostgreSQL autocommit
+  test checks no transaction is held during the fake invocation.
+- Contract supplies a monotonic five-second deadline and rejects late answers;
+  it cannot interrupt a blocking function. No future network/process deadline
+  claimed proved. The adapter must reject duplicate JSON keys before decoding.
+  Free text may itself contain personal data; no identity/session/history added
+  and no need/raw response logging. Google EEA conditions remain unresolved.
+- SPEC records only partial service evidence for AC29–33/35–36; AC34 AI
+  confirmation, provider identity/credentials, UI warning and manual fallback
+  integration remain unbuilt. Existing MCP/client and personal/UI limits remain.
+- Node regressions23, MCP checker12/12 and the isolated historical SQLite
+  guard1 passed after unchanged reruns outside sandbox (initial spawn EPERM /
+  temporary-directory permission refusal). Django check reported no issues.
+- First full coverage run stopped425pass37setup errors1deselected due to
+  inaccessible pytest temp directory; no assertion failure and no measurement
+  accepted from that run. Unchanged rerun outside sandbox passed462PG tests,
+  1deselected (only test_guard_refuses_unmarked_or_wrong_database, passed1
+  separately under isolated historical SQLite settings), then9TP1 tests.
+  PostgreSQL concurrency and all project stdio/parity regressions included.
+- Final measured coverage: services319/319lines+108/108branches100%; new
+  suggestion service92/92+32/32. Global1532/1618lines94.68%,374/410branches91.22%,
+  includingTP1. Inventory/exclusions/gates unchanged. Ignored local report:
+  .local/coverage/b2c0c78297e145d59aefee34ab9ec312/coverage.json. Parent unittest
+  emitted no-data-collected warning; actual server subprocess data is included.
+- Read-only custom reviewer ran exactly once for this implementation. No
+  blocking/important finding; retained and fixed its README status ambiguity
+  (full AI integration future, injectable service delivered). No finding rejected.
+  No production changes after the successful test version. ex232/32 and diff
+  check clean. Existing SQLite SHA256 remains identical to the pre-task value;
+  .venv/.local/demo.sqlite3/Gemini.env remain ignored and untracked. No demo write,
+  5432 operation, applied migration, CI change, key read or provider call.
