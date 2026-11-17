@@ -3,6 +3,7 @@
 import json
 import math
 import sys
+from contextlib import redirect_stdout
 from pathlib import Path
 from typing import Any, NoReturn
 
@@ -214,6 +215,20 @@ def main() -> int:
     sys.stdin.reconfigure(encoding="utf-8", errors="replace")
     sys.stdout.reconfigure(encoding="utf-8")
     sys.stderr.reconfigure(encoding="utf-8")
+
+    if sys.argv[1:] not in ([], ["--project"]):
+        print("Usage: server.py [--project]", file=sys.stderr)
+        return 2
+    if sys.argv[1:] == ["--project"]:
+        try:
+            from project_runtime import initialize_project
+
+            with redirect_stdout(sys.stderr):
+                initialize_project()
+        except Exception:
+            # Configuration/database exceptions can contain connection secrets.
+            print("Project initialization failed; check local configuration.", file=sys.stderr)
+            return 1
 
     try:
         lectures = load_lectures()

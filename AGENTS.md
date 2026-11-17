@@ -18,7 +18,11 @@ The user additionally authorized one dedicated PostgreSQL development demo;
 student-ui@demo.example was created without a usable password. User sets its
 password locally and signed in. Codex observed the authorized Edge journey on
 2026-11-12: availability, explicit creation, own history and retained cancellation.
-SQLite and 5432 remain preserved. No Google, AI, MCP or deployment.
+SQLite and 5432 remain preserved. No Google, AI or deployment. Project MCP is
+approved only for substep 1: --project bootstrap, read-only Django session
+authentication, tests/docs and a local commit, no push. Four project tools and
+the real-token launcher remain future work. See docs/MCP_AUTH_1.md and
+docs/MCP_PROJECT_PLAN.md. Use synthetic test sessions only at this checkpoint.
 Local checkpoint commit authorized. The user also authorized PostgreSQL CI
 alignment and normal pushes for TP3 finalization after its checks; do not publish
 prematurely or equate green CI with complete TP3 acceptance. Keep the student's
@@ -44,6 +48,7 @@ Restart it manually after Windows reboot; no service was registered. Existing
 - JavaScript coverage (loaded catalogue/booking modules): `node --test --experimental-test-coverage --test-coverage-include='src/**' --test-coverage-exclude='tests/**' --test-coverage-lines=80 tests/labs_ui.test.mjs tests/booking_ui.test.mjs`
 - MCP server: `python mcp-server/server.py` (from the repository root)
 - MCP check: `node mcp-server/check.mjs -- python mcp-server/server.py`
+- MCP auth/bootstrap tests: `.\.venv\Scripts\python.exe -m pytest tests/test_mcp_session_auth.py tests/test_project_mcp.py --ds=tests.settings_postgres --reuse-db --tb=short -q`
 
 The existing demo accounts are configured by the student; do not rerun password preparation. Checkpoint 3 commands and the backup/withdraw/restore procedure are in `docs/CHECKPOINT3.md`. Do not execute that procedure on the demo database during automated work. On Linux use `.venv/bin/python`. Never read the local key or any Gemini secret to report status; tests load separate non-secret settings.
 
@@ -80,6 +85,11 @@ that talks to the database directly is a second, unguarded way into your data: n
 <!-- Where it lives and how it authenticates. -->
 - Lives in `mcp-server/`, grew out of Exercise 1.
 - The two existing TP1 tools read course data; they do not access the application database. Project tools are still future work.
+- `--project` now initializes Django/PostgreSQL but still exposes only those two
+  tools. `project_runtime.current_actor()` authenticates anew from
+  `LAB_BOOKING_MCP_SESSION` for future dispatch; no project tool invokes it yet.
+  It uses Django get_user with a read-only database SessionStore: no session
+  creation/renewal/flush, no cached actor, no privileged Django account.
 - Every future project tool must call a shared service function; none may touch the data layer or database directly.
 - Project tools must carry a user and enforce exactly the same authorization rules as the HTTP API.
 - Adding a tool means adding a row to the table in `SPEC.md` too.

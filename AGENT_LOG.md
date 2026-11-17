@@ -911,3 +911,91 @@ approved the whole feature diff. User must supply their own assessment.
   Retained optional readability improvement: separate routes/status codes and
   adjacent numbers in the new evidence paragraphs. No finding rejected. No
   full local test rerun for documentation alone; verify CI after normal push.
+
+## 2026-11-17 · Project MCP integration plan (not implemented)
+
+- User requested only the next MCP integration plan, superseding the previous
+  stop-before-MCP instruction for planning alone. Authentication and construction
+  remain subject to review; no implementation, installation, commit or push.
+- Initial Git state: clean main at 5d830b1c15c60775c548dae81dc89c76c9fc2fb9.
+  Read AGENTS, relevant SPEC sections, shared service contracts, TP1 dispatch,
+  HTTP serialization, Django's installed session/auth code and finalization guide.
+- Web reader failed; curl succeeded for the current TP3 and project guides.
+  Sections and source links are recorded in docs/MCP_PROJECT_PLAN.md.
+- Codex proposed ordinary session delivery through a masked local launcher and
+  inherited environment, per-call Django validation, an opt-in six-tool mode,
+  direct reuse of shared services and three testable substeps. These are assistant
+  proposals, not student-authored architecture or already approved mechanisms.
+- No existing cookie, credential or secret file read; no database query/mutation,
+  provider call, migration, dependency or CI change. No repeated HTTP evidence.
+  Personal note/review, deferred UI checks and other outstanding requirements
+  remain outstanding. AGENTS updated only to reflect the planning authorization.
+- Documentary checks: ex2 32/32 after sandbox EPERM on an existing pytest cache
+  directory and authorized rerun; git diff --check clean after spacing correction.
+  No application/DB test rerun for this planning-only change; historical ex3
+  diagnostic retained, not rerun or represented as passing.
+- One independent read-only custom reviewer examined the authentication proposal.
+  Retained finding: specify the user's manual local transfer of their own cookie
+  into the masked launcher; plan now makes that handoff and clipboard clearing
+  explicit. No finding rejected. Client-specific launcher compatibility remains
+  to verify during construction; no functional proof is claimed by this review.
+
+## 2026-11-17 · MCP substep 1 — Django session authentication and project mode
+
+- User approved the plan and authorized only bootstrap/authentication, tests,
+  documentation and one local commit. No tools, real-token handoff, new dependency,
+  provider call, CI change or push. Preserved the preexisting plan/AGENTS/log edits;
+  those relevant documents are included with the checkpoint, not discarded.
+- Initial HEAD 5d830b1c15c60775c548dae81dc89c76c9fc2fb9; initial changes limited to
+  AGENTS.md, AGENT_LOG.md and untracked docs/MCP_PROJECT_PLAN.md.
+- Tests first: after resolving a stopped dedicated cluster, the absent-session
+  test failed with ModuleNotFoundError for the missing service. Implemented
+  Django get_user with a session-only context and read-only SessionStore. Genuine
+  sessions then exposed a subclass signing-salt mismatch; preserve Django's
+  original backend salt. Targeted rerun: 28/28. No test weakened for this correction.
+- Per-call session lookup verifies Django signatures, expiry, allowed backend,
+  current user/activity and session auth hash. Reject privileged sessions and
+  flush/cycle attempts, including secret fallback rotation. No actor cache,
+  silent renewal or owner selected from tool arguments. Runtime adapter exists
+  but no project RPC dispatch/tool is delivered yet; AC-37/38 only partial.
+- Real stdio tests: --project with explicit PostgreSQL test settings, no inherited
+  session; unchanged two-tool catalogue, handshake/notification/course call.
+  Default Python -S works despite an invalid Django settings module. Invalid
+  project configuration and CLI arguments return safe diagnostics without traces.
+- Test infrastructure initially timed out; pg_ctl status reported no dedicated
+  server. Started only the existing cluster on 5433 with local_postgres.py start,
+  no init/provision operation or 5432 intervention. Runtime tests use the existing
+  test-profile loader, never a manual profile dump or a real browser cookie.
+- Incident: pytest's initial long database-failure traceback exposed the local
+  PostgreSQL test-role password. Its value is not repeated in tracked documents;
+  subsequent commands use short tracebacks. No password rotation performed or
+  falsely claimed; this separate follow-up must be considered with the user.
+- Coverage runner --postgresql: 347 passed/1 SQLite-specific deselection, 9 TP1
+  passed; services 227/227 lines and 76/76 branches, global 1282/1360 lines
+  (94.26%), 304/336 branches (90.48%). New production modules/TP1 included,
+  inventory and exclusions/thresholds unchanged. The -S autonomy subprocess
+  emits a coverage no-data warning by design; other TP1 processes are measured.
+- Other checks: 23 Node tests, MCP 12/12, ex2 32/32, Django check clean. Node
+  sandbox spawn EPERM resolved by authorized rerun. No new CI/deployment proof.
+  Personal note/review, deferred UI checks, four MCP tools and client handoff
+  remain open; no student understanding or completed TP3 claimed.
+- The one PostgreSQL deselection is still asserted separately with
+  tests.settings_sqlite_legacy: 1 passed (after a sandbox temp-directory refusal
+  and authorized rerun). Demo SQLite SHA256 unchanged between the recorded
+  pre-final checks and final check. Ignore checks confirm local profiles,
+  .venv, Gemini env and demo database remain ignored; no values printed.
+- One read-only custom reviewer retained two findings: convert raw DB errors
+  at the MCP authentication boundary to a dedicated safe technical exception
+  (without displayed chaining), and clarify that settings override is for test
+  processes. Both addressed; no finding rejected. Added a regression checking
+  that an injected synthetic driver detail cannot appear in rendered exception
+  output. Final targeted tests and coverage rerun after this correction.
+- Final post-review PostgreSQL coverage: 348 passed/1 SQLite-specific deselection,
+  9 TP1 passed; services remain 227/227 lines and 76/76 branches. Global Python
+  1287/1365 lines (94.29%), branches 304/336 (90.48%), all production included.
+  Report .local/coverage/7be6fdc11fd446d3991a98ccd735bd84/coverage.json.
+  No repeated reviewer or CI change; ex2 32/32 and diff whitespace check clean.
+- Final targeted run after review: 29 passed. Staged exactly the 13 related
+  files, including the preserved approved plan and earlier planning log entry;
+  no unrelated change or ignored local profile/database added. Local commit
+  only, no remote publication authorized for this substep.

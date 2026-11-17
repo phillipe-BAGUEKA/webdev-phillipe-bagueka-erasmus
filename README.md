@@ -6,6 +6,11 @@ The final target in [SPEC.md](SPEC.md) includes workstation reservations, staff 
 
 ## Start
 
+Project MCP substep 1 adds an opt-in Django/PostgreSQL bootstrap and a read-only
+session authenticator, tested only with synthetic sessions. No project tools
+are exposed yet; the default TP1 command stays independent of Django/PostgreSQL.
+See [MCP authentication checkpoint](docs/MCP_AUTH_1.md) for commands and limits.
+
 Historical slice 1 progress: **checkpoints 1–3** are implemented. The student reported
 the [foundation checks](docs/CHECKPOINT1.md) and the session/keyboard observations
 for [checkpoint 2](docs/CHECKPOINT2.md). Codex has now observed all three laboratories

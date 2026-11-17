@@ -142,6 +142,13 @@ Ces règles sont des décisions à implémenter. Source technique consultée le 
 
 Ces quatre outils sont prévus en complément de `find_lecture` et `search_lectures` du TP 1. Ils ne sont pas encore implémentés. Chaque outil devra utiliser une session ordinaire et appeler le même service métier que sa route HTTP, avec les mêmes permissions ; aucun accès administrateur implicite ni accès direct aux données depuis un outil.
 
+Sous-étape MCP 1 : le démarrage optionnel `--project` et l'adaptateur de session
+Django sont construits ; seuls des tests sur sessions synthétiques PostgreSQL
+ont été effectués. Le catalogue contient toujours les deux outils TP1 : aucun
+appel métier MCP ni parcours client final n'est encore livré. La remise manuelle
+d'une vraie clé n'a pas été effectuée et n'est ni OAuth ni une connexion
+automatique. Détails, résultats et limites : `docs/MCP_AUTH_1.md`.
+
 ## UI
 <!-- Stack, and the three or more screens. The graded checklist lives in docs/UI.md. -->
 
@@ -249,6 +256,7 @@ Slice 2 référence AC-11 et AC-13 à AC-28 ; leurs formulations restent dans le
 <!-- Filled in from Exercise 3 onward: each AC id, and the test that names it. -->
 | Criterion | Test |
 | --- | --- |
+| AC-37/38 (socle partiel seulement) | `tests/test_project_mcp.py` et `tests/test_mcp_session_auth.py` : démarrage stdio réel, catalogue TP1 inchangé et validation de sessions Django isolées. Les quatre outils sont absents : ni AC-37 complet ni refus via chacun des quatre outils AC-38 ne sont déclarés validés. AC-39 reste futur. |
 | AC-1 |  |
 | AC-40/41/42 (partiels) | `tests/booking_ui.test.mjs` : navigation, états, confirmation, erreurs et doubles clics en DOM simulé ; `tests/test_booking_page.py` : HTML/labels/MIME. Edge : réservation/annulation et erreur réseau suivie d'un réessai 200 observées. Largeurs 380/768/1280 non validées ; 380 reporté. Écrans Google/personnel et IA non construits. |
 | AC-43/44/45 (partiels, pas de titre automatisé exact) | Codex dans Edge : partie réservation/annulation au clavier et focus visibles ; connexion/déconnexion clavier rapportées précédemment par l'utilisateur, pas un nouveau parcours complet unique. CSS overview + calcul WCAG : palette de texte ≥7,463:1. Jetons inspectés dans app.css ; ce n'est pas un audit de toute l'accessibilité, des cibles ou des futurs écrans. Détails et limites dans SLICE2_FINALIZATION. |
