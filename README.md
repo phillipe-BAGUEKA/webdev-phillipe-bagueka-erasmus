@@ -6,6 +6,10 @@ The final target in [SPEC.md](SPEC.md) includes workstation reservations, staff 
 
 ## Start
 
+AI delivery status, current Lab 03 checker failures and remaining requirements:
+[AI finalization](docs/AI_FINALIZATION.md). Publication of this slice does not
+mean Lab 03 acceptance; personal work and real-provider/client proofs remain open.
+
 AI substeps 1–3 provide the injectable read-only suggestion service, a bounded
 REST adapter and POST /api/labs/{id}/suggestion. The adapter defaults off; no real
 key or provider call has been used. Tests use simulated HTTP, controlled local

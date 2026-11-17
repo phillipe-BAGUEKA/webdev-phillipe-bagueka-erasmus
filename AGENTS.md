@@ -27,10 +27,10 @@ repeat it. See docs/MCP_FINALIZATION.md. Gemini CLI 0.65.0 MCP-only connection
 was observed with a synthetic token and isolated home; its actual tool calls
 and real-token handoff remain unverified because no provider call is authorized.
 Use synthetic test sessions only at this checkpoint.
-Current AI authorization covers substep 3 only: suggestion UI, offline tests,
-isolated fake-client browser fixture and documentation; local commit, no push.
-No real provider call, key access, installation, migration or CI change. The
-provider stays disabled by default. See docs/AI_UI_3.md and AI_TRANSPORT_2.md.
+Current AI authorization covers finalization and normal publication of the three
+completed substeps, including necessary CI corrections and independent review.
+No new feature, real provider call, key access, installation, billing or Lab 04.
+The provider stays disabled by default. See docs/AI_FINALIZATION.md and AI_UI_3.md.
 Local controlled-process timing is not Google access or browser latency proof.
 Local checkpoint commit authorized. The user also authorized PostgreSQL CI
 alignment and normal pushes for TP3 finalization after its checks; do not publish
@@ -89,7 +89,8 @@ that talks to the database directly is a second, unguarded way into your data: n
 ## The model feature
 <!-- Provider, env var, and the call site. -->
 - The injectable read-only suggestion service, bounded REST adapter and protected
-  POST /api/labs/{id}/suggestion are implemented through AI substep 2, without UI.
+  POST /api/labs/{id}/suggestion and optional /labs UI are implemented through
+  AI substep 3. Real provider use remains untested and disabled by default.
   `src/services/ai_suggestion.py` reuses availability, validates the candidate and
   rechecks account/availability. src/integrations/gemini_http.py is the sole REST
   call site; gemini.py supervises a stdlib-only worker without Django/database.

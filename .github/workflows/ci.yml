@@ -89,7 +89,7 @@ jobs:
         run: |
           node --test --experimental-test-coverage \
             --test-coverage-include='src/**' --test-coverage-exclude='tests/**' \
-            --test-coverage-lines=80 tests/labs_ui.test.mjs tests/booking_ui.test.mjs
+            --test-coverage-lines=80 tests/labs_ui.test.mjs tests/booking_ui.test.mjs tests/ai_suggestion_ui.test.mjs
 
       - name: Set up Python
         uses: actions/setup-python@v5

@@ -348,6 +348,15 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
 
+Finalisation IA, 17 novembre 2026 : trois commits de sous-étapes conservés ;
+couverture CI JavaScript étendue au fichier de tests IA existant, sans changement
+de seuil, exclusion ou fonctionnalité. ex3 inchangé : 15/18 (sortie 1), défaut
+npm Windows, traçabilité des critères futurs/UI et note personnelle manquante.
+Bilan courant : `docs/AI_FINALIZATION.md`, qui distingue faux fournisseur,
+adaptateur désactivé observé dans Edge, Google réel non essayé, client MCP final
+et remise réelle non validés, note/revue personnelles et UI reportées.
+La publication de la tranche ne constitue pas une clôture du Lab 03.
+
 IA sous-étape 3, 17 novembre 2026 : interface facultative sur /labs construite
 par Codex sur décisions utilisateur. Besoin trim 1–1 000, avertissement avant
 envoi, action explicite, anti-double soumission, invalidation besoin/date/labo,

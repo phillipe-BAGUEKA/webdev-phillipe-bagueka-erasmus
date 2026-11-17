@@ -1404,3 +1404,38 @@ approved the whole feature diff. User must supply their own assessment.
   Présentation PEP8 des nouveaux tests finalisée ; lecture UTF-8/BOM du fichier
   de scénario vérifiée sans base ni réseau. .local, .venv et data/demo.sqlite3
   confirmés ignorés, aucun profil/base suivi. Aucun push.
+
+## Finalisation et publication IA — 17 novembre 2026
+
+- État initial propre, main devant origin/main de trois commits : 3fa6ecb,
+  aeba6da et e1474e1. Fetch origin/main effectué : zéro commit distant à intégrer,
+  trois commits locaux conservés. Aucun rebase, reset ou force push.
+- Autorisation utilisateur : finalisation, ajustements CI nécessaires, revue,
+  commits et push normal ; aucun Lab04, fournisseur, clé réelle, installation
+  locale, facturation ou déploiement. Pas de nouvel essai Edge ou mutation démo.
+- Lecture AGENTS, guides IA, MCP et Slice2 ; AGENTS actualisé sans élargir les
+  autorisations fonctionnelles. Un seul changement CI : ajout des tests IA
+  existants à la commande de couverture JS. Les suites automatisées test_*.py
+  et *.test.mjs sont découvertes par les lanceurs existants ; fixtures/dispositifs
+  manuels ne sont pas collectés. Aucun seuil/exclusion modifié.
+- ex3 actuel exécuté sans changement : 15/18, sortie1. Échecs : npm ENOENT
+  Windows (shell:false/npm.cmd), traçabilité de dix AC futurs/UI, note personnelle
+  absente. Collecte réelle : 546 tests Python ; aucun AC1–10, tous AC29–36 présents.
+  Les sous-chaînes du vérificateur ne prouvent pas les critères Google.
+  Catégories et exigences ouvertes : docs/AI_FINALIZATION.md. Aucun test factice
+  ni note personnelle écrite pour rendre ex3 vert.
+- npm test direct : 545 PostgreSQL réussis/1 garde SQLite désélectionné, garde
+  séparé réussi1, TP1 réussi9, Node réussi42. Durée PG observée206,01s.
+  Commande couverture JS CI réussie41 : lignes97,71%, branches95,59%.
+  Python production/tests inchangés : mesure locale récente1765/1865lignes,
+  services322/322+108/108 conservée avec sa provenance ; CI doit mesurer Linux.
+- ex2 32/32 et diff --check réussis ; .local/.venv/data ignorés, aucun fichier
+  suivi sensible/base. SQLite SHA256 initial préservé. Ni secrets ni profils lus.
+- Documentation préparée par Codex sur décisions utilisateur. Faux fournisseur,
+  désactivé réel Edge, Google absent, client MCP final non validé, note/revue
+  personnelles et UI reportées distingués explicitement ; Lab03 reste ouvert.
+- Revue indépendante unique, lecture seule : constat de traçabilité retenu.
+  Remplacement de « tous les tests Python » par les suites test_*.py collectées ;
+  browser_ai_demo.py nommé dispositif manuel non collecté, non compilé/exécuté
+  en CI et hors couverture, avec preuve locale distincte. Aucun défaut
+  fonctionnel détecté, aucun constat écarté, aucun code/tests modifié après revue.

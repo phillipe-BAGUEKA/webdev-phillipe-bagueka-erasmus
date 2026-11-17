@@ -1,5 +1,10 @@
 # Slice 2 — finalisation de la tranche réservation
 
+Suivi au 17 novembre 2026 : les relevés ci-dessous sont historiques. IA et outils
+MCP sont depuis construits ; ex3 courant : 15/18, toujours rouge. Bilan des preuves
+et exigences restantes : [AI_FINALIZATION.md](AI_FINALIZATION.md). Les observations
+réelles et limites anciennes restent conservées, sans être rejouées.
+
 Date de vérification : 12 novembre 2026. Point de départ propre :
 64bc12a1f0c0ee8b6a5af44111fceaa6afe74e07, huit commits locaux depuis origin/main.
 Cette livraison ne constitue pas une déclaration de clôture du TP3.
