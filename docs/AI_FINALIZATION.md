@@ -107,3 +107,30 @@ Les preuves HTTP manuelles 201/409/401/403 antérieures sont conservées, non
 rejouées. SQLite, données conservées, profils et instance 5432 sont préservés.
 Commandes et résultats de finalisation, revue et publication : journal et bilan
 de livraison. Aucun résultat distant n'est déduit de la seule mesure locale.
+
+## Publication et preuves distantes observées
+
+Push normal effectué au SHA `da875b9fa25f56880bbc5e144285455dd60d6219`, incluant
+les trois commits IA et la finalisation. Local et origin/main identiques, arbre
+propre à cette vérification. Aucun force push, installation locale ni fournisseur.
+
+[CI de ce SHA](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/44138036352) :
+
+| Job | Résultat réellement lu dans les logs |
+| --- | --- |
+| [test](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/44138036352/job/134232857200) | Réussi : 545 PostgreSQL, 1 garde SQLite désélectionné puis rejoué séparément (1 réussi), 9 TP1 et 42 Node. Titres AC-29 à AC-36 et concurrence AC-22/23/24 effectivement présents. |
+| [coverage](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/44138036352/job/134232857566) | Réussi : Python global 1 766/1 865 lignes (94,69 %), 446/488 branches (91,39 %) ; services 322/322 lignes et 108/108 branches (100 %). JS chargé : 41 tests, 97,71 % lignes / 95,59 % branches. |
+| [mcp](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/44138036352/job/134232857715) | Réussi : TP1 autonome 12/12. Le mode projet est testé dans les suites PostgreSQL des jobs test/coverage. |
+| [spec](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/44138036352/job/134232857919) | Réussi : ex2 32/32. Ce job ne signifie ni ex3 vert ni acceptation du professeur. |
+
+Test/coverage montrent zéro table publique avant migrations, puis application de
+0001/0002/0003 en PostgreSQL éphémère avec rôle restreint. Aucun job ignoré ; seule
+l'étape « Docker image builds » est ignorée par la condition préexistante, sans
+Dockerfile. Aucun correctif fonctionnel nécessaire à cette publication.
+Le léger écart de couverture Linux/Windows est conservé, pas masqué.
+
+Revue indépendante unique : correction documentaire retenue sur le dispositif
+navigateur manuel non collecté/non exécuté en CI ; aucun constat écarté ni
+défaut fonctionnel trouvé. Cette revue ne remplace pas la revue personnelle.
+Le commit documentaire qui enregistre ces preuves doit recevoir sa propre
+vérification CI sur son SHA ; la réussite ci-dessus concerne uniquement da875b9.

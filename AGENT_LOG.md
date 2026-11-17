@@ -1439,3 +1439,12 @@ approved the whole feature diff. User must supply their own assessment.
   browser_ai_demo.py nommé dispositif manuel non collecté, non compilé/exécuté
   en CI et hors couverture, avec preuve locale distincte. Aucun défaut
   fonctionnel détecté, aucun constat écarté, aucun code/tests modifié après revue.
+- Publication normale réalisée : da875b9fa25f56880bbc5e144285455dd60d6219,
+  SHA local et origin/main comparés identiques, arbre propre. GitHub Actions
+  44138036352 : quatre jobs success, aucune correction requise. test545PG+
+  gardeSQLite1+TP1 9+Node42 ; MCP12/ex232. coverage Linux1766/1865lignes94,69%,
+  branches446/48891,39%, services322/322+108/108100%, JS97,71%/95,59%.
+  Zéro table publique avant migrations, 0001/0002/0003 appliquées. Seule étape
+  Docker skipped par condition initiale, aucun job skipped. Preuves/liens dans
+  AI_FINALIZATION.md. Ce complément documentaire sera publié puis sa propre CI
+  vérifiée séparément ; aucune réussite présumée pour son futur SHA. Lab03 ouvert.
