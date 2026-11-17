@@ -123,6 +123,27 @@ constat retenu ou écarté, aucune correction demandée. Guard SQLite séparé :
 **1 réussi** ; contrôle Django sans problème, diff propre. La revue ne remplace
 ni la note/revue personnelles reportées, ni les essais du client final.
 
+## Publication réellement vérifiée
+
+Les trois commits MCP et la finalisation ont été publiés normalement, sans
+force-push, au SHA `365b52b4ff12aad7a725e84b025ae763707a3d57`.
+[Exécution CI de ce SHA](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/44080856587) :
+
+| Job | Résultat observé |
+| --- | --- |
+| [test](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/44080856587/job/134030755944) | Réussi : 411 tests PG, 1 désélection SQLite rejouée séparément (1 réussi), 9 TP1 et 23 Node. Titres AC-37, quota AC-20/39, propriétaire AC-27/39 et révocation AC-38 présents dans les logs des tests stdio réels. |
+| [coverage](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/44080856587/job/134030755170) | Réussi : services 227/227 lignes, 76/76 branches ; global Python 1439/1524 lignes (94,42 %), 343/378 branches (90,74 %), TP1 et inventaire inclus. JS chargé par les tests : 98,18 % lignes, 90,91 % branches, pas une couverture visuelle complète. |
+| [mcp](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/44080856587/job/134030758257) | Réussi : contrôle TP1 autonome 12/12. Le mode projet est testé dans test/coverage, pas dans ce job autonome. |
+| [spec](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/44080856587/job/134030755621) | Réussi : ex2 32/32, pas une acceptation professorale ni un ex3 vert. |
+
+Les jobs test/coverage montrent zéro table publique avant les migrations,
+application de 0001/0002/0003, base/rôle dédiés sur 5433 et flags superuser,
+createdb, createrole faux. Aucun job ignoré ; seule l'étape Docker est ignorée
+par sa condition existante (pas de Dockerfile). Aucun correctif de CI nécessaire.
+Ces preuves concernent **ce SHA précis**. Le commit documentaire qui consigne
+ce tableau doit aussi recevoir une vérification CI indépendante ; son résultat
+n'est pas présumé à partir de celui-ci.
+
 ## Points ouverts après publication
 
 Validation client des outils et remise masquée réelle ; note/revue personnelles

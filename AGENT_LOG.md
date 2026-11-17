@@ -1170,3 +1170,17 @@ approved the whole feature diff. User must supply their own assessment.
 - Separate historical SQLite guard passed1 and Django check reported no issues.
   Final local ex2 32/32 and diff check clean. Only configuration/reporting/docs
   in the finalization commit; the three existing MCP commits remain intact.
+- Normal push published 365b52b4ff12aad7a725e84b025ae763707a3d57. Local/remote
+  refs equal, clean worktree. Verified Actions run44080856587 for that exact SHA:
+  test134030755944, coverage134030755170, mcp134030758257, spec134030755621 all
+  success. Test logs show real six-tool catalogue/quota/owner/revocation test
+  titles,411PGpassed1deselected+1isolatedSQLite+9TP1+23Node. Both PG jobs start
+  with zero public tables and apply all three migrations as restricted test role.
+- CI coverage actual: services227/227 lines+76/76branches100%, global1439/1524
+  lines94.42% and343/378branches90.74%, TP1 included; loaded JS modules98.18%
+  lines90.91%branches. MCP12/12 andspec32/32. No job skipped; Docker step alone
+  skipped by existing no-Dockerfile condition. No CI fix/gate weakening needed.
+- Recording these remote facts is documentation-only; no full local rerun needed.
+  Verify CI independently on the follow-up published SHA. Client actual tool
+  use/real-session handoff, personal note/review, deferred UI and remaining
+  project features remain pending; no Lab03 closure or next IA plan implemented.
