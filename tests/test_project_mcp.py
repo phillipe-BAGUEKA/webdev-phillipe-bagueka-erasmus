@@ -59,28 +59,37 @@ def exchange(
     )
 
 
-def assert_tp1_only(result: subprocess.CompletedProcess) -> None:
+def assert_catalog(
+    result: subprocess.CompletedProcess, project: bool = False,
+) -> None:
     assert result.returncode == 0
     assert result.stderr == ""
     replies = [json.loads(line) for line in result.stdout.splitlines()]
     assert [row["id"] for row in replies] == [1, 2, 3, 4]
     assert replies[0]["result"]["protocolVersion"] == "2025-11-25"
-    assert [tool["name"] for tool in replies[1]["result"]["tools"]] == [
-        "find_lecture", "search_lectures",
-    ]
+    names = ["find_lecture", "search_lectures"]
+    if project:
+        names += ["list_free_slots", "my_bookings"]
+    assert [tool["name"] for tool in replies[1]["result"]["tools"]] == names
     assert "Lecture 5:" in replies[2]["result"]["content"][0]["text"]
-    assert replies[3]["error"]["code"] == -32602
+    if project:
+        assert replies[3]["result"]["isError"] is True
+        assert replies[3]["result"]["structuredContent"]["error"]["code"] == (
+            "AuthenticationRequired"
+        )
+    else:
+        assert replies[3]["error"]["code"] == -32602
 
 
 def test_AC_37_partial_default_stdio_needs_no_django_or_database() -> None:
-    assert_tp1_only(exchange(profile="unavailable.settings", stdlib_only=True))
+    assert_catalog(exchange(profile="unavailable.settings", stdlib_only=True))
 
 
 @pytest.mark.django_db(transaction=True)
 def test_AC_37_partial_project_stdio_starts_without_a_session() -> None:
     assert connection.vendor == "postgresql"
     assert connection.settings_dict["NAME"] == "test_lab_booking_1a"
-    assert_tp1_only(exchange("--project", profile="tests.settings_postgres"))
+    assert_catalog(exchange("--project", profile="tests.settings_postgres"), project=True)
 
 
 @pytest.mark.parametrize("profile", ["tests.settings", "missing.settings"])

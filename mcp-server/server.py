@@ -5,6 +5,7 @@ import math
 import sys
 from contextlib import redirect_stdout
 from pathlib import Path
+from types import ModuleType
 from typing import Any, NoReturn
 
 
@@ -151,6 +152,7 @@ def call_tool(
 def handle_message(
     message: object,
     lectures: list[dict[str, Any]],
+    project: ModuleType | None = None,
 ) -> dict[str, Any] | None:
     """Route one parsed JSON-RPC request, leaving notifications unanswered."""
     if not isinstance(message, dict):
@@ -197,9 +199,14 @@ def handle_message(
         )
 
     if method == "tools/list":
-        return result_response(request_id, {"tools": TOOLS})
+        tools = TOOLS if project is None else TOOLS + project.TOOLS
+        return result_response(request_id, {"tools": tools})
 
     if method == "tools/call":
+        name = parameters.get("name")
+        if (project is not None and isinstance(name, str)
+                and name in project.TOOL_NAMES):
+            return result_response(request_id, project.call_tool(parameters))
         return call_tool(request_id, parameters, lectures)
 
     return error_response(request_id, -32601, f"Unknown method: {method}")
@@ -219,12 +226,14 @@ def main() -> int:
     if sys.argv[1:] not in ([], ["--project"]):
         print("Usage: server.py [--project]", file=sys.stderr)
         return 2
+    project = None
     if sys.argv[1:] == ["--project"]:
         try:
             from project_runtime import initialize_project
 
             with redirect_stdout(sys.stderr):
                 initialize_project()
+                import project_tools as project
         except Exception:
             # Configuration/database exceptions can contain connection secrets.
             print("Project initialization failed; check local configuration.", file=sys.stderr)
@@ -243,7 +252,7 @@ def main() -> int:
             except (json.JSONDecodeError, ValueError):
                 response = error_response(None, -32700, "Parse error")
             else:
-                response = handle_message(message, lectures)
+                response = handle_message(message, lectures, project)
 
             if response is not None:
                 print(json.dumps(response, ensure_ascii=False), flush=True)

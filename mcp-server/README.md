@@ -17,7 +17,16 @@ The MCP server lives in this folder. The course normally asks the student to wri
 
 ## Where this goes next
 
-Do not throw this folder away after Exercise 1. From Exercise 3 it becomes **your project's own MCP server**: the same protocol loop, with the tools rewired from `lectures.json` to your real data. Its tools call exactly the same service functions your HTTP routes call, so a tool obeys the same rules an API request does, and it carries a user (the `MCP_TOKEN` in `.env.example`) so it may do what that person may do and no more.
+Current project mode: `.\.venv\Scripts\python.exe mcp-server/server.py --project` additionally
+exposes `list_free_slots` and `my_bookings`, authenticated on every call through
+`LAB_BOOKING_MCP_SESSION`. Both call the existing HTTP services directly;
+neither calls HTTP nor queries the data layer. Project mutations are not yet
+implemented. Default mode keeps the two course tools without Django or PostgreSQL.
+See [the current MCP guide](../docs/MCP_READS_2.md) for isolated tests, error
+contracts and the unverified final-client/manual-token handoff. No real session
+is stored in `.env`; the starter `MCP_TOKEN` placeholder is not used by this mode.
+
+Do not throw this folder away after Exercise 1. From Exercise 3 it becomes **your project's own MCP server**: the same protocol loop, with the tools rewired from `lectures.json` to your real data. Its tools call exactly the same service functions your HTTP routes call, so a tool obeys the same rules an API request does, and it carries a user (the process-local `LAB_BOOKING_MCP_SESSION` in this project mode) so it may do what that person may do and no more.
 
 That is the whole design, and it is one sentence: **one set of rules, two front doors.** An MCP tool that writes its own database query is a second way into your data with none of your rules on it, and Exercise 5 is very good at finding those.
 

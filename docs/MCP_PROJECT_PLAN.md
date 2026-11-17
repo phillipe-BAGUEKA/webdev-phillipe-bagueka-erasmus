@@ -1,7 +1,9 @@
 # Plan MCP projet — proposition à examiner
 
 17 novembre 2026 · Base examinée : `5d830b1c15c60775c548dae81dc89c76c9fc2fb9`, arbre initial propre.
-Autorisation actuelle : documentation seulement. Aucun mécanisme ci-dessous n'est implémenté ou validé fonctionnellement par ce plan.
+Autorisation initiale : documentation seulement. Ce plan initial n'était pas
+une preuve d'implémentation ; les mises à jour suivantes décrivent les étapes
+autorisées puis vérifiées, sans modifier cette proposition d'origine.
 
 Mise à jour après examen utilisateur : le plan est approuvé ; seule la
 sous-étape 1 est autorisée à la construction et au commit local, sans push.
@@ -9,6 +11,11 @@ Son état et ses preuves sont dans [MCP_AUTH_1.md](MCP_AUTH_1.md).
 Les contrats à six outils et le lanceur décrits ci-dessous restent la cible
 des étapes suivantes : le mode projet de la sous-étape 1 n'expose que les deux
 outils TP1, et aucune vraie clé de session n'est remise à Codex.
+
+Mise à jour suivante : la sous-étape 2 est à présent autorisée et construite
+(voir [MCP_READS_2.md](MCP_READS_2.md)) : quatre outils au total en mode projet,
+dont les deux consultations. Le catalogue à six outils demeure une cible ;
+la sous-étape 3 des mutations n'est pas autorisée par cette livraison.
 
 ## 1. Session ordinaire Django
 

@@ -140,14 +140,19 @@ Ces règles sont des décisions à implémenter. Source technique consultée le 
 | book_slot | Réserver pour soi un poste sur un créneau proposé, après contrôle de la disponibilité, du quota et des chevauchements. | Utilisateur ordinaire authentifié autorisé à réserver, pour lui-même et sans dérogation aux règles. |
 | cancel_booking | Annuler sa propre réservation avant son début, en conservant son historique et en libérant le créneau et le quota. | Utilisateur ordinaire authentifié, propriétaire de la réservation et sous les mêmes conditions que HTTP. |
 
-Ces quatre outils sont prévus en complément de `find_lecture` et `search_lectures` du TP 1. Ils ne sont pas encore implémentés. Chaque outil devra utiliser une session ordinaire et appeler le même service métier que sa route HTTP, avec les mêmes permissions ; aucun accès administrateur implicite ni accès direct aux données depuis un outil.
+Ces quatre outils sont retenus en complément de `find_lecture` et `search_lectures`
+du TP 1. `list_free_slots` et `my_bookings` sont livrés dans le seul mode
+`--project`, avec une session ordinaire revalidée à chaque appel et les mêmes
+services de lecture que HTTP. `book_slot` et `cancel_booking` restent à construire.
+Aucun accès administrateur implicite ni accès direct aux données depuis un outil.
 
-Sous-étape MCP 1 : le démarrage optionnel `--project` et l'adaptateur de session
-Django sont construits ; seuls des tests sur sessions synthétiques PostgreSQL
-ont été effectués. Le catalogue contient toujours les deux outils TP1 : aucun
-appel métier MCP ni parcours client final n'est encore livré. La remise manuelle
+Sous-étapes MCP 1–2 : le démarrage optionnel `--project`, l'adaptateur de session
+Django et les deux consultations sont construits ; seuls des tests sur sessions
+synthétiques PostgreSQL ont été effectués. Le catalogue projet contient les deux
+outils TP1 et ces deux lectures ; le mode par défaut conserve les seuls outils TP1.
+Aucune mutation MCP ni parcours client final n'est livré. La remise manuelle
 d'une vraie clé n'a pas été effectuée et n'est ni OAuth ni une connexion
-automatique. Détails, résultats et limites : `docs/MCP_AUTH_1.md`.
+automatique. Détails, résultats et limites : `docs/MCP_READS_2.md`.
 
 ## UI
 <!-- Stack, and the three or more screens. The graded checklist lives in docs/UI.md. -->
@@ -163,7 +168,8 @@ protégé avec Django. Codex a observé dans Edge le 12 novembre 2026 le parcour
 disponibilités, confirmation, historique puis annulation conservée, sur la démo
 PostgreSQL autorisée. Le parcours clavier complet et les erreurs en navigateur
 restent à vérifier ; 380 pixels reste reporté. Google, espace de compte,
-personnel, IA et MCP projet restent non construits. L'absence d'écran du personnel
+personnel et IA restent non construits ; les consultations MCP sont livrées,
+leurs mutations restent à construire. L'absence d'écran du personnel
 n'est pas présentée comme une réalisation complète d'AC-40.
 
 Attribution des exigences UI : `docs/UI.md` contient les largeurs 380/768/1280 pixels, l’absence de défilement horizontal et de déplacements au chargement, les états d’écran, le clavier et le focus, les libellés accessibles, le contraste 4,5:1, le titre et la langue, les cibles tactiles de 44 pixels et l’identification des suggestions IA. Il cite explicitement les jetons d’espacement et de typographie ; les jetons de couleurs et de rayons d’AC-45 sont une extension de conception retenue, pas une citation de cette checklist. L’organisation des espaces d’AC-40 est propre au projet. La checklist demande les quatre états sur chaque écran, alors qu’AC-41 conserve « lorsqu’ils s’appliquent » : cette correspondance devra être explicitée pour chaque écran. Elle ajoute un indicateur de chargement vers 100 ms, un succès visible sans rechargement, des preuves visuelles et une décision sur le mode sombre, que les critères ci-dessous ne remplacent pas. Aucun élément de la checklist n’est déclaré vérifié.
@@ -256,7 +262,7 @@ Slice 2 référence AC-11 et AC-13 à AC-28 ; leurs formulations restent dans le
 <!-- Filled in from Exercise 3 onward: each AC id, and the test that names it. -->
 | Criterion | Test |
 | --- | --- |
-| AC-37/38 (socle partiel seulement) | `tests/test_project_mcp.py` et `tests/test_mcp_session_auth.py` : démarrage stdio réel, catalogue TP1 inchangé et validation de sessions Django isolées. Les quatre outils sont absents : ni AC-37 complet ni refus via chacun des quatre outils AC-38 ne sont déclarés validés. AC-39 reste futur. |
+| AC-37/38/39 (partiels, deux consultations) | `tests/test_mcp_reads.py`, `tests/test_project_mcp.py`, `tests/test_mcp_session_auth.py` : catalogue réel à quatre outils, schémas fermés, sessions synthétiques revalidées/révoquées, historique personnel, erreurs sans mutation, réponses structurées/texte cohérentes et parité des lectures avec HTTP/services. Les deux mutations MCP et le client final restent absents : aucun de ces trois AC n'est déclaré entièrement validé. |
 | AC-1 |  |
 | AC-40/41/42 (partiels) | `tests/booking_ui.test.mjs` : navigation, états, confirmation, erreurs et doubles clics en DOM simulé ; `tests/test_booking_page.py` : HTML/labels/MIME. Edge : réservation/annulation et erreur réseau suivie d'un réessai 200 observées. Largeurs 380/768/1280 non validées ; 380 reporté. Écrans Google/personnel et IA non construits. |
 | AC-43/44/45 (partiels, pas de titre automatisé exact) | Codex dans Edge : partie réservation/annulation au clavier et focus visibles ; connexion/déconnexion clavier rapportées précédemment par l'utilisateur, pas un nouveau parcours complet unique. CSS overview + calcul WCAG : palette de texte ≥7,463:1. Jetons inspectés dans app.css ; ce n'est pas un audit de toute l'accessibilité, des cibles ou des futurs écrans. Détails et limites dans SLICE2_FINALIZATION. |

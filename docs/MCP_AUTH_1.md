@@ -1,5 +1,10 @@
 # MCP — sous-étape 1 : mode projet et session
 
+État historique de la sous-étape 1. Depuis, la rotation du mot de passe du rôle
+de test a été effectuée et vérifiée, et les deux consultations ont été ajoutées
+au mode projet. État courant : [MCP_READS_2.md](MCP_READS_2.md). Les résultats et
+limites ci-dessous restent ceux de la sous-étape 1, sans réécriture des preuves.
+
 ## Périmètre réalisé
 
 Le mode par défaut `python mcp-server/server.py` reste autonome, sans import

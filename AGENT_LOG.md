@@ -999,3 +999,61 @@ approved the whole feature diff. User must supply their own assessment.
   files, including the preserved approved plan and earlier planning log entry;
   no unrelated change or ignored local profile/database added. Local commit
   only, no remote publication authorized for this substep.
+
+## 2026-11-17 · MCP substep 2 — authenticated reads and credential incident closure
+
+- Initial HEAD aa536364f779091855bfaa43cbf2d5af206467b3, clean working tree,
+  main one commit ahead of its tracking reference. User authorized rotation of
+  only the exposed local test-role password if not previously completed, then
+  two read tools, tests/docs/review/local commit. No push or mutation tools.
+- Checked existing evidence: no password rotation had been performed. Ran the
+  targeted tool once against 127.0.0.1:5433 as lab_booking_1a_test itself, no
+  bootstrap/dev credential read. Verified cluster/base/role and SQL logging
+  settings, generated a random replacement, sent a client-side SCRAM verifier
+  and updated only the protected test profile in place. New connection accepted,
+  previous password explicitly rejected; Windows SDDL unchanged before/after.
+  No password in arguments/output/logs. Ignored non-secret receipt:
+  .local/postgres-test-password-rotation.json; tool now refuses to repeat.
+- pytest.ini now defaults to short tracebacks without disabling a test/check.
+  Synthetic failing-connection subprocess confirms no credential argument in
+  default output; fake driver errors are not printed by the rotation CLI or
+  MCP boundary. Four incident-safety tests passed without another real rotation.
+- Tests first: real stdio catalogue expected four tools and failed on the two
+  absent reads. Added project_tools.py, dispatched only in --project. Each call
+  uses current_actor then exactly booking_reads.list_available_slots or
+  list_personal_bookings. No ORM/data-layer/HTTP imports in the tools, no actor
+  from user/owner arguments, no project create/cancel tool.
+- Real subprocess tests use committed isolated PostgreSQL fixtures and Django
+  sessions, fixed January 2030 clocks, bounded reply queues and guaranteed child
+  cleanup. Cover catalogue/schemas, owner-only history, auth absence/invalidity,
+  revocation within one process, invalid inputs, missing lab, empty results,
+  retained cancelled/offline state, coherent text/structured output, parity
+  against HTTP/direct services and no Booking/Session mutation (digest snapshots).
+  Initial targeted run 46 passed, then added direct-service and error cases.
+- Full PostgreSQL coverage: 368 passed/1 historical SQLite deselection, 9 TP1
+  passed. Services 227/227 lines + 76/76 branches, global 1403/1489 lines (94.22%)
+  + 324/360 branches (90.00%). project_tools.py 55/55 lines,12/12 branches.
+  All production including TP1 and the rotation tool remains inventoried;
+  exclusions/thresholds unchanged. Report 9bd86211b24e45888159b852f05f30d6.
+- Other checks: historical SQLite guard 1 passed on its isolated test settings;
+  23 Node tests, MCP12/12, ex2 32/32, Django check and whitespace diff clean.
+  No CI changes or new remote results. No demo data/SQLite migration, 5432 access,
+  dependency, provider call or real user session. No user architecture note
+  written, deferred UI checks not upgraded. AC-37/38/39 remain partial reads;
+  final-client handoff and both mutating project tools remain future work.
+- Required independent read-only custom reviewer ran once. Retained important
+  finding: generic RuntimeError was insufficient to reproduce the original
+  psycopg traceback leak. Replaced it with actual psycopg.connect to a reserved
+  non-listening loopback port and synthetic credentials. Default pytest output
+  hides the fake value; forcing --tb=long reproduces it in captured memory only.
+  No active database or real secret used. Retained improvement: reject an unknown
+  adapter name explicitly, with a test proving no read service is called.
+  No finding rejected. Post-review targeted suite: 50 passed; full PostgreSQL
+  coverage rerun. Rotation was not repeated, remaining client/UI limits unchanged.
+- Post-review final coverage: 369 PostgreSQL tests passed, 1 historical SQLite
+  guard deselected, 9 TP1 passed; services 227/227 lines and 76/76 branches (100%).
+  Global 1405/1491 lines (94.23%), 326/362 branches (90.06%); new read adapter
+  57/57 lines and 14/14 branches. All production and existing exclusions kept.
+  Report .local/coverage/f33f2ba1e98247a7af487d4abe214cac/coverage.json.
+  Demo SQLite SHA256 unchanged from task start; local profiles, receipt, .venv
+  and Gemini env remain ignored and untracked. No real session/client validated.
