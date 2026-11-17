@@ -1,4 +1,4 @@
-"""Opt-in stdio bootstrap and session adapter; project tools remain absent."""
+"""Opt-in stdio bootstrap and session adapter, preserving the default TP1 mode."""
 
 import importlib.util
 import json
@@ -69,7 +69,7 @@ def assert_catalog(
     assert replies[0]["result"]["protocolVersion"] == "2025-11-25"
     names = ["find_lecture", "search_lectures"]
     if project:
-        names += ["list_free_slots", "my_bookings"]
+        names += ["list_free_slots", "my_bookings", "book_slot", "cancel_booking"]
     assert [tool["name"] for tool in replies[1]["result"]["tools"]] == names
     assert "Lecture 5:" in replies[2]["result"]["content"][0]["text"]
     if project:

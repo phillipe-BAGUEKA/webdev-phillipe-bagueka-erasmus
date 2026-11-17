@@ -18,11 +18,15 @@ The MCP server lives in this folder. The course normally asks the student to wri
 ## Where this goes next
 
 Current project mode: `.\.venv\Scripts\python.exe mcp-server/server.py --project` additionally
-exposes `list_free_slots` and `my_bookings`, authenticated on every call through
-`LAB_BOOKING_MCP_SESSION`. Both call the existing HTTP services directly;
-neither calls HTTP nor queries the data layer. Project mutations are not yet
-implemented. Default mode keeps the two course tools without Django or PostgreSQL.
-See [the current MCP guide](../docs/MCP_READS_2.md) for isolated tests, error
+exposes `list_free_slots`, `my_bookings`, `book_slot` and `cancel_booking`,
+authenticated on every call through
+`LAB_BOOKING_MCP_SESSION`. All four call the existing services directly;
+none calls HTTP or queries the data layer. Creation is not idempotent; cancellation
+is owner-only and retains the row. Confirm each mutation and never automatically
+retry after a lost response; consult my_bookings before a new decision.
+Descriptions/annotations cannot attest human consent in an arbitrary client.
+Default mode keeps the two course tools without Django or PostgreSQL.
+See [the current MCP guide](../docs/MCP_MUTATIONS_3.md) for isolated tests, error
 contracts and the unverified final-client/manual-token handoff. No real session
 is stored in `.env`; the starter `MCP_TOKEN` placeholder is not used by this mode.
 

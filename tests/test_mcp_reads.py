@@ -52,7 +52,7 @@ def world() -> World:
 
 
 @contextmanager
-def server(token: str | None) -> Iterator[Request]:
+def server(token: str | None, *, now: datetime = NOW) -> Iterator[Request]:
     """Bound every reply; terminate and reap the child even after a failed test."""
     environment = os.environ.copy()
     environment.pop("LAB_BOOKING_MCP_SESSION", None)
@@ -65,7 +65,7 @@ def server(token: str | None) -> Iterator[Request]:
         "sys.path.insert(0,'mcp-server')\n"
         "sys.argv=['mcp-server/server.py','--project']\n"
         "with patch('django.utils.timezone.now',return_value="
-        "datetime(2030,1,7,5,tzinfo=timezone.utc)):\n"
+        f"datetime.fromisoformat({now.isoformat()!r})):\n"
         "    runpy.run_path('mcp-server/server.py',run_name='__main__')\n"
     )
     process = subprocess.Popen(
@@ -139,13 +139,17 @@ def snapshot() -> str:
     return hashlib.sha256(json.dumps(rows, default=str).encode()).hexdigest()
 
 
-def test_AC_37_AC_39_read_catalog_and_personal_history(world: World) -> None:
+@pytest.mark.parametrize("_criterion", ["AC-37-AC-39"], ids=str)
+def test_AC_37_AC_39_read_catalog_and_personal_history(
+    world: World, _criterion: str,
+) -> None:
     owner, _, lab, station, client, token = world
     before = snapshot()
     with server(token) as request:
         tools = request("tools/list", {})["result"]["tools"]
         assert [tool["name"] for tool in tools] == [
             "find_lecture", "search_lectures", "list_free_slots", "my_bookings",
+            "book_slot", "cancel_booking",
         ]
         for tool in tools[2:]:
             assert len(tool["description"]) >= 20
@@ -182,7 +186,7 @@ def test_AC_37_AC_39_read_catalog_and_personal_history(world: World) -> None:
     assert snapshot() == before
 
 
-@pytest.mark.parametrize("token", [None, "z" * 32], ids=["absent", "invalid"])
+@pytest.mark.parametrize("token", [None, "z" * 32], ids=["AC-38-absent", "AC-38-invalid"])
 def test_AC_38_both_read_tools_refuse_without_session(
     world: World, token: str | None,
 ) -> None:
@@ -197,7 +201,10 @@ def test_AC_38_both_read_tools_refuse_without_session(
     assert snapshot() == before
 
 
-def test_AC_38_session_revoked_between_calls_in_same_process(world: World) -> None:
+@pytest.mark.parametrize("_criterion", ["AC-38"], ids=str)
+def test_AC_38_session_revoked_between_calls_in_same_process(
+    world: World, _criterion: str,
+) -> None:
     *_, client, token = world
     with server(token) as request:
         payload(request("tools/call", {"name": "my_bookings"}))

@@ -17,6 +17,12 @@ Mise à jour suivante : la sous-étape 2 est à présent autorisée et construit
 dont les deux consultations. Le catalogue à six outils demeure une cible ;
 la sous-étape 3 des mutations n'est pas autorisée par cette livraison.
 
+Mise à jour sous-étape 3 : l'utilisateur a ensuite autorisé uniquement les deux
+mutations, leurs tests/documents/revue et un commit local sans push. Les six
+outils sont maintenant construits ; voir [MCP_MUTATIONS_3.md](MCP_MUTATIONS_3.md).
+Le client final et la remise réelle du jeton restent à essayer, sans lancement
+de fournisseur pendant cette étape. La rotation déjà traitée n'est pas répétée.
+
 ## 1. Session ordinaire Django
 
 Recommandation : transmettre **la clé d'une session Django ordinaire**, dans

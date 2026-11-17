@@ -19,11 +19,12 @@ student-ui@demo.example was created without a usable password. User sets its
 password locally and signed in. Codex observed the authorized Edge journey on
 2026-11-12: availability, explicit creation, own history and retained cancellation.
 SQLite and 5432 remain preserved. No Google, AI or deployment. Project MCP is
-approved through substep 2 only: session bootstrap plus list_free_slots and
-my_bookings, tests/docs and local commit, no push. One-time rotation of the
+approved through substep 3 only: the four shared-service project tools,
+tests/docs and local commit, no push. One-time rotation of the
 exposed local PostgreSQL test-role password was authorized and verified; do not
-repeat it. See docs/MCP_READS_2.md. Mutating tools and the real-token launcher
-remain future work. Use synthetic test sessions only at this checkpoint.
+repeat it. See docs/MCP_MUTATIONS_3.md. Final-client execution and real-token
+handoff remain unverified; prepare their procedure only, no provider call.
+Use synthetic test sessions only at this checkpoint.
 Local checkpoint commit authorized. The user also authorized PostgreSQL CI
 alignment and normal pushes for TP3 finalization after its checks; do not publish
 prematurely or equate green CI with complete TP3 acceptance. Keep the student's
@@ -51,6 +52,7 @@ Restart it manually after Windows reboot; no service was registered. Existing
 - MCP check: `node mcp-server/check.mjs -- python mcp-server/server.py`
 - MCP auth/bootstrap tests: `.\.venv\Scripts\python.exe -m pytest tests/test_mcp_session_auth.py tests/test_project_mcp.py --ds=tests.settings_postgres --reuse-db --tb=short -q`
 - MCP reads/security tests: `.\.venv\Scripts\python.exe -m pytest tests/test_mcp_reads.py tests/test_secret_error_safety.py --ds=tests.settings_postgres --reuse-db -q`
+- MCP mutation tests: `.\.venv\Scripts\python.exe -m pytest tests/test_mcp_mutations.py --ds=tests.settings_postgres --reuse-db -q`
 
 The existing demo accounts are configured by the student; do not rerun password preparation. Checkpoint 3 commands and the backup/withdraw/restore procedure are in `docs/CHECKPOINT3.md`. Do not execute that procedure on the demo database during automated work. On Linux use `.venv/bin/python`. Never read the local key or any Gemini secret to report status; tests load separate non-secret settings.
 
@@ -87,8 +89,10 @@ that talks to the database directly is a second, unguarded way into your data: n
 <!-- Where it lives and how it authenticates. -->
 - Lives in `mcp-server/`, grew out of Exercise 1.
 - Default mode exposes the two TP1 course tools without Django or PostgreSQL.
-- `--project` additionally exposes list_free_slots and my_bookings, calling the
-  same read services as HTTP. No project mutation tool is implemented yet.
+- `--project` additionally exposes list_free_slots, my_bookings, book_slot and
+  cancel_booking, calling the same services as HTTP. Do not retry a mutation
+  automatically after transport uncertainty; inspect personal history first.
+  Annotations/descriptions guide confirmations but cannot prove human consent.
   `project_runtime.current_actor()` authenticates anew from
   `LAB_BOOKING_MCP_SESSION` on every project call.
   It uses Django get_user with a read-only database SessionStore: no session

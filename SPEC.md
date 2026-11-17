@@ -141,18 +141,23 @@ Ces règles sont des décisions à implémenter. Source technique consultée le 
 | cancel_booking | Annuler sa propre réservation avant son début, en conservant son historique et en libérant le créneau et le quota. | Utilisateur ordinaire authentifié, propriétaire de la réservation et sous les mêmes conditions que HTTP. |
 
 Ces quatre outils sont retenus en complément de `find_lecture` et `search_lectures`
-du TP 1. `list_free_slots` et `my_bookings` sont livrés dans le seul mode
-`--project`, avec une session ordinaire revalidée à chaque appel et les mêmes
-services de lecture que HTTP. `book_slot` et `cancel_booking` restent à construire.
+du TP 1. `list_free_slots`, `my_bookings`, `book_slot` et `cancel_booking` sont
+livrés dans le seul mode `--project`, avec une session ordinaire revalidée à
+chaque appel et les mêmes
+services que leurs routes HTTP. Création non idempotente ; annulation propriétaire
+idempotente après sa première transition, sans contourner les permissions.
 Aucun accès administrateur implicite ni accès direct aux données depuis un outil.
 
-Sous-étapes MCP 1–2 : le démarrage optionnel `--project`, l'adaptateur de session
-Django et les deux consultations sont construits ; seuls des tests sur sessions
+Sous-étapes MCP 1–3 : le démarrage optionnel `--project`, l'adaptateur de session
+Django et les quatre outils projet sont construits ; seuls des tests sur sessions
 synthétiques PostgreSQL ont été effectués. Le catalogue projet contient les deux
-outils TP1 et ces deux lectures ; le mode par défaut conserve les seuls outils TP1.
-Aucune mutation MCP ni parcours client final n'est livré. La remise manuelle
+outils TP1 et les quatre outils projet ; le mode par défaut conserve les seuls outils TP1.
+Aucun parcours client final n'est validé. La remise manuelle
 d'une vraie clé n'a pas été effectuée et n'est ni OAuth ni une connexion
-automatique. Détails, résultats et limites : `docs/MCP_READS_2.md`.
+automatique. Descriptions et annotations MCP sont des indications, pas une preuve
+de consentement humain. Aucune mutation n'est relancée automatiquement après un
+résultat de transport incertain : consulter l'historique avant une nouvelle
+décision. Détails, résultats et limites : `docs/MCP_MUTATIONS_3.md`.
 
 ## UI
 <!-- Stack, and the three or more screens. The graded checklist lives in docs/UI.md. -->
@@ -168,8 +173,8 @@ protégé avec Django. Codex a observé dans Edge le 12 novembre 2026 le parcour
 disponibilités, confirmation, historique puis annulation conservée, sur la démo
 PostgreSQL autorisée. Le parcours clavier complet et les erreurs en navigateur
 restent à vérifier ; 380 pixels reste reporté. Google, espace de compte,
-personnel et IA restent non construits ; les consultations MCP sont livrées,
-leurs mutations restent à construire. L'absence d'écran du personnel
+personnel et IA restent non construits ; les quatre outils MCP sont construits,
+leur essai avec le client final reste à faire. L'absence d'écran du personnel
 n'est pas présentée comme une réalisation complète d'AC-40.
 
 Attribution des exigences UI : `docs/UI.md` contient les largeurs 380/768/1280 pixels, l’absence de défilement horizontal et de déplacements au chargement, les états d’écran, le clavier et le focus, les libellés accessibles, le contraste 4,5:1, le titre et la langue, les cibles tactiles de 44 pixels et l’identification des suggestions IA. Il cite explicitement les jetons d’espacement et de typographie ; les jetons de couleurs et de rayons d’AC-45 sont une extension de conception retenue, pas une citation de cette checklist. L’organisation des espaces d’AC-40 est propre au projet. La checklist demande les quatre états sur chaque écran, alors qu’AC-41 conserve « lorsqu’ils s’appliquent » : cette correspondance devra être explicitée pour chaque écran. Elle ajoute un indicateur de chargement vers 100 ms, un succès visible sans rechargement, des preuves visuelles et une décision sur le mode sombre, que les critères ci-dessous ne remplacent pas. Aucun élément de la checklist n’est déclaré vérifié.
@@ -262,7 +267,9 @@ Slice 2 référence AC-11 et AC-13 à AC-28 ; leurs formulations restent dans le
 <!-- Filled in from Exercise 3 onward: each AC id, and the test that names it. -->
 | Criterion | Test |
 | --- | --- |
-| AC-37/38/39 (partiels, deux consultations) | `tests/test_mcp_reads.py`, `tests/test_project_mcp.py`, `tests/test_mcp_session_auth.py` : catalogue réel à quatre outils, schémas fermés, sessions synthétiques revalidées/révoquées, historique personnel, erreurs sans mutation, réponses structurées/texte cohérentes et parité des lectures avec HTTP/services. Les deux mutations MCP et le client final restent absents : aucun de ces trois AC n'est déclaré entièrement validé. |
+| AC-37 (automatisé stdio) | `tests/test_mcp_mutations.py::test_AC_37_six_tools_and_mutation_schemas` : six noms attendus, descriptions ≥20 caractères et schémas fermés. TP1 par défaut garde deux outils. Essai du client final distinct et encore en attente. |
+| AC-38 (automatisé stdio) | `tests/test_mcp_reads.py` et `tests/test_mcp_mutations.py` : chacun des quatre outils refuse les sessions absentes/inconnues, puis révoquées entre appels au même processus, sans données ni mutation. Authentification Django détaillée dans `tests/test_mcp_session_auth.py`. Vraie session utilisateur non utilisée. |
+| AC-39 (automatisé, scénarios comparés) | `tests/test_mcp_reads.py` et `tests/test_mcp_mutations.py` : mêmes fonctions de services, comparaison HTTP/MCP des lectures et de 14 cas de création + 8 cas d'annulation depuis des états initiaux identiques (IDs générés normalisés), CSRF actif côté HTTP. Rôle, quota, horaires/futur, conflits, propriétaire, annulation tardive/hors service et répétition ; aucun changement sur refus. Ce sont des preuves de ces scénarios, pas une preuve de tout comportement possible ni de nouveaux ordonnancements concurrents MCP. Client final en attente. |
 | AC-1 |  |
 | AC-40/41/42 (partiels) | `tests/booking_ui.test.mjs` : navigation, états, confirmation, erreurs et doubles clics en DOM simulé ; `tests/test_booking_page.py` : HTML/labels/MIME. Edge : réservation/annulation et erreur réseau suivie d'un réessai 200 observées. Largeurs 380/768/1280 non validées ; 380 reporté. Écrans Google/personnel et IA non construits. |
 | AC-43/44/45 (partiels, pas de titre automatisé exact) | Codex dans Edge : partie réservation/annulation au clavier et focus visibles ; connexion/déconnexion clavier rapportées précédemment par l'utilisateur, pas un nouveau parcours complet unique. CSS overview + calcul WCAG : palette de texte ≥7,463:1. Jetons inspectés dans app.css ; ce n'est pas un audit de toute l'accessibilité, des cibles ou des futurs écrans. Détails et limites dans SLICE2_FINALIZATION. |

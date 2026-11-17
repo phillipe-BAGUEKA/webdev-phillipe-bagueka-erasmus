@@ -1,5 +1,9 @@
 # MCP — sous-étape 2 : consultations authentifiées
 
+Preuves historiques de la sous-étape 2 : la sous-étape 3 ajoute ensuite les deux
+mutations et leur couverture stdio/HTTP, sans répéter la rotation. État courant :
+[MCP_MUTATIONS_3.md](MCP_MUTATIONS_3.md). Le client final reste non vérifié.
+
 ## Incident PostgreSQL : rotation réellement effectuée
 
 Les preuves de la sous-étape 1 disaient explicitement « rotation non effectuée ».

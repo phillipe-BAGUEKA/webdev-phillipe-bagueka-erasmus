@@ -1057,3 +1057,63 @@ approved the whole feature diff. User must supply their own assessment.
   Report .local/coverage/f33f2ba1e98247a7af487d4abe214cac/coverage.json.
   Demo SQLite SHA256 unchanged from task start; local profiles, receipt, .venv
   and Gemini env remain ignored and untracked. No real session/client validated.
+
+## 2026-11-17 · MCP substep 3 — booking and cancellation adapters
+
+- Initial HEAD 4bbbfd5a1ee2afe6cb642c5ca3f17cb7feb9c339, clean working tree,
+  main two commits ahead of its tracking reference. User explicitly authorized
+  adding book_slot/cancel_booking, tests/docs/review and one local commit only.
+  Existing test-password incident was already treated; no rotation repeated.
+- Read applicable AGENTS, relevant SPEC contracts/AC-37/38/39, approved plan,
+  auth/read guides and creation/cancellation services. Business services, data
+  layer, dependencies, migrations and CI remain unchanged. No real-token handoff,
+  browser cookie, provider call, deployment or demo preparation.
+- Tests first: real stdio catalogue failed with four tools instead of six.
+  Added only the project adapter's two mutations. Every call reauthenticates;
+  exact argument shapes/positive IDs/aware timestamp syntax are checked there,
+  then existing create_booking/cancel_booking functions decide and transact.
+  No application ORM/SQL/data-layer/HTTP imports in the tool handlers.
+- Results use identical structuredContent and JSON text, no owner ID in the
+  success DTO. Explicit known business errors become safe tool errors, unknown
+  failures generic InternalError. No exception text or private driver detail.
+- Descriptions request confirmation; annotations mark creation non-idempotent,
+  cancellation idempotent after first transition and destructive. These are
+  hints, not proof of human consent. No automatic transport retry implemented;
+  read personal history before any fresh decision after a lost response.
+- Targeted tests: first 61 passed, then strengthened boundary, timestamp and
+  direct write-count assertions; final targeted command 92 passed. Real stdio
+  tests cover 14 creation and 8 cancellation parity cases against HTTP with
+  actual CSRF checks and equivalent initial rows on the dedicated PG test DB.
+  Generated creation IDs normalized only for comparison; each MCP ID/owner is
+  independently checked in persisted rows. Refusals compare Booking/Session
+  digests; cancellation retains its row and only changes cancelled_at.
+- Repeated cancellation is tested twice in one stdio process, and after the
+  slot start for an already cancelled row. A separate direct adapter test wraps
+  data.mark_cancelled and observes one write across two calls (not claimed as
+  stdio SQL instrumentation). Foreign cancelled row still refuses its non-owner;
+  offline station cancellation allowed. Missing/invalid/revoked sessions refuse
+  both mutations without state changes; extra user_id/owner_id are refused.
+- Full PostgreSQL regression/coverage launched, including existing concurrency
+  tests; no new concurrent ordering through MCP claimed. Other checks already
+  observed: 23 Node passed, TP1 MCP12/12, isolated historical SQLite guard1 passed,
+  Django check clean, ex2 32/32 and whitespace diff clean. Results are local;
+  no remote run or complete TP3 acceptance inferred.
+- Current guide docs/MCP_MUTATIONS_3.md prepares only the future final-client
+  procedure. No launcher built or client/provider run; personal note/review and
+  deferred UI checks stay pending. All draft wording/code assisted by Codex,
+  not represented as student-authored architecture or validated understanding.
+- Full run completed: 411 PostgreSQL passed, 1 historical SQLite-only guard
+  deselected, 9 TP1 passed. Coverage services227/227 lines +76/76 branches (100%),
+  global1438/1524 lines (94.36%) +342/378 branches (90.48%), project adapter90/90
+  lines +30/30 branches. Scope/inventory/thresholds/exclusions unchanged.
+  Report .local/coverage/083c4a5190894e708dc38a20957320df/coverage.json.
+- Collected test titles now carry exact AC-37/38/39 and relevant business AC IDs
+  via parameter ids, not only underscored Python names. No AC added, renumbered
+  or rewritten. Assertions preserved/strengthened with retained cancelled history;
+  read test catalogue expectations updated to six only in project mode.
+- One independent read-only custom reviewer: no functional/security blocker.
+  Retained requirement to finish the final targeted rerun: it completed 92/92;
+  strengthened catalogue/schema assertion then passed 1/1. Retained obsolete
+  runtime docstring finding: corrected module/current_actor and bootstrap-test
+  docstrings only. No finding rejected. Production behavior unchanged since
+  the full coverage run; test assertions/titles were strengthened, not weakened.

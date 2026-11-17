@@ -1,4 +1,4 @@
-"""Opt-in Django bootstrap and per-call session adapter; no project tools yet."""
+"""Opt-in Django bootstrap and per-call session adapter for project tools."""
 
 import os
 from pathlib import Path
@@ -33,7 +33,7 @@ def initialize_project() -> None:
 
 
 def current_actor() -> "Actor":
-    """Authenticate anew on every future project dispatch, never at handshake."""
+    """Authenticate anew on every project dispatch, never at handshake."""
     from django.db import DatabaseError
     from src.services.session_auth import authenticate_session
 

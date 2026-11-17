@@ -4,6 +4,7 @@ One row per agent session. In Gemini CLI, type `/stats` before you quit and copy
 
 | Date | Tool | Input tokens | Output tokens | Credits (if no tokens) | List-price cost |
 |---|---|---|---|---|---|
+| 2026-11-17 | Codex, MCP booking/cancellation adapters and isolated stdio/HTTP parity tests | non disponible | non disponible | sans objet (no provider call) | non calculable |
 | 2026-11-17 | Codex, PostgreSQL test credential rotation and MCP read tools | non disponible | non disponible | sans objet (no provider call) | non calculable |
 | 2026-11-17 | Codex, MCP plan and substep 1 session authentication/project bootstrap | non disponible | non disponible | sans objet (no provider call) | non calculable |
 | 2026-10-20 | Codex | non disponible | non disponible | non disponible | non disponible |

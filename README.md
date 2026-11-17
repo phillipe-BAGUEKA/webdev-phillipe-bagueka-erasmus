@@ -2,15 +2,17 @@
 
 This repository contains Exercise 1 in `mcp-server/` and Lab booking in the rest of it. The first slice was developed locally on Windows with Python 3.13, Django 5.2 LTS, SQLite and plain JavaScript. The course Codespaces template remains available; its Python 3.12 environment has not been validated in this work.
 
-The final target in [SPEC.md](SPEC.md) includes workstation reservations, staff management, Google sign-in, a model suggestion and project MCP tools. Slice 1 provides local sign-in/sign-out and a protected database-backed laboratory list. TP3 now provides PostgreSQL booking services, protected HTTP APIs and the student journey on /labs. See [student checkpoint 4](docs/STUDENT_UI_4.md) and [Slice 2 finalization](docs/SLICE2_FINALIZATION.md) for commands, automated evidence and the Edge creation/history/cancellation, keyboard, network retry and palette checks on 2026-11-12. Full accessibility and width checks remain incomplete; 380 pixels is deferred. Staff management, Google, AI and project MCP mutation tools remain future work. Specification wording and code were prepared with ChatGPT/Codex assistance, recorded in AGENT_LOG.md and USAGE.md; they are not presented as wholly independent student work.
+The final target in [SPEC.md](SPEC.md) includes workstation reservations, staff management, Google sign-in, a model suggestion and project MCP tools. Slice 1 provides local sign-in/sign-out and a protected database-backed laboratory list. TP3 now provides PostgreSQL booking services, protected HTTP APIs and the student journey on /labs. See [student checkpoint 4](docs/STUDENT_UI_4.md) and [Slice 2 finalization](docs/SLICE2_FINALIZATION.md) for commands, automated evidence and the Edge creation/history/cancellation, keyboard, network retry and palette checks on 2026-11-12. Full accessibility and width checks remain incomplete; 380 pixels is deferred. Staff management, Google and AI remain future work; the four project MCP tools are implemented, with final-client validation still pending. Specification wording and code were prepared with ChatGPT/Codex assistance, recorded in AGENT_LOG.md and USAGE.md; they are not presented as wholly independent student work.
 
 ## Start
 
-Project MCP substeps 1–2 add an opt-in Django/PostgreSQL bootstrap, session
-authentication and two read tools: list_free_slots and my_bookings. Tested with
-synthetic sessions only; no project mutation tools or final-client validation.
-The default TP1 command stays independent of Django/PostgreSQL.
-See [MCP read checkpoint](docs/MCP_READS_2.md) for commands and limits.
+Project MCP substeps 1–3 add an opt-in Django/PostgreSQL bootstrap, session
+authentication and four tools: list_free_slots, my_bookings, book_slot and
+cancel_booking. Tested through real stdio with synthetic sessions; final-client
+validation and real-token handoff remain pending. Creation is not idempotent;
+never automatically retry a mutation after a lost response. The default TP1
+command stays independent of Django/PostgreSQL. See
+[MCP mutation checkpoint](docs/MCP_MUTATIONS_3.md) for commands and limits.
 
 Historical slice 1 progress: **checkpoints 1–3** are implemented. The student reported
 the [foundation checks](docs/CHECKPOINT1.md) and the session/keyboard observations
