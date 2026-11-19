@@ -1,5 +1,11 @@
 # Finalisation de la tranche IA — Lab 03 reste ouvert
 
+Préparation documentaire de clôture depuis le SHA publié c96aa2e : voir
+[LAB03_CLOSURE.md](LAB03_CLOSURE.md) pour les conditions exactes des trois échecs,
+la lecture actuelle du cours, les preuves compatibles Linux et les questions
+de préparation de la note. Aucun commit/push ni nouvelle fonctionnalité pendant
+cette préparation ; les résultats de publication ci-dessous restent historiques.
+
 17 novembre 2026. État initial propre sur main, trois commits locaux attendus :
 
 - `3fa6ecb238e64761d95cff5ac0299aee01fda01a` : service injectable et faux client.

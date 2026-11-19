@@ -67,3 +67,16 @@ Offline fake-client/API tests and an explicitly labelled isolated Edge simulatio
 were used; the normal development adapter stayed disabled. No provider request,
 real key access, token/cost measurement or billing activation. No invented model
 usage statistics. The personal architecture note remains unwritten.
+
+## Lab 03 closure preparation — 17 November 2026
+
+Codex assisted with source reading, traceability and a question/file guide only.
+The student's architecture note and deep review remain deferred. Existing Linux
+CI evidence was inspected; no model request, key access, installation or billing.
+Codex token/cost totals were unavailable and are not invented. No commit or push.
+
+## Lab 03 responsive follow-up — 19 November 2026
+
+Codex assisted with the layout fix, Edge checks on synthetic data, MIME test
+isolation and traceability. No provider request, key access or billing. The
+student's own observations and outstanding review remain separate.

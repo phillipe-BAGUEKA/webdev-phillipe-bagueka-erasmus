@@ -1448,3 +1448,96 @@ approved the whole feature diff. User must supply their own assessment.
   Docker skipped par condition initiale, aucun job skipped. Preuves/liens dans
   AI_FINALIZATION.md. Ce complément documentaire sera publié puis sa propre CI
   vérifiée séparément ; aucune réussite présumée pour son futur SHA. Lab03 ouvert.
+
+## Préparation documentaire de clôture Lab 03 — 17 novembre 2026
+
+- Départ c96aa2ecebcc5821c11d61928fc2d194102f0592, main synchronisé/propre.
+  L'utilisateur autorise uniquement analyse, traçabilité et préparation de la
+  note, sans la rédiger ; aucun commit/push, code ou Lab04 à cette étape.
+- Lecture AGENTS, ex3/lib et bilan IA ; Web des consignes en échec, curl réussi
+  pour Lab03 et projet. Textes actuels lus : Goal, Steps, What you build,
+  Working with the agent, What the assistant checks ; projet Requirements,
+  Documents, Tests et When you build which part. Sources et limites dans
+  docs/LAB03_CLOSURE.md ; distinction tranche/projet sans dispense inventée.
+- ex3 officiel inchangé, nouvel essai Windows : 15/18, sortie1. Conditions npm,
+  recherche textuelle des AC et note décrites exactement. Pas de wrapper,
+  changement des contrôles ni fichier feature factice pour les rendre verts.
+- WSL list initialement refusé par le bac à sable ; relance en lecture seule
+  autorisée réussie, seule docker-desktop listée. Pas de distribution de travail
+  préparée, pas de lancement/installation improvisé. Commande npm test Linux
+  vérifiée dans les logs existants du SHA publié : run44138794766, job134235547443,
+  Ubuntu,545PG+gardeSQLite1+TP1 9+Node42, étape environ85s. Pas d'ex3 Linux déduit.
+- Collecte actuelle546cas Python, aucun AC1–10/12/43–45 ; tous les AC implémentés
+  identifiés avec bornes exactes. Node42 réellement réexécutés, tous réussis.
+  Pas de relance complète PostgreSQL pour des changements exclusivement doc.
+- SPEC Traceability : une ligne pour chacun des49AC existants,46 références de
+  fonctions Python vérifiées automatiquement. Critères approuvés identiques à
+  HEAD, aucun identifiant ni test modifié. AC42 explicitement non prouvé par
+  le titre de son test HTML ; Google/personnel/UI complets non revendiqués.
+- Guide de note : fichiers/questions/points seulement, aucun texte personnel
+  rédigé ni compréhension validée. Revue approfondie et entretiens reportés.
+  Pas de reviewer indépendant supplémentaire : documentation seule, aucune
+  décision d'architecture ou modification de code selon la règle AGENTS.
+- Aucun fournisseur, secret, facturation, donnée ou migration touché. Vérificateur
+  et helper comparés à HEAD, inchangés ; aucune CI modifiée ou déclenchée.
+- Vérifications finales : ex2 32/32 ; ex3 15/18, sortie1 (trois échecs conservés) ;
+  diff --check réussi. Note détectée :0 ligne, document feature:null. Six documents
+  seulement, non indexés ; HEAD c96aa2e inchangé, aucun commit/push. Empreinte
+  data/demo.sqlite3 identique à celle de départ. Mesure de couverture antérieure
+  non présentée comme une nouvelle exécution ; aucun code/test modifié.
+
+## Vérifications UI Lab 03 — 19 novembre 2026
+
+- Départ c96aa2e avec les six documents du 17 novembre déjà modifiés ou créés.
+  Consignes lues et changements antérieurs conservés. Ex3 laissé à son relevé.
+- Codex a testé les deux écrans à 380, 768 et 1280 px CSS dans Edge. Le cluster
+  local 5433 n'a pas démarré avec la commande prévue. Banc local jetable sur
+  8011 avec base en mémoire, session et données synthétiques, fournisseur
+  désactivé. Aucun parcours attribué à l'utilisateur. Aucune réservation
+  soumise. Seul POST navigateur, la suggestion désactivée, a répondu 503.
+- Défaut reproduit à 380 avec réponses retardées de 600 ms. Arrivées catalogue,
+  historique et créneaux déplaçaient respectivement les ancres de 163, 167
+  et 2 080 px. Modification du template labs.html et de app.css pour réserver
+  l'espace dans trois zones nommées avec défilement vertical et focus visible.
+  Après correction, déplacements de 0 px sur les trois largeurs mesurées.
+- À 380, libellés et actions lisibles, historique accessible et choix manuel
+  après repli IA. Captures dans la session et chiffres dans docs/UI.md.
+  AC-42 reste partiel. Serveur arrêté et base en mémoire relâchée.
+- 41 tests JS réussis. Exécution Django groupée sur SQLite historique :
+  42 réussis et 2 échecs de fermeture de connexion aux tests MIME. Tests
+  du template, de l'accès et de la connexion rejoués ensemble : 42 réussis.
+  Deux tests MIME isolés sous tests.settings : 2 réussis. Port 5433 devenu
+  disponible après les essais Edge. Page et accès rejoués sous PostgreSQL
+  de test : 11 réussis, dont les deux tests MIME. Suite entière non relancée.
+  Ex2 32/32, diff --check réussi. Empreinte SQLite démo identique au relevé
+  antérieur. Ni appel fournisseur ni commit/push.
+- Revue indépendante déclenchée une fois. Aucun défaut bloquant ou important.
+  Suggestion d'assertions supplémentaires sur les régions différée. La preuve
+  de stabilité et de focus est la mesure Edge et non la forme du HTML seule.
+
+## Finalisation du correctif UI et de la traçabilité — 19 novembre 2026
+
+- L'utilisateur a autorisé la vérification ciblée, la séparation des commits
+  UI/tests et documentation, puis le push normal après réussite des contrôles.
+  Codex a conservé les six documents de clôture préparés depuis c96aa2e.
+- Codex a observé le refus 401 dans Edge à 380 px CSS sur le banc local isolé.
+  Message lisible, adresse conservée, mot de passe vidé, deux champs corrigés
+  au clavier et contour visible sur le bouton de connexion. Largeur mesurée
+  380/380/380 pour viewport, client et scroll. Captures dans la conversation,
+  aucun essai attribué à l'étudiant. Les mesures antérieures restent limitées
+  aux trois déplacements observés. AC-42 reste partiel.
+- Échec MIME reproduit (42 réussites et 2 échecs au nettoyage sous SQLite
+  historique). Rappel de nettoyage isolé dans le test, assertions conservées.
+  Même combinaison après correction : 44 réussites. Cas MIME isolés : 2.
+  Node : 41 tests UI, 42 avec le test du lanceur. Voir les commandes et les
+  preuves dans [LAB03_CLOSURE.md](docs/LAB03_CLOSURE.md).
+- Revue indépendante unique pour cette publication. Aucun blocage relevé.
+  Constat retenu et corrigé : vérifier dans le test Django que les trois zones
+  réservées entourent leurs listes et restent nommées et accessibles au clavier.
+  Les anciennes mentions du report à 380 px sont conservées dans les bilans
+  historiques datés ; le bilan actuel précise la reprise du contrôle.
+- Suite officielle `npm.cmd test` réussie hors du bac à sable : 545 PostgreSQL,
+  garde SQLite exécutée à part (1), 9 TP1 et 42 Node. Tentative initiale dans
+  le bac à sable bloquée par les permissions du dossier temporaire de pytest.
+  Contrôles ex2 32/32, MCP TP1 12/12, Django check et diff --check réussis.
+  Couverture JavaScript locale : 97,71 % des lignes sur les modules mesurés.

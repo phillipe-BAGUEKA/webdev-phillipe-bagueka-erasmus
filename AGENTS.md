@@ -6,7 +6,7 @@ Read this file at the start of every session. Keep it short and correct; update 
 <!-- One or two sentences: what the app does and for whom. Link SPEC.md. -->
 See `SPEC.md` for goals, non-goals and acceptance criteria.
 
-Lab booking's final goal is workstation reservations and staff catalogue management. Slice 1 implements only local sessions and a protected database-backed laboratory list. The student reported checkpoint 1/2 observations and the API error body after logout (not its HTTP status). Codex observed the real browser list and AC-48's 3 → 2 → 3 with identical Beta restoration. The 380-pixel check is explicitly deferred, not passed. Slice 1 is published; the four GitHub Actions jobs passed on delivery commit 4243d717716142b45ab8304abf21c2056f28fdb7. Check the exact SHA of any later commit independently. TP3 proceeds only through the explicitly authorized checkpoint below. See `docs/TP2_FINALIZATION.md`, `docs/SLICE1_PLAN.md` and the CHECKPOINT guides.
+Lab booking's final goal is workstation reservations and staff catalogue management. Slice 1 implements only local sessions and a protected database-backed laboratory list. The student reported checkpoint 1/2 observations and the API error body after logout (not its HTTP status). Codex observed the real browser list and AC-48's 3 → 2 → 3 with identical Beta restoration. The responsive check was deferred during Slice 1 and resumed on 19 November. Slice 1 is published; the four GitHub Actions jobs passed on delivery commit 4243d717716142b45ab8304abf21c2056f28fdb7. Check the exact SHA of any later commit independently. TP3 proceeds only through the explicitly authorized checkpoint below. See `docs/TP2_FINALIZATION.md`, `docs/SLICE1_PLAN.md` and the CHECKPOINT guides.
 
 ## Commands
 
@@ -29,13 +29,18 @@ and real-token handoff remain unverified because no provider call is authorized.
 Use synthetic test sessions only at this checkpoint.
 Current AI authorization covers finalization and normal publication of the three
 completed substeps, including necessary CI corrections and independent review.
+Current Lab 03 authorization covers the scoped layout fix, test isolation,
+traceability and normal publication after checks. Personal note and deep
+personal review stay deferred. See docs/LAB03_CLOSURE.md.
+Edge measurements at 380, 768 and 1280 CSS px, the synthetic login refusal
+at 380 CSS px and the remaining AC-42 limits are recorded in docs/UI.md.
 No new feature, real provider call, key access, installation, billing or Lab 04.
 The provider stays disabled by default. See docs/AI_FINALIZATION.md and AI_UI_3.md.
 Local controlled-process timing is not Google access or browser latency proof.
 Local checkpoint commit authorized. The user also authorized PostgreSQL CI
 alignment and normal pushes for TP3 finalization after its checks; do not publish
 prematurely or equate green CI with complete TP3 acceptance. Keep the student's
-architecture note personal. The 380-pixel check remains deferred.
+architecture note personal. The latest viewport results are in docs/UI.md.
 PostgreSQL commands are opt-in: --settings=src.config.postgres for development,
 --ds=tests.settings_postgres --reuse-db for tests, after local provisioning.
 Never run the SQLite demonstration seed against PostgreSQL.
