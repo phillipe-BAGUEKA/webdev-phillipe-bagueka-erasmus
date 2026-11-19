@@ -16,8 +16,11 @@ Pour préparer un compte dédié, suivre la procédure du [guide Réservations](
 3. Modifier les deux champs de nom et activer chaque bouton **Renommer**.
 4. Recharger avec F5. La fiche et le poste affichent leurs nouveaux noms.
 
-Les écritures utilisent la base du serveur démarré. Sur la machine d'essai, le
-banc local ignoré permet de rejouer les mêmes étapes sur une base en mémoire.
+Les écritures utilisent la base du serveur démarré. La commande suivante documente
+le banc Edge de la machine d'essai, sur une base en mémoire. Son fichier sous
+`.local/` est ignoré par Git et absent d'un clone propre. Depuis un clone, la
+[suite PostgreSQL ci-dessous](#cycle-et-concurrence-sur-postgresql-isolé) vérifie
+la création et le renommage, avec relecture des identifiants et des rattachements.
 
 ```powershell
 .\.venv\Scripts\python.exe .local/ui-staff-catalogue-audit.fixture .local/ui-staff-catalogue-manuel.stop
@@ -29,8 +32,10 @@ synthétique, puis arrêter le processus avec Ctrl+C après l'essai.
 ## Changer l'état d'un poste
 
 Le [catalogue](http://127.0.0.1:8000/staff/catalogue) affiche « En service »
-ou « Hors service » et propose l'action correspondante. Pour rejouer le cycle
-sans écrire dans la base de démonstration, lancer le banc local sur cette machine.
+ou « Hors service » et propose l'action correspondante. La commande suivante
+correspond au banc Edge en mémoire de la machine d'essai. Ce second fichier
+sous `.local/` est également absent d'un clone propre. Pour rejouer la règle
+métier sans utiliser la base de démonstration, lancer la suite PostgreSQL.
 
 ```powershell
 .\.venv\Scripts\python.exe .local/ui-workstation-state-audit.fixture .local/ui-workstation-state-manuel.stop
@@ -66,6 +71,9 @@ uniquement le nom. Les historiques du personnel et de l'étudiant lisent l'état
 courant du poste tout en gardant le statut de la réservation.
 
 ### Cycle et concurrence sur PostgreSQL isolé
+
+Préparer la base de test selon le [guide PostgreSQL](POSTGRES_1A.md), puis
+lancer ces tests versionnés depuis la racine du dépôt.
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest tests/test_staff_catalogue.py tests/test_staff_bookings.py tests/test_workstation_state_concurrency.py --ds=tests.settings_postgres --reuse-db -q
@@ -140,14 +148,20 @@ La couverture complète a exécuté 573 cas PostgreSQL et 9 tests Python TP1.
 Le garde SQLite a réussi séparément. Les services couvrent 404/404 lignes et
 124/124 branches. La mesure globale atteint 1 995/2 243 lignes (88,94 %) et
 478/544 branches (87,87 %), serveur TP1 et anciens bancs Python ignorés inclus.
+Deux bancs Python ignorés ajoutent 148 lignes non exécutées à cette mesure
+Windows. L'ancienne CI de `2919829` mesurait 1 766/1 865 lignes depuis un clone
+sans ces fichiers et avant les ajouts du personnel. Les inventaires diffèrent.
 
 Les 28 cas PostgreSQL ciblés couvrent le catalogue, les réservations du personnel
 et les deux ordres concurrents. Les 64 tests Node passent, dont les nouveaux
 cas de libellé, de focus, d'état explicite et de renommage hors service. La
 commande de couverture étendue aux deux écrans du personnel exécute 63 cas UI
 et mesure 97,97 % des lignes et 94,69 % des branches. Le seuil de 80 % est conservé.
-Le job de couverture JavaScript versionné garde le périmètre signalé lors du
-lot précédent. La mesure de cet écran est locale.
+Le job de couverture JavaScript est configuré pour ces mêmes cinq suites UI.
+Le rapport local inclut `labs.mjs`, `booking.mjs` (suggestion IA comprise),
+`staff_bookings.mjs` et `staff_catalogue.mjs`. Le cas de
+`tests/test_runner.test.mjs` vérifie le lanceur de `npm test` et fait partie
+de ses 64 cas Node. La mesure UI compte 63 cas.
 
 Le contrôle Django, `git diff --check`, ex2 (32/32) et MCP TP1 (12/12) passent.
 Les 28 cas ciblés repassent après la revue et couvrent les deux nouveaux
@@ -171,9 +185,9 @@ personnel, atteint 97,80 % des lignes et 94,65 % des branches (59 cas, seuil de
 
 La revue indépendante a demandé une preuve du tri sur plusieurs laboratoires
 et postes. L'assertion vérifie désormais leur ordre par identifiant. Les 23 cas
-PostgreSQL du catalogue et des réservations ont repassé après cet ajout. Le job de
-couverture JavaScript de la CI devra inclure le catalogue avant une future
-publication. La mesure locale couvre déjà ce périmètre.
+PostgreSQL du catalogue et des réservations ont repassé après cet ajout. À ce stade,
+seule la mesure locale incluait le catalogue. La publication de l'espace du
+personnel étend le job de couverture aux deux écrans.
 
 Ex3 reconnaît AC-6 à AC-8 et affiche encore 15/18. La commande automatique
 `npm` rencontre `spawnSync npm ENOENT` sous Windows. Le vérificateur relève

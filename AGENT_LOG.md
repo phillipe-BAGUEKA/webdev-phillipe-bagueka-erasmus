@@ -1627,3 +1627,27 @@ approved the whole feature diff. User must supply their own assessment.
   Couverture UI locale 97,97 % des lignes. Django, ex2 (32/32) et MCP (12/12) passent.
 - Les 28 cas ciblés repassent après la revue. Ex3 reconnaît AC-10 à AC-12 et
   reste à 15/18 pour les écarts Windows, UI et note personnelle.
+
+## Publication de l'espace du personnel — 20 novembre 2026
+
+- `git fetch` confirme `2919829` sur `origin/main`. Les commits `1f2c023`,
+  `551a200` et `c3cc0aa` le suivent dans l'ordre, sans divergence. La publication
+  conserve ces commits et ajoute les ajustements de couverture et du guide.
+- La commande locale identique à celle configurée pour le job de couverture
+  exécute 63 cas UI, avec 97,97 % des lignes sur Node 22.12.0 sous Windows.
+  Les deux modules `staff_bookings.mjs`
+  et `staff_catalogue.mjs` figurent dans le rapport avec `labs.mjs` et
+  `booking.mjs`, qui contient la logique de suggestion IA. Le 64e cas de
+  `npm test` vérifie le lanceur lui-même.
+- Les deux bancs Edge de `.local/` sont présents sur la machine d'essai,
+  ignorés et absents de l'arbre Git. Le guide pointe vers les tests PostgreSQL
+  versionnés pour rejouer le cycle, sans utiliser la base de démonstration.
+- L'inventaire de couverture Python est conservé. Le rapport local précédent
+  inclut 148 lignes non exécutées de deux fichiers Python ignorés. L'ancienne
+  CI a mesuré le code de `2919829` depuis un clone propre avec un inventaire
+  différent.
+- Ex2 donne 32/32. Ex3 reste à 15/18 sous Windows, avec `spawnSync npm ENOENT`,
+  l'absence de titres de test pour AC-43 à AC-45 et la note personnelle
+  encore attendue. Le vérificateur officiel est conservé. Le job `spec` lance ex2.
+- La revue indépendante a demandé de préciser la provenance locale du rapport
+  JavaScript avant le push. Le guide et le journal l'indiquent explicitement.
