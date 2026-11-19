@@ -214,8 +214,8 @@ PostgreSQL autorisée. Le 19 novembre, Codex a repris les essais à 380, 768 et
 1 280 px CSS dans Edge, dont le refus de connexion à 380 px. Le parcours
 clavier complet et les autres états non observés restent à vérifier.
 L'espace du personnel contient la consultation des réservations en lecture seule
-sur `/staff/bookings` et la création et le renommage dans `/staff/catalogue`.
-L'espace de compte, Google et le changement d'état des postes restent à
+sur `/staff/bookings` et la création, le renommage et le changement d'état des
+postes dans `/staff/catalogue`. L'espace de compte et Google restent à
 construire. L'UI IA a été vérifiée hors fournisseur
 (docs/AI_UI_3.md). Les quatre outils MCP sont construits et leur essai avec le
 client final reste à faire. AC-40 reste partiel.
@@ -323,14 +323,14 @@ Architecture reste personnellement à rédiger, dans la section dédiée laissé
 | AC-2 | Aucun test des conditions de liaison Google. | Non implémenté. |
 | AC-3 | Aucun test de connexion Google après liaison. | Non implémenté. |
 | AC-4 | Aucun test d'identité Google non liée. | Non implémenté. |
-| AC-5 (partiel) | `tests/test_staff_bookings.py::test_students_keep_personal_history_and_are_denied_staff_routes` ; `tests/test_staff_catalogue.py::test_student_cannot_apply_catalogue_mutations`. | Une session étudiante locale, y compris avec `is_staff` et CSRF valide, reçoit 403 sur les lectures réservées et les quatre écritures du catalogue. Rôle et données préservés. La session Google reste à vérifier. |
+| AC-5 (partiel) | `tests/test_staff_bookings.py::test_students_keep_personal_history_and_are_denied_staff_routes` ; `tests/test_staff_catalogue.py::test_student_cannot_apply_catalogue_mutations` et `test_workstation_state_rejects_student_with_valid_csrf_and_staff_without_csrf`. | Une session étudiante locale, y compris avec `is_staff` et CSRF valide, reçoit 403 sur les opérations réservées, dont le changement d'état. Rôle et données préservés. La session Google reste à vérifier. |
 | AC-6 | `tests/test_staff_catalogue.py::test_catalogue_create_rename_and_reload[AC-6-AC-7-AC-8-AC-40]` ; `tests/staff_catalogue_ui.test.mjs`. | Création HTTP 201 et une seule ligne en base. Formulaire utilisé au clavier dans Edge. [Preuves](docs/STAFF_CATALOGUE.md). |
 | AC-7 | `tests/test_staff_catalogue.py::test_catalogue_create_rename_and_reload` et `test_postgres_workstation_names_unique_per_laboratory`. | Création avec rattachement vérifié, conflit 409 dans le même laboratoire et acceptation du même nom ailleurs. Ajout observé dans Edge. |
 | AC-8 | `tests/test_staff_catalogue.py::test_catalogue_create_rename_and_reload` ; `tests/staff_catalogue_ui.test.mjs`. | Deux renommages, noms persistants après rechargement, mêmes identifiants et rattachement. Tests PostgreSQL et parcours synthétique Edge. |
 | AC-9 | `tests/test_staff_bookings.py::test_personnel_consults_two_owners_in_stable_order[AC-9-AC-40]` et autres cas AC-9 PostgreSQL ; `tests/staff_bookings_ui.test.mjs`. | Le personnel voit deux réservations de propriétaires distincts dans l'ordre prévu, et chaque étudiant voit uniquement la sienne sur son API. Comparaison des lignes avant/après. Codex a observé les deux lignes, leurs créneaux Europe/Sofia et le réessai dans Edge sur données synthétiques. [Preuves et procédure](docs/STAFF_BOOKINGS.md). |
-| AC-10 | Aucun test du passage hors service par le personnel. | Les fixtures hors service prouvent des règles de réservation, pas l'opération de gestion. |
-| AC-11 | `tests/test_booking_creation.py::test_access_and_post_refusals_are_unchanged[AC-11-offline]` ; `tests/test_booking_api.py::test_creation_business_refusals[AC-11]`. | Refus service et HTTP 409 sans mutation ; DOM du refus dans booking_ui. Pas de nouvelle observation navigateur. |
-| AC-12 | Aucun test de remise en service par le personnel. | La préparation d'un état en service dans un test ne réalise pas le parcours de gestion. |
+| AC-10 | `tests/test_staff_catalogue.py::test_workstation_state_cycle_keeps_booking_and_controls_creation` ; `tests/test_workstation_state_concurrency.py` ; cas AC-10 dans les tests DOM du personnel. | La réservation reste identique en base et apparaît dans les deux historiques avec « Poste hors service ». Le créneau libre disparaît. Action et historiques observés dans Edge. |
+| AC-11 | `tests/test_booking_api.py::test_creation_business_refusals[AC-11]` ; cycle HTTP et cas AC-11 de `tests/test_workstation_state_concurrency.py`. | Le POST direct sur le créneau autrement valide retourne 409 sans nouvelle réservation. PostgreSQL démontre l'attente du verrou et le refus après la désactivation. |
+| AC-12 | Cycle de `tests/test_staff_catalogue.py` et tests DOM `tests/staff_catalogue_ui.test.mjs`. | La remise en service rétablit le créneau libre et garde le créneau occupé indisponible. La réservation existante reste identique. Rejeu Edge sur le même poste à 380 px CSS. |
 | AC-13 | `tests/test_read_services.py::test_slots_use_sofia_hours_and_utc` (paramètres AC-13/14) ; `tests/test_booking_api.py::test_reads_real_rows_empty_and_private_history[AC-13-AC-14-AC-28]` ; titre Node `AC-13 AC-40 AC-41 catalogue opens availability, loading and safe DOM text`. | Jours/limites/futur et lecture réelle en tests directs/API. Edge : vingt créneaux observés ; week-end sans candidat IA observé seulement sur serveur isolé. Tous les états manuels n'ont pas été rejoués en navigateur. |
 | AC-14 | `tests/test_booking_api.py::test_offset_input_is_returned_and_stored_as_utc[AC-14-winter-http]` et `[AC-14-summer-http]` ; titre Node `AC-14 Europe/Sofia display changes winter/summer offset without changing wire timestamps`. | Stockage/échanges UTC et conversion simulée hiver/été. Edge : horaire de novembre observé, pas d'essai estival réel. |
 | AC-15 | `tests/test_booking_creation.py::test_valid_creation_owner_and_quota_exclusions[AC-15-AC-21]` ; `tests/test_booking_api.py::test_create_conflict_cancel_repeat_and_retained_row[AC-15-AC-17-AC-25-AC-28]` ; titre Node `AC-15 AC-41 explicit confirmation, CSRF, double click blocked, success refreshes without reload`. | Création/acteur/une ligne, API et DOM. Edge et sonde HTTP réelle : 201, propriétaire et ligne comparés ; SLICE2_FINALIZATION. |
@@ -373,6 +373,11 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
+
+Le cycle hors service et remise en service couvre AC-10 à AC-12. L'action
+envoie l'état souhaité et le changement se coordonne avec la création d'une
+réservation sur le verrou du poste. Les preuves PostgreSQL et le parcours
+Edge à 380 px CSS sont distinctes. [Rejouer et vérifier le cycle](docs/STAFF_CATALOGUE.md#changer-létat-dun-poste)
 
 Le catalogue réalise AC-6 à AC-8. La preuve Edge couvre quatre écritures puis
 rechargement à 380, 768 et 1 280 px CSS sur données isolées. Les tests PostgreSQL

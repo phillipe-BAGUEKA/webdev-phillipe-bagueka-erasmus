@@ -42,10 +42,12 @@ function response(payload) {
 const winterBooking = {
   id: 3, owner_id: 21, laboratory_name: "<b>Laboratoire nord</b>", workstation_name: "Poste A",
   starts_at: "2027-01-12T06:00:00Z", ends_at: "2027-01-12T07:00:00Z", status: "future",
+  is_operational: true,
 };
 const summerBooking = {
   id: 7, owner_id: 19, laboratory_name: "Laboratoire sud", workstation_name: "Poste B",
   starts_at: "2027-07-12T06:00:00Z", ends_at: "2027-07-12T07:00:00Z", status: "cancelled",
+  is_operational: true,
 };
 
 test("AC-9 loads once, then shows both owners in response order and Sofia time", async () => {
@@ -84,6 +86,14 @@ test("AC-9 loads once, then shows both owners in response order and Sofia time",
   assert.equal(nodes.results.tabIndex, 0);
   assert.equal(nodes.results.attributes["aria-busy"], undefined);
   assert.equal(nodes.retry.hidden, true);
+});
+
+test("AC-10 personnel still see an upcoming reservation on an unavailable workstation", async () => {
+  const { nodes, document } = pageElements();
+  const booking = { ...winterBooking, is_operational: false };
+  await createStaffBookings(document, async () => response({ bookings: [booking] })).load();
+  assert.equal(nodes.list.children.length, 1);
+  assert.equal(nodes.list.children[0].children[2].textContent, "État : À venir · Poste hors service");
 });
 
 test("AC-9 the empty result is announced without adding an empty keyboard stop", async () => {

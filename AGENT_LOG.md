@@ -1597,3 +1597,33 @@ approved the whole feature diff. User must supply their own assessment.
   à 97,80 % des lignes. Django, ex2 (32/32), MCP (12/12) et garde SQLite réussis.
 - Les 23 cas ciblés PostgreSQL repassent après la revue. Ex3 reste à 15/18 et
   reconnaît AC-6 à AC-8. Le vérificateur, les migrations et la CI restent intacts.
+
+## État des postes du personnel — 20 novembre 2026
+
+- Demande AC-10 à AC-12 depuis `551a200`, avec conservation des deux commits
+  du personnel. Catalogue et API appliquent un état booléen explicite sous
+  la session `personnel` et le CSRF. Une seule colonne est écrite sous le même
+  verrou de ligne que la création des réservations. Les deux historiques
+  montrent l'état courant du poste et gardent le statut de la réservation.
+- Sur PostgreSQL de test, le cycle conserve tous les champs de la réservation,
+  refuse en 409 le créneau autrement valide tant que le poste est hors service
+  et retrouve la liste initiale en service. Deux ordres concurrents vérifient
+  l'attente effective du verrou, le refus après désactivation et la conservation
+  d'une réservation validée avant désactivation. Les refus rôle et CSRF restent distincts.
+- Le premier passage a détecté une session de test expirée en avançant l'horloge
+  après sa création. Les deux sessions du scénario démarrent maintenant avec la
+  même horloge figée. Les 28 cas PostgreSQL ciblés et les 64 tests Node passent.
+- Codex a observé le cycle au clavier dans Edge à 380 × 424 px CSS sur un seul
+  poste synthétique. La réservation de 9 h à 10 h reste visible et le créneau
+  de 10 h revient après remise en service. Le banc en mémoire a vérifié la ligne
+  conservée et a été arrêté. Les bases de démonstration sont préservées.
+- La revue indépendante a demandé deux refus supplémentaires pour l'endpoint
+  d'état, sans session et avec un membre du personnel désactivé, et une
+  précision sur les quatre écritures historiques du catalogue. Les deux
+  améliorations ont été retenues.
+- La couverture complète réussit 573 cas PostgreSQL et 9 tests TP1. Services
+  à 404/404 lignes et 124/124 branches. Global à 1 995/2 243 lignes (88,94 %),
+  avec les anciens bancs Python ignorés. Le garde SQLite a réussi séparément.
+  Couverture UI locale 97,97 % des lignes. Django, ex2 (32/32) et MCP (12/12) passent.
+- Les 28 cas ciblés repassent après la revue. Ex3 reconnaît AC-10 à AC-12 et
+  reste à 15/18 pour les écarts Windows, UI et note personnelle.

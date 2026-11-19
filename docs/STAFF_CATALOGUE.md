@@ -26,6 +26,20 @@ banc local ignoré permet de rejouer les mêmes étapes sur une base en mémoire
 Ouvrir <http://127.0.0.1:8013/__catalogue_test__/enter> pour obtenir la session
 synthétique, puis arrêter le processus avec Ctrl+C après l'essai.
 
+## Changer l'état d'un poste
+
+Le [catalogue](http://127.0.0.1:8000/staff/catalogue) affiche « En service »
+ou « Hors service » et propose l'action correspondante. Pour rejouer le cycle
+sans écrire dans la base de démonstration, lancer le banc local sur cette machine.
+
+```powershell
+.\.venv\Scripts\python.exe .local/ui-workstation-state-audit.fixture .local/ui-workstation-state-manuel.stop
+```
+
+1. Ouvrir [la session personnel](http://127.0.0.1:8014/__state_test__/staff). Avec Tab et Entrée, activer **Mettre hors service** pour le poste synthétique.
+2. Ouvrir [la session étudiant](http://127.0.0.1:8014/__state_test__/student). Lire **Mes réservations**, puis afficher les créneaux de la date préremplie. La réservation de 9 h à 10 h signale que le poste est hors service. La liste des créneaux est vide.
+3. Revenir à la session personnel et activer **Remettre en service**. Retourner à la session étudiant. Le créneau de 10 h à 11 h réapparaît et celui de 9 h à 10 h reste occupé. Arrêter le banc avec Ctrl+C.
+
 ## Contrat et preuves PostgreSQL
 
 | Méthode et route sous `/api/staff/catalogue` | Effet |
@@ -35,18 +49,46 @@ synthétique, puis arrêter le processus avec Ctrl+C après l'essai.
 | `PATCH /laboratories/{lab}` | Renomme le laboratoire. Réponse 200. |
 | `POST /laboratories/{lab}/workstations` | Crée le poste dans ce laboratoire. Réponse 201. |
 | `PATCH /laboratories/{lab}/workstations/{poste}` | Renomme le poste sous ce parent. Réponse 200. |
+| `PATCH /laboratories/{lab}/workstations/{poste}/state` | Applique `{"is_operational": true}` ou `false`. Réponse 200 avec l'état enregistré. |
 
-Chaque écriture reçoit un objet JSON avec `name` et un jeton CSRF. Le service
+La création et le renommage reçoivent un objet JSON avec `name`. Toutes les
+écritures exigent le jeton CSRF. Le service
 vérifie le rôle actif `personnel` et valide le nom après retrait des espaces
 aux extrémités. La couche de données utilise les tables existantes. Le renommage
 met à jour uniquement le nom. La contrainte PostgreSQL du poste refuse un nom
 identique dans le même laboratoire avec un 409 et permet le même nom ailleurs.
 Le nom du laboratoire conserve les règles du modèle existant.
 
+Le changement d'état verrouille la ligne `Workstation` dans la transaction,
+comme `create_booking`. Il écrit uniquement `is_operational` quand la valeur
+diffère. Répéter la même demande conserve le résultat. Le renommage écrit
+uniquement le nom. Les historiques du personnel et de l'étudiant lisent l'état
+courant du poste tout en gardant le statut de la réservation.
+
+### Cycle et concurrence sur PostgreSQL isolé
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/test_staff_catalogue.py tests/test_staff_bookings.py tests/test_workstation_state_concurrency.py --ds=tests.settings_postgres --reuse-db -q
+```
+
+- Une réservation de 9 h à 10 h et un créneau autrement valide de 10 h à 11 h
+  sont préparés pour le même poste et le même étudiant. Chaque état est demandé
+  deux fois. La réservation est comparée champ par champ. Hors service, elle
+  reste à venir dans les deux historiques, les disponibilités sont vides et le
+  POST direct pour 10 h reçoit 409. Après remise en service, la liste initiale
+  revient et 9 h reste occupé.
+- Une session étudiante avec CSRF valide reçoit 403 pour le changement d'état.
+  Une session personnel sans CSRF reçoit un 403 distinct. Sans session ou avec
+  un compte personnel désactivé, l'API renvoie 401. Les données restent identiques.
+- Deux connexions éprouvent les deux ordres. Si le changement d'état verrouille
+  le poste en premier, la création attend puis est refusée. Si la création
+  détient le verrou en premier, elle aboutit avant la désactivation et demeure
+  conservée. Le blocage est constaté dans PostgreSQL avec `pg_blocking_pids`.
+
 `tests/test_staff_catalogue.py` vérifie la création d'une seule ligne par action,
 les identifiants stables et le rattachement après rechargement. Une session
-étudiante avec jeton valide reçoit 403 sur chacune des quatre écritures, y
-compris si `is_staff` est actif. Les lignes et le rôle sont comparés avant et
+étudiante avec jeton valide reçoit 403 sur les quatre opérations de création
+et de renommage, y compris si `is_staff` est actif. Les lignes et le rôle sont comparés avant et
 après. Les essais vérifient également les écritures sans jeton, les noms invalides,
 les doublons à la création et au renommage, le parent incorrect et la préservation
 de l'état d'un poste déjà hors service. Les tests DOM vérifient les quatre actions,
@@ -71,10 +113,49 @@ chaque largeur. Les réponses GET après F5 ont confirmé les noms et les paires
 d'identifiants 1/1, 2/2 et 3/3. Le focus est passé au champ d'ajout du poste,
 puis aux titres après les enregistrements. Les captures restent dans la
 conversation. Le banc a été arrêté et sa base en mémoire libérée. La base de
-démonstration a été préservée. La mise en service et la mise hors service
-relèvent d'une tranche suivante.
+démonstration a été préservée.
 
-## Vérifications locales
+### Relevé Edge du changement d'état
+
+Le 20 novembre 2026, Codex a utilisé Edge à 380 × 424 px CSS avec le même poste
+et deux sessions synthétiques sur le banc SQLite en mémoire, port 8014.
+Les deux boutons ont été atteints avec Tab et activés avec Entrée. Le focus
+visible est resté sur le bouton qui porte maintenant l'action inverse.
+La console a mesuré 380 / 380 / 380 pour la largeur, le client et le défilement
+horizontal du catalogue et de la vue étudiant.
+
+| Moment | Catalogue et réservation | Vue étudiant le 23 novembre, Europe/Sofia |
+| --- | --- | --- |
+| Après désactivation, PATCH 200 | « Hors service ». Réservation nº 1 toujours à venir avec « Poste hors service » côté personnel. | Réservation de 9 h à 10 h visible avec le même signalement. 0 créneau disponible. |
+| Après réactivation, PATCH 200 | « En service ». Même poste. | Même réservation à venir. 9 créneaux disponibles, dont 10 h à 11 h. 9 h à 10 h reste occupé. |
+
+Le banc a comparé la réservation avant et après, puis a été arrêté. L'essai
+navigateur a utilisé les pages et l'API, et le verrou ainsi que le POST refusé
+ont été vérifiés séparément sur PostgreSQL. La base de démonstration est restée
+en dehors de ces essais.
+
+## Vérifications locales du cycle d'état
+
+La couverture complète a exécuté 573 cas PostgreSQL et 9 tests Python TP1.
+Le garde SQLite a réussi séparément. Les services couvrent 404/404 lignes et
+124/124 branches. La mesure globale atteint 1 995/2 243 lignes (88,94 %) et
+478/544 branches (87,87 %), serveur TP1 et anciens bancs Python ignorés inclus.
+
+Les 28 cas PostgreSQL ciblés couvrent le catalogue, les réservations du personnel
+et les deux ordres concurrents. Les 64 tests Node passent, dont les nouveaux
+cas de libellé, de focus, d'état explicite et de renommage hors service. La
+commande de couverture étendue aux deux écrans du personnel exécute 63 cas UI
+et mesure 97,97 % des lignes et 94,69 % des branches. Le seuil de 80 % est conservé.
+Le job de couverture JavaScript versionné garde le périmètre signalé lors du
+lot précédent. La mesure de cet écran est locale.
+
+Le contrôle Django, `git diff --check`, ex2 (32/32) et MCP TP1 (12/12) passent.
+Les 28 cas ciblés repassent après la revue et couvrent les deux nouveaux
+refus 401. Ex3 reconnaît AC-10 à AC-12 et affiche 15/18. Le lancement de npm
+sous Windows, AC-43 à AC-45 et la note d'architecture personnelle restent
+signalés par le vérificateur.
+
+## Vérifications locales du lot AC-6 à AC-8
 
 La couverture PostgreSQL a exécuté 568 cas et 9 tests Python TP1. Le garde
 SQLite a été exécuté séparément. Les services atteignent 394/394 lignes et
@@ -103,10 +184,10 @@ encore AC-10, AC-12, AC-43 à AC-45 et l'absence de note personnelle.
 - `base.html` relie les écrans du personnel. `staff_catalogue.html` fournit les formulaires et le jeton CSRF. `staff_catalogue.mjs` appelle l'API et met les fiches à jour. `app.css` définit leur présentation et leur focus.
 - `urls.py` associe les URL à `routes/staff_catalogue.py`. `session.py` garde une destination de retour interne, `pages.py` contrôle les écrans et `booking_http.py` traduit les erreurs d'API.
 - `services/access.py` partage le contrôle du rôle entre les écrans et les services. `staff_bookings.py` réutilise cette règle côté route et côté service. `services/staff_catalogue.py` valide chaque nom avant d'appeler `data/staff_catalogue.py`, qui lit ou modifie les lignes par l'ORM.
-- `test_staff_catalogue.py` vérifie les réponses et les lignes PostgreSQL. `staff_catalogue_ui.test.mjs` vérifie les formulaires et les transitions DOM. `SPEC.md`, `UI.md`, `AGENTS.md` et `AGENT_LOG.md` conservent la portée, les commandes et les preuves.
+- `test_staff_catalogue.py` vérifie les réponses et les lignes PostgreSQL. `test_workstation_state_concurrency.py` observe les deux ordres de verrouillage. Les tests DOM vérifient les actions et les historiques. `SPEC.md`, `UI.md`, `AGENTS.md` et `AGENT_LOG.md` conservent la portée, les commandes et les preuves.
 
 ## Questions pour relire le code
 
-- Où le rôle du compte et le jeton CSRF sont-ils contrôlés ?
-- Quelle opération de données permet de renommer un poste en gardant son laboratoire ?
-- Comment le service distingue-t-il un nom en double d'une autre erreur de base ?
+- Quelle valeur la requête envoie-t-elle pour que sa répétition conserve le même état ?
+- Pourquoi le changement d'état verrouille-t-il la même ligne que `create_booking` ?
+- Comment les historiques affichent-ils l'état actuel du poste tout en conservant le statut de la réservation ?

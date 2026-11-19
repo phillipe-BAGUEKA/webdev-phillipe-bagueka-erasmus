@@ -175,3 +175,8 @@ Pour « Catalogue du personnel », Codex a observé la création, l'ajout du pos
 les deux renommages et le rechargement dans Edge aux trois largeurs. Les champs
 et boutons ont été utilisés au clavier et la page ne débordait pas horizontalement.
 [Relevé AC-6 à AC-8](STAFF_CATALOGUE.md#observations-edge)
+
+Codex a aussi suivi le cycle d'état dans Edge à 380 px CSS. Tab et Entrée
+servent aux deux changements d'état et à la consultation étudiant. Le focus
+reste visible et les deux vues mesurent 380 / 380 / 380 horizontalement.
+[Relevé AC-10 à AC-12](STAFF_CATALOGUE.md#relevé-edge-du-changement-détat)

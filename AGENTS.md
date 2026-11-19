@@ -34,8 +34,8 @@ traceability and normal publication after checks. Personal note and deep
 personal review stay deferred. See docs/LAB03_CLOSURE.md.
 Edge measurements at 380, 768 and 1280 CSS px, the synthetic login refusal
 at 380 CSS px and the remaining AC-42 limits are recorded in docs/UI.md.
-The current checkpoint authorizes the staff catalogue for AC-6 to AC-8,
-isolated tests and a local commit. Workstation state changes are a later slice.
+The current checkpoint authorizes workstation state changes for AC-10 to AC-12,
+isolated tests and a local commit. Keep the existing staff checkpoints.
 See docs/STAFF_CATALOGUE.md and docs/STAFF_BOOKINGS.md.
 Further features, real provider calls, key access, installation, billing and Lab 04 are out of scope.
 The provider stays disabled by default. See docs/AI_FINALIZATION.md and AI_UI_3.md.
@@ -64,6 +64,7 @@ Restart it manually after Windows reboot; no service was registered. Existing
 - Current student UI and catalogue tests: `node --test tests/labs_ui.test.mjs tests/booking_ui.test.mjs tests/ai_suggestion_ui.test.mjs`
 - Staff reservations tests: `.\.venv\Scripts\python.exe -m pytest tests/test_staff_bookings.py --ds=tests.settings_postgres --reuse-db -q` and `node --test tests/staff_bookings_ui.test.mjs`
 - Staff catalogue tests: `.\.venv\Scripts\python.exe -m pytest tests/test_staff_catalogue.py --ds=tests.settings_postgres --reuse-db -q` and `node --test tests/staff_catalogue_ui.test.mjs`
+- Workstation state concurrency: `.\.venv\Scripts\python.exe -m pytest tests/test_workstation_state_concurrency.py --ds=tests.settings_postgres --reuse-db -q`
 - JavaScript coverage (loaded catalogue/booking modules): `node --test --experimental-test-coverage --test-coverage-include='src/**' --test-coverage-exclude='tests/**' --test-coverage-lines=80 tests/labs_ui.test.mjs tests/booking_ui.test.mjs tests/ai_suggestion_ui.test.mjs`
 - MCP server: `python mcp-server/server.py` (from the repository root)
 - MCP check: `node mcp-server/check.mjs -- python mcp-server/server.py`

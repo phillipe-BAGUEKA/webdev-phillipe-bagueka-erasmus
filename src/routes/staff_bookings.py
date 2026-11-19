@@ -29,6 +29,7 @@ def reservations_api(request: HttpRequest) -> JsonResponse:
             "starts_at": utc_text(booking.starts_at),
             "ends_at": utc_text(booking.ends_at),
             "status": booking.status,
+            "is_operational": booking.is_operational,
         }
         for booking in bookings
     ]})

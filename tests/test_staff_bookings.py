@@ -84,6 +84,7 @@ def test_personnel_consults_two_owners_in_stable_order(
             "starts_at": utc_text(booking.starts_at),
             "ends_at": utc_text(booking.ends_at),
             "status": "future",
+            "is_operational": True,
         }
         for booking in (booking_scenario.second, booking_scenario.first)
     ]}

@@ -14,12 +14,26 @@ class NamedEntity(TypedDict):
     name: str
 
 
+class CatalogueWorkstation(NamedEntity):
+    is_operational: bool
+
+
 class CatalogueLaboratory(NamedEntity):
-    workstations: list[NamedEntity]
+    workstations: list[CatalogueWorkstation]
 
 
 class NamedWorkstation(NamedEntity):
     laboratory_id: int
+
+
+class WorkstationState(TypedDict):
+    id: int
+    laboratory_id: int
+    is_operational: bool
+
+
+class CreatedWorkstation(WorkstationState):
+    name: str
 
 
 class WorkstationNameConflict(Exception):
@@ -30,16 +44,21 @@ def list_catalogue() -> list[CatalogueLaboratory]:
     """Read the ordered laboratory tree, including empty laboratories."""
     rows = Laboratory.objects.order_by("id", "workstation__id").values_list(
         "id", "name", "workstation__id", "workstation__name",
+        "workstation__is_operational",
     )
     laboratories: dict[int, CatalogueLaboratory] = {}
-    for row in rows:
-        laboratory_id, laboratory_name, workstation_id, workstation_name = row
+    for (
+        laboratory_id, laboratory_name, workstation_id, workstation_name,
+        is_operational,
+    ) in rows:
         laboratory = laboratories.setdefault(laboratory_id, {
             "id": laboratory_id, "name": laboratory_name, "workstations": [],
         })
         if workstation_id is not None:
             laboratory["workstations"].append({
-                "id": workstation_id, "name": workstation_name,
+                "id": workstation_id,
+                "name": workstation_name,
+                "is_operational": is_operational,
             })
     return list(laboratories.values())
 
@@ -73,7 +92,7 @@ def _workstation_write() -> Iterator[None]:
 
 def create_workstation(
     laboratory_id: int, name: str,
-) -> NamedWorkstation | None:
+) -> CreatedWorkstation | None:
     """Keep the verified parent present until insertion completes."""
     with _workstation_write():
         laboratories = Laboratory.objects.select_for_update()
@@ -86,6 +105,7 @@ def create_workstation(
             "id": workstation.pk,
             "name": workstation.name,
             "laboratory_id": laboratory_id,
+            "is_operational": workstation.is_operational,
         }
 
 
@@ -103,4 +123,24 @@ def rename_workstation(
             "id": workstation_id,
             "name": name,
             "laboratory_id": laboratory_id,
+        }
+
+
+def set_workstation_state(
+    laboratory_id: int, workstation_id: int, is_operational: bool,
+) -> WorkstationState | None:
+    """Set the state under the workstation lock shared with booking creation."""
+    with transaction.atomic():
+        workstation = Workstation.objects.select_for_update().filter(
+            pk=workstation_id, laboratory_id=laboratory_id,
+        ).first()
+        if workstation is None:
+            return None
+        if workstation.is_operational != is_operational:
+            workstation.is_operational = is_operational
+            workstation.save(update_fields=["is_operational"])
+        return {
+            "id": workstation.pk,
+            "laboratory_id": workstation.laboratory_id,
+            "is_operational": workstation.is_operational,
         }

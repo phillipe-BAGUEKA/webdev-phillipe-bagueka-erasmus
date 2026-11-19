@@ -12,6 +12,7 @@ def all_bookings() -> list[dict[str, Any]]:
         "owner_id",
         "workstation__laboratory__name",
         "workstation__name",
+        "workstation__is_operational",
         "starts_at",
         "ends_at",
         "cancelled_at",

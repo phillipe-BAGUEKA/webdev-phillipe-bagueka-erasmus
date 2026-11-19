@@ -15,6 +15,10 @@ class DuplicateWorkstationName(ValueError):
     """A workstation already uses this name in the requested laboratory."""
 
 
+class InvalidWorkstationState(ValueError):
+    """The requested operational state must be a boolean."""
+
+
 def _validated_name(value: object) -> str:
     if type(value) is not str:
         raise InvalidCatalogueName
@@ -50,7 +54,7 @@ def rename_laboratory(
 
 def create_workstation(
     actor: Actor | None, laboratory_id: int, name: object,
-) -> data.NamedWorkstation:
+) -> data.CreatedWorkstation:
     require_staff_actor(actor)
     try:
         workstation = data.create_workstation(
@@ -73,6 +77,22 @@ def rename_workstation(
         )
     except data.WorkstationNameConflict as error:
         raise DuplicateWorkstationName from error
+    if workstation is None:
+        raise WorkstationNotFound
+    return workstation
+
+
+def set_workstation_state(
+    actor: Actor | None, laboratory_id: int, workstation_id: int,
+    is_operational: object,
+) -> data.WorkstationState:
+    """Set the requested state of a workstation in the staff catalogue."""
+    require_staff_actor(actor)
+    if type(is_operational) is not bool:
+        raise InvalidWorkstationState
+    workstation = data.set_workstation_state(
+        laboratory_id, workstation_id, is_operational,
+    )
     if workstation is None:
         raise WorkstationNotFound
     return workstation

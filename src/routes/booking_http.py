@@ -25,7 +25,9 @@ from src.services.booking_creation import (
 from src.services.booking_reads import (
     AvailableSlot, InvalidReadInput, LaboratoryNotFound, PersonalBooking,
 )
-from src.services.staff_catalogue import DuplicateWorkstationName, InvalidCatalogueName
+from src.services.staff_catalogue import (
+    DuplicateWorkstationName, InvalidCatalogueName, InvalidWorkstationState,
+)
 
 STAFF_ACCESS_MESSAGE = "Accès réservé au personnel."
 API_ROUTE_NAMES = {
@@ -33,6 +35,7 @@ API_ROUTE_NAMES = {
     "staff-bookings-api",
     "staff-catalogue-api", "staff-laboratory-api", "staff-workstations-api",
     "staff-workstation-api",
+    "staff-workstation-state-api",
 }
 LOGGER = logging.getLogger(__name__)
 ERRORS = {
@@ -40,6 +43,7 @@ ERRORS = {
     StaffAccessDenied: (403, STAFF_ACCESS_MESSAGE),
     DuplicateWorkstationName: (409, "Un poste porte déjà ce nom dans ce laboratoire."),
     InvalidCatalogueName: (422, "Saisis un nom valide de 1 à 150 caractères."),
+    InvalidWorkstationState: (422, "L’état souhaité du poste doit être un booléen."),
     StudentRequired: (403, "Seuls les étudiants peuvent réserver."),
     NotBookingOwner: (403, "Tu ne peux annuler que tes propres réservations."),
     LaboratoryNotFound: (404, "Laboratoire introuvable."),

@@ -58,3 +58,15 @@ def workstation_api(
         actor, laboratory_id, workstation_id, requested_name(request),
     )
     return JsonResponse({"workstation": workstation})
+
+
+@api_methods("PATCH")
+def workstation_state_api(
+    request: HttpRequest, laboratory_id: int, workstation_id: int,
+) -> JsonResponse:
+    actor = require_staff_actor(current_actor(request))
+    desired = json_object(request, {"is_operational"}, max_bytes=4096)
+    workstation = staff_catalogue.set_workstation_state(
+        actor, laboratory_id, workstation_id, desired["is_operational"],
+    )
+    return JsonResponse({"workstation": workstation})

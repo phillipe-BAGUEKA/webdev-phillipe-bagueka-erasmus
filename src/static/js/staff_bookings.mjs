@@ -12,6 +12,7 @@ function bookingItem(document, booking) {
       || typeof booking.workstation_name !== "string"
       || typeof booking.starts_at !== "string" || typeof booking.ends_at !== "string"
       || !Number.isSafeInteger(booking.owner_id) || booking.owner_id < 1
+      || typeof booking.is_operational !== "boolean"
       || typeof booking.status !== "string" || !Object.hasOwn(statusNames, booking.status)) {
     throw new Error("Invalid staff booking response");
   }
@@ -22,7 +23,8 @@ function bookingItem(document, booking) {
   const owner = document.createElement("p");
   title.textContent = `${booking.laboratory_name} · ${booking.workstation_name}`;
   slot.textContent = `Créneau : ${slotLabel(booking)}`;
-  state.textContent = `État : ${statusNames[booking.status]}`;
+  const unavailable = booking.is_operational ? "" : " · Poste hors service";
+  state.textContent = `État : ${statusNames[booking.status]}${unavailable}`;
   owner.textContent = `Propriétaire : compte nº ${booking.owner_id}`;
   item.append(title, slot, state, owner);
   return item;

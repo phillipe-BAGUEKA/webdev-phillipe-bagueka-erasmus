@@ -31,6 +31,11 @@ urlpatterns = [
         "api/staff/catalogue/laboratories/<int:laboratory_id>/workstations/<int:workstation_id>",
         staff_catalogue.workstation_api, name="staff-workstation-api",
     ),
+    path(
+        "api/staff/catalogue/laboratories/<int:laboratory_id>/workstations/"
+        "<int:workstation_id>/state",
+        staff_catalogue.workstation_state_api, name="staff-workstation-state-api",
+    ),
     path("api/bookings/<int:booking_id>/cancel", bookings.cancel_api,
          name="cancel-booking-api"),
     path("api/auth/login", auth.sign_in, name="sign-in"),

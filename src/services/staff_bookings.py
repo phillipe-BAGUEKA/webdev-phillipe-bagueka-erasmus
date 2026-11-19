@@ -18,6 +18,7 @@ class StaffBooking:
     starts_at: datetime
     ends_at: datetime
     status: str
+    is_operational: bool
 
 
 def list_staff_bookings(
@@ -34,6 +35,7 @@ def list_staff_bookings(
             workstation_name=row["workstation__name"],
             starts_at=row["starts_at"].astimezone(timezone.utc),
             ends_at=row["ends_at"].astimezone(timezone.utc),
+            is_operational=row["workstation__is_operational"],
             status=booking_status(
                 row["starts_at"], row["ends_at"], row["cancelled_at"], instant,
             ),

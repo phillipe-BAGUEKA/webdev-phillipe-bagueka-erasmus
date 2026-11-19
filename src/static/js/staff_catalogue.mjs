@@ -2,10 +2,19 @@ const endpoint = "/api/staff/catalogue";
 
 const refusalMessages = {
   400: "La demande est invalide.",
-  409: "Ce nom de poste existe déjà dans ce laboratoire.",
   413: "La demande est trop volumineuse.",
   415: "La demande doit être envoyée au format JSON.",
+};
+
+const nameRefusalMessages = {
+  ...refusalMessages,
+  409: "Ce nom de poste existe déjà dans ce laboratoire.",
   422: "Entre un nom de 1 à 150 caractères.",
+};
+
+const stateRefusalMessages = {
+  ...refusalMessages,
+  422: "L’état demandé pour le poste est invalide.",
 };
 
 function namedEntity(value, expectedId) {
@@ -67,72 +76,126 @@ export function createStaffCatalogue(document, fetcher) {
       : "Accès refusé. Vérifie ton rôle et recharge la page.");
   }
 
+  function canWrite() {
+    if (busy) return false;
+    if (current) return true;
+    refresh.focus();
+    return false;
+  }
+
+  async function save(button, { method, url, payload, successText, apply, refusals }) {
+    busy = true;
+    button.setAttribute("aria-disabled", "true");
+    error.textContent = "";
+    status.textContent = "Enregistrement…";
+    try {
+      const response = await fetcher(url, {
+        ...requestOptions,
+        method,
+        headers: {
+          ...headers,
+          "Content-Type": "application/json",
+          "X-CSRFToken": createLab.elements.csrfmiddlewaretoken.value,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (response.status === 401 || response.status === 403) {
+        showAccessError(response.status);
+        return;
+      }
+      if (response.status === 404) {
+        current = false;
+        refresh.hidden = false;
+        showError("Cet élément a changé. Actualise le catalogue.");
+        return;
+      }
+      if (Object.hasOwn(refusals, response.status)) {
+        showError(refusals[response.status]);
+        return;
+      }
+      if (!response.ok) throw new Error("Catalogue write status is uncertain");
+      const result = await response.json();
+      const focusTarget = apply(result);
+      status.textContent = successText;
+      focusTarget.focus();
+    } catch {
+      current = false;
+      refresh.hidden = false;
+      showError("Enregistrement non confirmé. Actualise le catalogue avant de modifier à nouveau.");
+    } finally {
+      busy = false;
+      button.removeAttribute("aria-disabled");
+    }
+  }
+
   function bindEditor(editor, method, url, successText, apply) {
     editor.form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      if (busy) return;
-      if (!current) {
-        refresh.focus();
-        return;
-      }
+      if (!canWrite()) return;
       const name = editor.input.value.trim();
       if (!name || name.length > 150) {
-        showError(refusalMessages[422]);
+        showError(nameRefusalMessages[422]);
         return;
       }
-      busy = true;
       editor.form.setAttribute("aria-busy", "true");
-      editor.button.setAttribute("aria-disabled", "true");
       editor.input.readOnly = true;
-      error.textContent = "";
-      status.textContent = "Enregistrement…";
       try {
-        const response = await fetcher(url, {
-          ...requestOptions,
-          method,
-          headers: {
-            ...headers,
-            "Content-Type": "application/json",
-            "X-CSRFToken": createLab.elements.csrfmiddlewaretoken.value,
-          },
-          body: JSON.stringify({ name }),
+        await save(editor.button, {
+          method, url, payload: { name }, successText, apply, refusals: nameRefusalMessages,
         });
-        if (response.status === 401 || response.status === 403) {
-          showAccessError(response.status);
-          return;
-        }
-        if (response.status === 404) {
-          current = false;
-          refresh.hidden = false;
-          showError("Cet élément a changé. Actualise le catalogue.");
-          return;
-        }
-        if (Object.hasOwn(refusalMessages, response.status)) {
-          showError(refusalMessages[response.status]);
-          return;
-        }
-        if (!response.ok) throw new Error("Catalogue write status is uncertain");
-        const result = await response.json();
-        const focusTarget = apply(result);
-        status.textContent = successText;
-        focusTarget.focus();
-      } catch {
-        current = false;
-        refresh.hidden = false;
-        showError("Enregistrement non confirmé. Actualise le catalogue avant de modifier à nouveau.");
       } finally {
-        busy = false;
         editor.form.removeAttribute("aria-busy");
-        editor.button.removeAttribute("aria-disabled");
         editor.input.readOnly = false;
       }
     });
+  }
+
+  function workstationState(station, labId, url, title) {
+    if (typeof station.is_operational !== "boolean") throw new Error("Invalid workstation state");
+
+    const state = document.createElement("p");
+    state.id = `staff-catalogue-state-${station.id}`;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "secondary";
+    button.id = `staff-catalogue-action-${station.id}`;
+    button.setAttribute("aria-describedby", `${title.id} ${state.id}`);
+
+    let isOperational = station.is_operational;
+    function renderState() {
+      state.textContent = isOperational ? "En service" : "Hors service";
+      button.textContent = isOperational ? "Mettre hors service" : "Remettre en service";
+    }
+    renderState();
+    button.addEventListener("click", async () => {
+      if (!canWrite()) return;
+      const desiredState = !isOperational;
+      await save(button, {
+        method: "PATCH",
+        url: `${url}/state`,
+        payload: { is_operational: desiredState },
+        successText: desiredState ? "Poste remis en service." : "Poste mis hors service.",
+        refusals: stateRefusalMessages,
+        apply(result) {
+          const updated = result.workstation;
+          if (updated?.id !== station.id || updated.laboratory_id !== labId
+              || updated.is_operational !== desiredState) {
+            throw new Error("Invalid workstation state response");
+          }
+          isOperational = updated.is_operational;
+          renderState();
+          return button;
+        },
+      });
+    });
+    return { state, button };
   }
 
   function workstationRow(labId, station) {
     namedEntity(station);
     const row = document.createElement("li");
     const title = document.createElement("h5");
+    title.id = `staff-catalogue-station-title-${station.id}`;
     title.textContent = station.name;
     title.tabIndex = -1;
     const rename = nameEditor(document, `staff-catalogue-station-${station.id}`,
@@ -145,7 +208,8 @@ export function createStaffCatalogue(document, fetcher) {
       rename.input.value = updated.name;
       return title;
     });
-    row.append(title, rename.form);
+    const { state, button } = workstationState(station, labId, url, title);
+    row.append(title, rename.form, state, button);
     return { row, title };
   }
 

@@ -35,23 +35,24 @@ function documentFixture() {
 const response = (payload, status = 200) => ({ status, ok: status < 300, json: async () => payload });
 const submit = (form) => form.submit({ preventDefault() {} });
 const north = { id: 4, name: "<b>Labo Nord</b>" };
-const station = { id: 7, name: "Poste A", laboratory_id: north.id };
+const station = { id: 7, name: "Poste A", laboratory_id: north.id, is_operational: true };
 const labsUrl = `${endpoint}/laboratories/${north.id}`;
 const stationUrl = `${labsUrl}/workstations`;
+const stateUrl = `${stationUrl}/${station.id}/state`;
 
 test("AC-6 AC-7 AC-8 create and rename both entities via CSRF-protected requests", async () => {
   const { nodes, document } = documentFixture();
   const calls = [];
   let finishCreate;
   const renamedLab = { ...north, name: "Labo photonique" };
-  const renamedStation = { ...station, name: "Poste laser" };
+  const renamedStation = { id: station.id, name: "Poste laser", laboratory_id: north.id };
   const responses = [
     response({ laboratories: [] }),
     () => new Promise((resolve) => { finishCreate = resolve; }),
     response({ workstation: station }, 201),
     response({ laboratory: renamedLab }),
     response({ workstation: renamedStation }),
-    response({ laboratories: [{ ...renamedLab, workstations: [{ id: station.id, name: renamedStation.name }] }] }),
+    response({ laboratories: [{ ...renamedLab, workstations: [{ ...station, name: renamedStation.name }] }] }),
   ];
   const catalogue = createStaffCatalogue(document, async (url, options) => {
     const next = responses[calls.length];
@@ -83,9 +84,11 @@ test("AC-6 AC-7 AC-8 create and rename both entities via CSRF-protected requests
   addStationInput.value = station.name;
   await submit(createStation);
   assert.match(nodes.status.textContent, /Poste ajouté/);
-  const [stationTitle, renameStation] = stations.children[0].children;
+  const [stationTitle, renameStation, state, stateButton] = stations.children[0].children;
   assert.equal(document.activeElement, stationTitle);
   assert.equal(stationTitle.textContent, station.name);
+  assert.equal(state.textContent, "En service");
+  assert.equal(stateButton.textContent, "Mettre hors service");
 
   renameLab.children[1].value = renamedLab.name;
   await submit(renameLab);
@@ -96,6 +99,7 @@ test("AC-6 AC-7 AC-8 create and rename both entities via CSRF-protected requests
   await submit(renameStation);
   assert.equal(stationTitle.textContent, renamedStation.name);
   assert.equal(document.activeElement, stationTitle);
+  assert.equal(state.textContent, "En service");
   assert.equal(stations.children.length, 1);
   assert.equal(nodes.labs.children.length, 1);
 
@@ -115,6 +119,98 @@ test("AC-6 AC-7 AC-8 create and rename both entities via CSRF-protected requests
     assert.equal(options.credentials, "same-origin");
     assert.equal(options.headers["X-CSRFToken"], testCsrf);
   }
+});
+
+test("AC-10 AC-12 the state action sends an explicit boolean and keeps keyboard focus", async () => {
+  const { nodes, document } = documentFixture();
+  const writes = [];
+  let finishUpdate;
+  const catalogue = createStaffCatalogue(document, async (url, options) => {
+    if (options.method === "GET") {
+      return response({ laboratories: [{ ...north, workstations: [station] }] });
+    }
+    writes.push([url, options]);
+    if (writes.length === 1) return new Promise((resolve) => { finishUpdate = resolve; });
+    return response({ workstation: { id: station.id, laboratory_id: north.id, is_operational: true } });
+  });
+  await catalogue.load();
+  const [title, , state, button] = nodes.labs.children[0].children[3].children[0].children;
+  assert.equal(state.textContent, "En service");
+  assert.equal(button.textContent, "Mettre hors service");
+  assert.equal(button.type, "button");
+  assert.equal(button.attributes["aria-describedby"], `${title.id} ${state.id}`);
+  button.focus();
+
+  const disabling = button.click();
+  assert.match(nodes.status.textContent, /Enregistrement/);
+  assert.equal(button.attributes["aria-disabled"], "true");
+  await button.click();
+  assert.equal(writes.length, 1);
+  assert.equal(state.textContent, "En service");
+  finishUpdate(response({ workstation: { id: station.id, laboratory_id: north.id, is_operational: false } }));
+  await disabling;
+  assert.equal(button.attributes["aria-disabled"], undefined);
+  assert.equal(state.textContent, "Hors service");
+  assert.equal(button.textContent, "Remettre en service");
+  assert.equal(nodes.status.textContent, "Poste mis hors service.");
+  assert.equal(document.activeElement, button);
+
+  await button.click();
+  assert.equal(state.textContent, "En service");
+  assert.equal(button.textContent, "Mettre hors service");
+  assert.equal(nodes.status.textContent, "Poste remis en service.");
+  assert.equal(document.activeElement, button);
+  assert.deepEqual(writes.map(([url, options]) => [url, options.method, JSON.parse(options.body)]), [
+    [stateUrl, "PATCH", { is_operational: false }], [stateUrl, "PATCH", { is_operational: true }],
+  ]);
+  for (const [, options] of writes) {
+    assert.equal(options.credentials, "same-origin");
+    assert.equal(options.headers["X-CSRFToken"], testCsrf);
+  }
+});
+
+test("AC-10 an unexpected state reply requires a fresh read instead of retrying", async () => {
+  const { nodes, document } = documentFixture();
+  let writes = 0;
+  let reads = 0;
+  const catalogue = createStaffCatalogue(document, async (url, options) => {
+    if (options.method === "GET") {
+      const workstation = { ...station, is_operational: ++reads === 1 };
+      return response({ laboratories: [{ ...north, workstations: [workstation] }] });
+    }
+    writes++;
+    return response({ workstation: { id: station.id, laboratory_id: north.id, is_operational: "false" } });
+  });
+  await catalogue.load();
+  const [, , state, button] = nodes.labs.children[0].children[3].children[0].children;
+  await button.click();
+  assert.match(nodes.error.textContent, /non confirmé/);
+  assert.equal(state.textContent, "En service");
+  assert.equal(nodes.refresh.hidden, false);
+  await button.click();
+  assert.equal(writes, 1);
+  assert.equal(document.activeElement, nodes.refresh);
+  await nodes.refresh.click();
+  const [, , newState, newButton] = nodes.labs.children[0].children[3].children[0].children;
+  assert.equal(newState.textContent, "Hors service");
+  assert.equal(newButton.textContent, "Remettre en service");
+  assert.equal(writes, 1);
+});
+
+test("AC-8 AC-10 renaming a workstation preserves its out-of-service display", async () => {
+  const { nodes, document } = documentFixture();
+  const renamedStation = { id: station.id, name: "Poste laser", laboratory_id: north.id };
+  const catalogue = createStaffCatalogue(document, async (url, options) => options.method === "GET"
+    ? response({ laboratories: [{ ...north, workstations: [{ ...station, is_operational: false }] }] })
+    : response({ workstation: renamedStation }));
+  await catalogue.load();
+  const [title, rename, state, button] = nodes.labs.children[0].children[3].children[0].children;
+  assert.equal(state.textContent, "Hors service");
+  rename.children[1].value = renamedStation.name;
+  await submit(rename);
+  assert.equal(title.textContent, renamedStation.name);
+  assert.equal(state.textContent, "Hors service");
+  assert.equal(button.textContent, "Remettre en service");
 });
 
 test("AC-41 read failure exposes refresh and moving focus to the status when recovered", async () => {
