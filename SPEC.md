@@ -213,10 +213,11 @@ disponibilités, confirmation, historique puis annulation conservée, sur la dé
 PostgreSQL autorisée. Le 19 novembre, Codex a repris les essais à 380, 768 et
 1 280 px CSS dans Edge, dont le refus de connexion à 380 px. Le parcours
 clavier complet et les autres états non observés restent à vérifier.
-Google, l'espace de compte et l'espace du personnel restent à construire.
-L'UI IA a été vérifiée hors fournisseur (docs/AI_UI_3.md). Les quatre outils MCP
-sont construits et leur essai avec le client final reste à faire. L'absence d'écran du personnel
-n'est pas présentée comme une réalisation complète d'AC-40.
+L'espace du personnel contient la consultation des réservations en lecture seule
+sur `/staff/bookings`. L'espace de compte, Google et la gestion du catalogue du
+personnel restent à construire. L'UI IA a été vérifiée hors fournisseur
+(docs/AI_UI_3.md). Les quatre outils MCP sont construits et leur essai avec le
+client final reste à faire. AC-40 reste partiel.
 
 Attribution des exigences UI : `docs/UI.md` contient les largeurs 380/768/1280 pixels, l’absence de défilement horizontal et de déplacements au chargement, les états d’écran, le clavier et le focus, les libellés accessibles, le contraste 4,5:1, le titre et la langue, les cibles tactiles de 44 pixels et l’identification des suggestions IA. Il cite explicitement les jetons d’espacement et de typographie ; les jetons de couleurs et de rayons d’AC-45 sont une extension de conception retenue, pas une citation de cette checklist. L’organisation des espaces d’AC-40 est propre au projet. La checklist demande les quatre états sur chaque écran, alors qu’AC-41 conserve « lorsqu’ils s’appliquent » : cette correspondance devra être explicitée pour chaque écran. Elle ajoute un indicateur de chargement vers 100 ms, un succès visible sans rechargement, des preuves visuelles et une décision sur le mode sombre, que les critères ci-dessous ne remplacent pas. Aucun élément de la checklist n’est déclaré vérifié.
 
@@ -321,11 +322,11 @@ Architecture reste personnellement à rédiger, dans la section dédiée laissé
 | AC-2 | Aucun test des conditions de liaison Google. | Non implémenté. |
 | AC-3 | Aucun test de connexion Google après liaison. | Non implémenté. |
 | AC-4 | Aucun test d'identité Google non liée. | Non implémenté. |
-| AC-5 | Aucun test de l'API de gestion du personnel. | Non implémenté ; les refus du rôle personnel lors d'une réservation ne prouvent pas ce critère de gestion. |
+| AC-5 (partiel) | `tests/test_staff_bookings.py::test_students_keep_personal_history_and_are_denied_staff_routes` (`AC-5-AC-9-student` et `AC-5-AC-9-is_staff`). | Session locale valide : GET direct de l'API et de la page réservées au personnel refusé avec 403. Rôles, drapeau Django et réservations inchangés. La gestion du catalogue et la session Google restent à vérifier. |
 | AC-6 | Aucun test de création HTTP/UI d'un laboratoire par le personnel. | Les seeds et fixtures ne constituent pas cette fonctionnalité. |
 | AC-7 | Aucun test de création HTTP/UI d'un poste par le personnel. | Le modèle Workstation et ses tests ne prouvent pas le parcours de gestion. |
 | AC-8 | Aucun test de mise à jour du catalogue par le personnel. | Non implémenté. |
-| AC-9 | Aucun test de consultation globale par le personnel. | L'historique personnel ne prouve pas ce critère. |
+| AC-9 | `tests/test_staff_bookings.py::test_personnel_consults_two_owners_in_stable_order[AC-9-AC-40]` et autres cas AC-9 PostgreSQL ; `tests/staff_bookings_ui.test.mjs`. | Le personnel voit deux réservations de propriétaires distincts dans l'ordre prévu, et chaque étudiant voit uniquement la sienne sur son API. Comparaison des lignes avant/après. Codex a observé les deux lignes, leurs créneaux Europe/Sofia et le réessai dans Edge sur données synthétiques. [Preuves et procédure](docs/STAFF_BOOKINGS.md). |
 | AC-10 | Aucun test du passage hors service par le personnel. | Les fixtures hors service prouvent des règles de réservation, pas l'opération de gestion. |
 | AC-11 | `tests/test_booking_creation.py::test_access_and_post_refusals_are_unchanged[AC-11-offline]` ; `tests/test_booking_api.py::test_creation_business_refusals[AC-11]`. | Refus service et HTTP 409 sans mutation ; DOM du refus dans booking_ui. Pas de nouvelle observation navigateur. |
 | AC-12 | Aucun test de remise en service par le personnel. | La préparation d'un état en service dans un test ne réalise pas le parcours de gestion. |
@@ -356,9 +357,9 @@ Architecture reste personnellement à rédiger, dans la section dédiée laissé
 | AC-37 | `tests/test_mcp_mutations.py::test_AC_37_six_tools_and_mutation_schemas[AC-37]` ; `tests/test_mcp_reads.py::test_AC_37_AC_39_read_catalog_and_personal_history[AC-37-AC-39]`. | Vrai stdio : découverte, schémas et descriptions ; six outils en mode projet, deux TP1 en mode autonome. Client Gemini final : appels non validés. |
 | AC-38 | `tests/test_mcp_session_auth.py::test_refuse_missing_or_unknown_session`, `test_refuse_invalidated_session_without_writing` ; `tests/test_mcp_mutations.py::test_AC_38_revocation_blocks_both_mutations_in_same_process`. | Sessions Django de test, expiration/révocation/inactivité/hash ; nouvel acteur à chaque appel. Remise réelle d'un jeton utilisateur au client final non validée. |
 | AC-39 | `tests/test_mcp_mutations.py::test_AC_11_AC_15_AC_17_AC_18_AC_20_AC_39_creation_parity` et `test_AC_25_AC_26_AC_27_AC_28_AC_39_cancellation_parity` ; `tests/test_mcp_reads.py::test_AC_37_AC_39_read_catalog_and_personal_history`. | Vrais processus stdio, services identiques, 14 créations/8 annulations et lectures comparées HTTP/MCP, CSRF côté HTTP, aucune mutation sur refus. Ne prouve pas tous les scénarios ni le client final. |
-| AC-40 | Titre Node `AC-13 AC-40 AC-41 catalogue opens availability, loading and safe DOM text` ; `tests/test_booking_page.py::test_student_journey_template_keeps_session_csrf_and_navigation`. | Navigation étudiant partielle. Espace de compte/Google et espace du personnel absents ; critère complet non satisfait. |
+| AC-40 (partiel) | Titre Node `AC-13 AC-40 AC-41 catalogue opens availability, loading and safe DOM text` ; `tests/test_booking_page.py::test_student_journey_template_keeps_session_csrf_and_navigation` ; `tests/test_staff_bookings.py::test_personnel_consults_two_owners_in_stable_order[AC-9-AC-40]`. | La navigation du personnel mène à son écran distinct « Réservations ». Lien observé dans Edge et contrôle serveur de sa visibilité par rôle. L'espace de compte et la liaison Google restent ouverts. |
 | AC-41 | Titres Node de chargement/vide/erreur/succès dans booking_ui, labs_ui et ai_suggestion_ui ; notamment `AC-41 read network errors offer retries, no raw stack`. | DOM simulé et observations Edge répertoriées dans AI_UI_3/SLICE2_FINALIZATION. Tous les écrans et états du projet final ne sont pas présents ni audités. |
-| AC-42 (partiel) | Le test Python vérifie le HTML et son accès. Codex a mesuré 380/768/1280 px CSS dans Edge sur la connexion et le parcours étudiant. À 380 px, un refus de connexion synthétique (401) est resté lisible et les champs et le bouton sont restés utilisables au clavier. | Sans défilement horizontal ni chevauchement observé dans les scénarios préparés. Après correction, les trois déplacements mesurés au chargement du catalogue, des créneaux et de l'historique sont de 0 px. Données synthétiques et limites dans [UI.md](docs/UI.md). Les autres états et écrans finaux restent ouverts. |
+| AC-42 (partiel) | Le test Python vérifie le HTML et son accès. Codex a mesuré 380/768/1280 px CSS dans Edge sur la connexion, le parcours étudiant et les réservations du personnel. À 380 px, le refus de connexion et le réessai de la consultation du personnel ont été observés. | Sans défilement horizontal ni chevauchement observé dans les scénarios préparés. Les trois déplacements mesurés à 0 px concernent le parcours étudiant. Données synthétiques et limites dans [UI.md](docs/UI.md). Les autres états et écrans finaux restent ouverts. |
 | AC-43 | Aucun titre automatisé exact AC-43. | Réservation/annulation au clavier observées par Codex ; connexion/déconnexion clavier rapportées par l'utilisateur. Pas de parcours unique complet ni d'audit global ; non validé complètement. |
 | AC-44 | Aucun titre automatisé exact AC-44. | Palette/contraste partiels documentés (CSS Overview et calcul WCAG), langue/titre dans les templates ; cibles et tous les états non audités. Non validé complètement. |
 | AC-45 | Aucun titre automatisé exact AC-45. | Jetons existants inspectés dans app.css ; l'audit complet de leur utilisation n'est pas une suite automatisée. Aucun identifiant ajouté pour rendre ex3 vert. |
@@ -371,6 +372,10 @@ Ces preuves automatisées sont distinctes de la démonstration navigateur. Aprè
 
 ## Spec vs result
 <!-- After the agent builds the slice: which criteria passed, which it missed or reinterpreted, and what you changed in this spec because of it. -->
+
+La consultation en lecture seule du personnel est livrée pour AC-9. Les
+preuves PostgreSQL, DOM et Edge sont détaillées dans [STAFF_BOOKINGS.md](docs/STAFF_BOOKINGS.md).
+Les contributions à AC-5, AC-40 et AC-42 restent partielles.
 
 Le 19 novembre 2026, Codex a réalisé le contrôle à 380 px auparavant reporté et
 vérifié aussi 768 et 1280 px dans Edge sur les deux écrans livrés. Les trois

@@ -43,11 +43,26 @@ class PersonalBooking:
     status: str
 
 
-def _clock(now: datetime | None) -> datetime:
+def read_instant(now: datetime | None) -> datetime:
+    """Use the supplied aware clock value or the current instant, in UTC."""
     instant = django_timezone.now() if now is None else now
     if not isinstance(instant, datetime) or instant.utcoffset() is None:
         raise InvalidReadInput("An aware current instant is required.")
     return instant.astimezone(timezone.utc)
+
+
+def booking_status(
+    starts_at: datetime, ends_at: datetime, cancelled_at: datetime | None,
+    instant: datetime,
+) -> str:
+    """Apply the same booking state boundaries to both read views."""
+    if cancelled_at is not None:
+        return "cancelled"
+    if starts_at > instant:
+        return "future"
+    if ends_at > instant:
+        return "in_progress"
+    return "past"
 
 
 def list_available_slots(
@@ -59,7 +74,7 @@ def list_available_slots(
     This read is not a reservation or a transactionally guaranteed offer.
     """
     actor = require_authenticated(actor)
-    instant = _clock(now)
+    instant = read_instant(now)
     if type(day) is not date or type(laboratory_id) is not int or laboratory_id <= 0:
         raise InvalidReadInput("A calendar date and positive laboratory ID are required.")
     if not data.laboratory_exists(laboratory_id):
@@ -97,17 +112,9 @@ def list_personal_bookings(
 ) -> list[PersonalBooking]:
     """Return only the actor's history, descending by start then booking ID."""
     actor = require_authenticated(actor)
-    instant = _clock(now)
+    instant = read_instant(now)
     result = []
     for row in data.personal_bookings(actor.user_id):
-        if row["cancelled_at"] is not None:
-            status = "cancelled"
-        elif row["starts_at"] > instant:
-            status = "future"
-        elif row["ends_at"] > instant:
-            status = "in_progress"
-        else:
-            status = "past"
         result.append(PersonalBooking(
             booking_id=row["id"], workstation_id=row["workstation_id"],
             workstation_name=row["workstation__name"],
@@ -117,6 +124,9 @@ def list_personal_bookings(
             ends_at=row["ends_at"].astimezone(timezone.utc),
             created_at=row["created_at"].astimezone(timezone.utc),
             cancelled_at=row["cancelled_at"],
-            is_operational=row["workstation__is_operational"], status=status,
+            is_operational=row["workstation__is_operational"],
+            status=booking_status(
+                row["starts_at"], row["ends_at"], row["cancelled_at"], instant,
+            ),
         ))
     return result

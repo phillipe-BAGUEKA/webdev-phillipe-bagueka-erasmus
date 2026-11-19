@@ -9,7 +9,15 @@
 </head>
 <body>
   <a class="skip-link" href="#main">Aller au contenu</a>
-  <header class="site-header"><span class="brand">Lab booking</span></header>
+  <header class="site-header">
+    <span class="brand">Lab booking</span>
+    {% if staff_can_view_bookings %}
+      <nav class="site-nav" aria-label="Navigation principale">
+        <a href="{% url 'laboratories' %}"{% if request.resolver_match.url_name == 'laboratories' %} aria-current="page"{% endif %}>Laboratoires</a>
+        <a href="{% url 'staff-bookings' %}"{% if request.resolver_match.url_name == 'staff-bookings' %} aria-current="page"{% endif %}>Espace du personnel</a>
+      </nav>
+    {% endif %}
+  </header>
   <main id="main" class="panel" tabindex="-1">
     {% block content %}{% endblock %}
   </main>

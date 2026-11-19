@@ -1,4 +1,4 @@
-"""Render the two checkpoint-2 pages and safe CSRF errors."""
+"""Render sign-in, laboratories and safe CSRF errors."""
 
 from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse, JsonResponse
@@ -8,6 +8,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET
 
 from src.services.access import AuthenticationRequired, require_authenticated
+from src.services.staff_bookings import StaffAccessDenied, require_staff_actor
 
 from .forms import LoginForm
 from .booking_http import API_ROUTE_NAMES
@@ -38,7 +39,16 @@ def laboratories_page(request: HttpRequest) -> HttpResponse:
         actor = require_authenticated(current_actor(request))
     except AuthenticationRequired:
         return redirect_to_login(request.get_full_path(), login_url=reverse("login"))
-    return render(request, "labs.html", {"actor": actor})
+    try:
+        require_staff_actor(actor)
+    except StaffAccessDenied:
+        staff_can_view_bookings = False
+    else:
+        staff_can_view_bookings = True
+    return render(request, "labs.html", {
+        "actor": actor,
+        "staff_can_view_bookings": staff_can_view_bookings,
+    })
 
 
 @never_cache

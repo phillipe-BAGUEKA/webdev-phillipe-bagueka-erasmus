@@ -22,12 +22,12 @@ def current_actor(request: HttpRequest) -> Actor | None:
 
 
 def safe_return_path(value: str) -> str:
-    """Only the existing protected page is a supported post-login destination."""
+    """Keep post-login destinations on the allowlist of protected pages."""
     fallback = reverse("laboratories")
     target = value.strip()
     if not url_has_allowed_host_and_scheme(target, allowed_hosts=set()):
         return fallback
-    if urlsplit(target).path != fallback:
+    if urlsplit(target).path not in {fallback, reverse("staff-bookings")}:
         return fallback
     return target
 

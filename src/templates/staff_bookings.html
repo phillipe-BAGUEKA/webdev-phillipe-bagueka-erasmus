@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Réservations · Espace du personnel · Lab booking{% endblock %}
+{% block content %}
+  <h1>Espace du personnel</h1>
+  <section id="staff-bookings" aria-labelledby="staff-bookings-title">
+    <h2 id="staff-bookings-title">Réservations</h2>
+    <p>Horaires affichés en <strong>Europe/Sofia</strong>.</p>
+    <div class="staff-bookings-feedback">
+      <p id="staff-bookings-status" class="message" role="status" tabindex="-1"></p>
+      <p id="staff-bookings-error" class="error message" role="alert" tabindex="-1"></p>
+      <a id="staff-bookings-login" href="{% url 'login' %}?next={% url 'staff-bookings' %}" hidden>Se reconnecter</a>
+      <button id="staff-bookings-retry" type="button" class="secondary" hidden>Réessayer</button>
+    </div>
+    <div id="staff-bookings-results" class="booking-results staff-bookings-results"
+         role="region" aria-label="Liste des réservations" tabindex="-1">
+      <ul id="staff-bookings-list" class="booking-list"></ul>
+    </div>
+    <noscript><p>Active JavaScript pour charger les réservations.</p></noscript>
+  </section>
+  <form id="logout-form" action="{% url 'sign-out' %}" method="post">
+    {% csrf_token %}
+    <p id="logout-error" class="error message" role="alert" tabindex="-1"></p>
+    <p id="logout-status" class="message" role="status" aria-live="polite"></p>
+    <button type="submit">Se déconnecter</button>
+  </form>
+{% endblock %}
+{% block scripts %}
+  <script src="{% static 'js/logout.js' %}" defer></script>
+  <script src="{% static 'js/staff_bookings.mjs' %}" type="module"></script>
+{% endblock %}

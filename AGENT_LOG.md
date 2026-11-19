@@ -1541,3 +1541,30 @@ approved the whole feature diff. User must supply their own assessment.
   le bac à sable bloquée par les permissions du dossier temporaire de pytest.
   Contrôles ex2 32/32, MCP TP1 12/12, Django check et diff --check réussis.
   Couverture JavaScript locale : 97,71 % des lignes sur les modules mesurés.
+
+## Consultation des réservations du personnel — 19 novembre 2026
+
+- Demande utilisateur depuis `2919829` : page et GET dédiés à AC-9, lecture
+  seule, sécurité par le rôle actif `personnel`, validation isolée et commit local.
+- Codex a ajouté la projection de données, le service et les deux routes.
+  Les deux historiques partagent le calcul d'état. La route personnelle reste
+  filtrée par son propriétaire. L'API du personnel expose seulement les champs
+  de consultation, dont l'identifiant numérique du propriétaire. Le lien est
+  dans l'en-tête du personnel et l'écran maintient les états de consultation.
+- Codex a observé Edge à 380, 768 et 1 280 px CSS avec deux lignes synthétiques,
+  un focus visible et aucun débordement horizontal mesuré. À 380, un 503
+  simulé a été suivi d'un réessai clavier et d'un 200. Le banc en mémoire a été
+  arrêté. Les preuves navigateur et PostgreSQL sont distinguées dans
+  [STAFF_BOOKINGS.md](docs/STAFF_BOOKINGS.md). AC-5, AC-40 et AC-42 restent partiels.
+- ex2 : 32/32. ex3 : 15/18. AC-9 n'est plus signalé, les autres écarts restent
+  consignés. Aucun compte étudiant persistant modifié ni fournisseur sollicité.
+- Couverture locale PostgreSQL : 552 cas et 9 tests Python TP1 réussis, garde
+  SQLite réussi séparément. Services à 347/347 lignes et 110/110 branches.
+  Global à 1 826/2 074 lignes (88,04 %), bancs ignorés `.local/` inclus.
+  Node : 51 réussites et 97,76 % des lignes sur les modules mesurés localement.
+  Contrôles Django et MCP TP1 réussis. Configuration et seuils conservés.
+- Revue indépendante unique sans blocage. Ajout d'un cas prouvant la priorité
+  du début sur l'identifiant au tri. 8 cas PostgreSQL AC-9 et 9 cas DOM rejoués
+  avec succès. Le point mineur sur les paramètres d'URL a été écarté : l'API
+  expose une vue fixe et l'ajout de filtres ou d'un contrat de recherche sort
+  du périmètre de cet écran.

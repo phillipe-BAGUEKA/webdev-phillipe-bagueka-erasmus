@@ -25,11 +25,17 @@ from src.services.booking_creation import (
 from src.services.booking_reads import (
     AvailableSlot, InvalidReadInput, LaboratoryNotFound, PersonalBooking,
 )
+from src.services.staff_bookings import StaffAccessDenied
 
-API_ROUTE_NAMES = {"availability-api", "bookings-api", "cancel-booking-api", "suggestion-api"}
+STAFF_ACCESS_MESSAGE = "Accès réservé au personnel."
+API_ROUTE_NAMES = {
+    "availability-api", "bookings-api", "cancel-booking-api", "suggestion-api",
+    "staff-bookings-api",
+}
 LOGGER = logging.getLogger(__name__)
 ERRORS = {
     AuthenticationRequired: (401, "Connexion requise."),
+    StaffAccessDenied: (403, STAFF_ACCESS_MESSAGE),
     StudentRequired: (403, "Seuls les étudiants peuvent réserver."),
     NotBookingOwner: (403, "Tu ne peux annuler que tes propres réservations."),
     LaboratoryNotFound: (404, "Laboratoire introuvable."),

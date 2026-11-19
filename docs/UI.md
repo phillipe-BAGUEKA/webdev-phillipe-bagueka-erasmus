@@ -163,7 +163,10 @@ consignés dans les guides précédents.
 
 **AC-42 partiel.** Les deux écrans livrés ont des preuves aux trois largeurs dans
 les scénarios ci-dessus. Le refus de connexion a été vérifié à 380 px. Les
-autres états et jeux de données, le refus à 768 et 1 280 px et les écrans finaux
-de compte et de personnel restent sans preuve. La conformité globale et le
-parcours clavier complet restent ouverts. Les contrôles Django et DOM complètent
-le relevé Edge.
+autres états et jeux de données, le refus à 768 et 1 280 px, l'espace de compte et
+la gestion du catalogue restent sans preuve. La conformité globale et le
+parcours clavier complet restent ouverts.
+
+Codex a également testé « Espace du personnel → Réservations » dans Edge à
+380, 768 et 1 280 px CSS. Le guide conserve les mesures de largeur, les horaires
+observés et le réessai clavier à 380 px. [Relevé AC-9](STAFF_BOOKINGS.md#observations-edge)

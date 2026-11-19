@@ -98,3 +98,17 @@ textarea { resize: vertical; }
 .catalogue-results { block-size: 9rem; }
 .slot-results { block-size: 15rem; }
 .history-results { block-size: 10rem; }
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 var(--space-2);
+}
+.site-nav [aria-current="page"] { font-weight: 700; }
+.staff-bookings-feedback { min-block-size: 4.8em; }
+.staff-bookings-results { block-size: 19rem; margin-block: var(--space-2); }
+.staff-bookings-results h3 { margin: 0 0 var(--space-1); font-size: var(--text-body); }
+.staff-bookings-results p { margin: 0; }
+.staff-bookings-results li:first-child { padding-block-start: 0; }
+#staff-bookings-retry[aria-disabled="true"] { cursor: wait; }
