@@ -83,3 +83,18 @@ textarea { resize: vertical; }
 .confirmation button + button { margin-top: var(--space-1); }
 .secondary { background: var(--paper); color: var(--accent); }
 .message:empty { min-height: 0; margin: 0; }
+
+/* Keep the following controls in place while these results load. */
+#labs-status, #availability-status, #history-status {
+  min-block-size: 4.8em;
+  margin: var(--space-1) 0;
+}
+.booking-results {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding: var(--space-1);
+}
+.booking-results ul { margin-block: 0; }
+.catalogue-results { block-size: 9rem; }
+.slot-results { block-size: 15rem; }
+.history-results { block-size: 10rem; }

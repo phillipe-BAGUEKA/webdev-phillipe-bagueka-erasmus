@@ -13,7 +13,10 @@
     <h2 id="catalogue-title">Liste des laboratoires</h2>
     <p id="labs-status" class="message" role="status" aria-live="polite"></p>
     <p id="labs-error" class="error message" role="alert"></p>
-    <ul id="labs-list" class="labs-list" hidden></ul>
+    <div class="booking-results catalogue-results" role="region"
+         aria-label="Laboratoires disponibles" tabindex="0">
+      <ul id="labs-list" class="labs-list" hidden></ul>
+    </div>
     <a id="labs-login" href="{% url 'login' %}?next=/labs" hidden>Se reconnecter</a>
     <button id="labs-retry" type="button" hidden>Réessayer</button>
     <noscript><p>Active JavaScript pour charger les laboratoires.</p></noscript>
@@ -32,7 +35,10 @@
         <button id="availability-load" type="submit">Afficher les créneaux</button>
       </form>
       <p id="availability-status" class="message" role="status" aria-live="polite"></p>
-      <ul id="slots-list" class="booking-list"></ul>
+      <div class="booking-results slot-results" role="region"
+           aria-label="Créneaux proposés" tabindex="0">
+        <ul id="slots-list" class="booking-list"></ul>
+      </div>
       <section class="confirmation" aria-labelledby="ai-title">
         <h3 id="ai-title">Suggestion IA facultative</h3>
         <form id="ai-form">
@@ -60,7 +66,10 @@
       <p>Réservations à venir, en cours, passées et annulées. Les règles sont revérifiées par le serveur.</p>
       <button id="history-refresh" type="button">Consulter l’état actuel / réessayer</button>
       <p id="history-status" class="message" role="status" aria-live="polite"></p>
-      <ul id="bookings-list" class="booking-list"></ul>
+      <div class="booking-results history-results" role="region"
+           aria-label="Historique des réservations" tabindex="0">
+        <ul id="bookings-list" class="booking-list"></ul>
+      </div>
     </section>
   </div>
   <form id="logout-form" action="{% url 'sign-out' %}" method="post">
