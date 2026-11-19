@@ -34,8 +34,9 @@ traceability and normal publication after checks. Personal note and deep
 personal review stay deferred. See docs/LAB03_CLOSURE.md.
 Edge measurements at 380, 768 and 1280 CSS px, the synthetic login refusal
 at 380 CSS px and the remaining AC-42 limits are recorded in docs/UI.md.
-The current checkpoint authorizes only the read-only personnel reservations
-page/API for AC-9, isolated tests and a local commit. See docs/STAFF_BOOKINGS.md.
+The current checkpoint authorizes the staff catalogue for AC-6 to AC-8,
+isolated tests and a local commit. Workstation state changes are a later slice.
+See docs/STAFF_CATALOGUE.md and docs/STAFF_BOOKINGS.md.
 Further features, real provider calls, key access, installation, billing and Lab 04 are out of scope.
 The provider stays disabled by default. See docs/AI_FINALIZATION.md and AI_UI_3.md.
 Local controlled-process timing is not Google access or browser latency proof.
@@ -62,6 +63,7 @@ Restart it manually after Windows reboot; no service was registered. Existing
 - Catalogue UI logic (simulated DOM/network): `node --test tests/labs_ui.test.mjs`
 - Current student UI and catalogue tests: `node --test tests/labs_ui.test.mjs tests/booking_ui.test.mjs tests/ai_suggestion_ui.test.mjs`
 - Staff reservations tests: `.\.venv\Scripts\python.exe -m pytest tests/test_staff_bookings.py --ds=tests.settings_postgres --reuse-db -q` and `node --test tests/staff_bookings_ui.test.mjs`
+- Staff catalogue tests: `.\.venv\Scripts\python.exe -m pytest tests/test_staff_catalogue.py --ds=tests.settings_postgres --reuse-db -q` and `node --test tests/staff_catalogue_ui.test.mjs`
 - JavaScript coverage (loaded catalogue/booking modules): `node --test --experimental-test-coverage --test-coverage-include='src/**' --test-coverage-exclude='tests/**' --test-coverage-lines=80 tests/labs_ui.test.mjs tests/booking_ui.test.mjs tests/ai_suggestion_ui.test.mjs`
 - MCP server: `python mcp-server/server.py` (from the repository root)
 - MCP check: `node mcp-server/check.mjs -- python mcp-server/server.py`

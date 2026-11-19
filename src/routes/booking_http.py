@@ -11,7 +11,7 @@ from typing import Any
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.cache import never_cache
 
-from src.services.access import AuthenticationRequired
+from src.services.access import AuthenticationRequired, StaffAccessDenied
 from src.services.ai_suggestion import InvalidSuggestionInput
 from src.services.booking_cancellation import (
     BookingChanged, BookingNotFound, CancellationResult, CancellationTooLate,
@@ -25,17 +25,21 @@ from src.services.booking_creation import (
 from src.services.booking_reads import (
     AvailableSlot, InvalidReadInput, LaboratoryNotFound, PersonalBooking,
 )
-from src.services.staff_bookings import StaffAccessDenied
+from src.services.staff_catalogue import DuplicateWorkstationName, InvalidCatalogueName
 
 STAFF_ACCESS_MESSAGE = "Accès réservé au personnel."
 API_ROUTE_NAMES = {
     "availability-api", "bookings-api", "cancel-booking-api", "suggestion-api",
     "staff-bookings-api",
+    "staff-catalogue-api", "staff-laboratory-api", "staff-workstations-api",
+    "staff-workstation-api",
 }
 LOGGER = logging.getLogger(__name__)
 ERRORS = {
     AuthenticationRequired: (401, "Connexion requise."),
     StaffAccessDenied: (403, STAFF_ACCESS_MESSAGE),
+    DuplicateWorkstationName: (409, "Un poste porte déjà ce nom dans ce laboratoire."),
+    InvalidCatalogueName: (422, "Saisis un nom valide de 1 à 150 caractères."),
     StudentRequired: (403, "Seuls les étudiants peuvent réserver."),
     NotBookingOwner: (403, "Tu ne peux annuler que tes propres réservations."),
     LaboratoryNotFound: (404, "Laboratoire introuvable."),

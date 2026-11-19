@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Catalogue · Espace du personnel · Lab booking{% endblock %}
+{% block content %}
+  <h1>Espace du personnel</h1>
+  <section id="staff-catalogue" aria-labelledby="staff-catalogue-title">
+    <h2 id="staff-catalogue-title">Catalogue</h2>
+    <div class="staff-catalogue-feedback">
+      <p id="staff-catalogue-status" class="message" role="status" tabindex="-1"></p>
+      <p id="staff-catalogue-error" class="error message" role="alert" tabindex="-1"></p>
+      <button id="staff-catalogue-refresh" type="button" class="secondary" hidden>Actualiser le catalogue</button>
+      <a id="staff-catalogue-login" href="{% url 'login' %}?next={% url 'staff-catalogue' %}" hidden>Se reconnecter</a>
+    </div>
+    <form id="staff-catalogue-create-lab" class="staff-catalogue-editor" method="post" hidden>
+      {% csrf_token %}
+      <label for="staff-catalogue-lab-name">Nom du nouveau laboratoire</label>
+      <input id="staff-catalogue-lab-name" type="text" required maxlength="150">
+      <button type="submit">Créer le laboratoire</button>
+    </form>
+    <div id="staff-catalogue-labs"></div>
+    <noscript><p>Active JavaScript pour gérer le catalogue.</p></noscript>
+  </section>
+  <form id="logout-form" action="{% url 'sign-out' %}" method="post">
+    {% csrf_token %}
+    <p id="logout-error" class="error message" role="alert" tabindex="-1"></p>
+    <p id="logout-status" class="message" role="status" aria-live="polite"></p>
+    <button type="submit">Se déconnecter</button>
+  </form>
+{% endblock %}
+{% block scripts %}
+  <script src="{% static 'js/logout.js' %}" defer></script>
+  <script src="{% static 'js/staff_catalogue.mjs' %}" type="module"></script>
+{% endblock %}

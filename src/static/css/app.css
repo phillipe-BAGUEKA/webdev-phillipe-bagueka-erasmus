@@ -112,3 +112,12 @@ textarea { resize: vertical; }
 .staff-bookings-results p { margin: 0; }
 .staff-bookings-results li:first-child { padding-block-start: 0; }
 #staff-bookings-retry[aria-disabled="true"] { cursor: wait; }
+
+.staff-catalogue-feedback { min-block-size: 4.8em; }
+.staff-catalogue-editor { display: grid; gap: var(--space-1); margin-block: var(--space-2); }
+.staff-catalogue-editor label { margin: 0; }
+.staff-catalogue-card { border-top: 1px solid var(--border); margin-block: var(--space-3); }
+.staff-catalogue-stations { list-style: none; margin-block: var(--space-2); padding: 0; }
+.staff-catalogue-stations li { padding-block: var(--space-1); }
+.staff-catalogue-stations h5 { margin-block: var(--space-1); font-size: var(--text-body); }
+#staff-catalogue [aria-disabled="true"] { cursor: wait; }

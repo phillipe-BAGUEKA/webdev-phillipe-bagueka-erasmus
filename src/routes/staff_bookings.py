@@ -1,29 +1,20 @@
 """Read-only page and JSON listing for the personnel business role."""
 
-from django.contrib.auth.views import redirect_to_login
-from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, JsonResponse
-from django.shortcuts import render
-from django.urls import reverse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET
 
-from src.services.access import AuthenticationRequired
-from src.services.staff_bookings import StaffAccessDenied, list_staff_bookings, require_staff_actor
+from src.services.staff_bookings import list_staff_bookings
 
-from .booking_http import STAFF_ACCESS_MESSAGE, api_methods, utc_text
+from .booking_http import api_methods, utc_text
+from .pages import render_staff_page
 from .session import current_actor
 
 
 @never_cache
 @require_GET
 def reservations_page(request: HttpRequest) -> HttpResponse:
-    try:
-        require_staff_actor(current_actor(request))
-    except AuthenticationRequired:
-        return redirect_to_login(request.get_full_path(), login_url=reverse("login"))
-    except StaffAccessDenied:
-        return HttpResponseForbidden(STAFF_ACCESS_MESSAGE, content_type="text/plain; charset=utf-8")
-    return render(request, "staff_bookings.html", {"staff_can_view_bookings": True})
+    return render_staff_page(request, "staff_bookings.html")
 
 
 @api_methods("GET")

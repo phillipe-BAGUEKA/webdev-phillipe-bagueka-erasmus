@@ -11,10 +11,11 @@
   <a class="skip-link" href="#main">Aller au contenu</a>
   <header class="site-header">
     <span class="brand">Lab booking</span>
-    {% if staff_can_view_bookings %}
+    {% if staff_navigation %}
       <nav class="site-nav" aria-label="Navigation principale">
         <a href="{% url 'laboratories' %}"{% if request.resolver_match.url_name == 'laboratories' %} aria-current="page"{% endif %}>Laboratoires</a>
         <a href="{% url 'staff-bookings' %}"{% if request.resolver_match.url_name == 'staff-bookings' %} aria-current="page"{% endif %}>Espace du personnel</a>
+        <a href="{% url 'staff-catalogue' %}"{% if request.resolver_match.url_name == 'staff-catalogue' %} aria-current="page"{% endif %}>Catalogue du personnel</a>
       </nav>
     {% endif %}
   </header>

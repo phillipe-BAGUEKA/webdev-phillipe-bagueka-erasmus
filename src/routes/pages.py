@@ -1,17 +1,18 @@
 """Render sign-in, laboratories and safe CSRF errors."""
 
 from django.contrib.auth.views import redirect_to_login
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET
 
-from src.services.access import AuthenticationRequired, require_authenticated
-from src.services.staff_bookings import StaffAccessDenied, require_staff_actor
+from src.services.access import (
+    AuthenticationRequired, StaffAccessDenied, require_authenticated, require_staff_actor,
+)
 
 from .forms import LoginForm
-from .booking_http import API_ROUTE_NAMES
+from .booking_http import API_ROUTE_NAMES, STAFF_ACCESS_MESSAGE
 from .session import current_actor, safe_return_path, wants_json
 
 
@@ -42,13 +43,26 @@ def laboratories_page(request: HttpRequest) -> HttpResponse:
     try:
         require_staff_actor(actor)
     except StaffAccessDenied:
-        staff_can_view_bookings = False
+        staff_navigation = False
     else:
-        staff_can_view_bookings = True
+        staff_navigation = True
     return render(request, "labs.html", {
         "actor": actor,
-        "staff_can_view_bookings": staff_can_view_bookings,
+        "staff_navigation": staff_navigation,
     })
+
+
+def render_staff_page(request: HttpRequest, template_name: str) -> HttpResponse:
+    """Use the shared staff policy before rendering either personnel screen."""
+    try:
+        require_staff_actor(current_actor(request))
+    except AuthenticationRequired:
+        return redirect_to_login(request.get_full_path(), login_url=reverse("login"))
+    except StaffAccessDenied:
+        return HttpResponseForbidden(
+            STAFF_ACCESS_MESSAGE, content_type="text/plain; charset=utf-8",
+        )
+    return render(request, template_name, {"staff_navigation": True})
 
 
 @never_cache

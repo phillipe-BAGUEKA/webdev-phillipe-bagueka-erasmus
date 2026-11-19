@@ -27,7 +27,9 @@ def safe_return_path(value: str) -> str:
     target = value.strip()
     if not url_has_allowed_host_and_scheme(target, allowed_hosts=set()):
         return fallback
-    if urlsplit(target).path not in {fallback, reverse("staff-bookings")}:
+    if urlsplit(target).path not in {
+        fallback, reverse("staff-bookings"), reverse("staff-catalogue"),
+    }:
         return fallback
     return target
 

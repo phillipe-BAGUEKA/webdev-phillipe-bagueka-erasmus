@@ -5,12 +5,8 @@ from datetime import datetime, timezone
 
 from src.data import staff_bookings as data
 
-from .access import Actor, require_authenticated
+from .access import Actor, require_staff_actor
 from .booking_reads import booking_status, read_instant
-
-
-class StaffAccessDenied(PermissionError):
-    """An active account lacks the personnel business role."""
 
 
 @dataclass(frozen=True)
@@ -22,14 +18,6 @@ class StaffBooking:
     starts_at: datetime
     ends_at: datetime
     status: str
-
-
-def require_staff_actor(actor: Actor | None) -> Actor:
-    """Require an active actor with the personnel business role."""
-    actor = require_authenticated(actor)
-    if actor.role != "personnel":
-        raise StaffAccessDenied
-    return actor
 
 
 def list_staff_bookings(

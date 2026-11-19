@@ -1568,3 +1568,32 @@ approved the whole feature diff. User must supply their own assessment.
   avec succès. Le point mineur sur les paramètres d'URL a été écarté : l'API
   expose une vue fixe et l'ajout de filtres ou d'un contrat de recherche sort
   du périmètre de cet écran.
+
+## Catalogue du personnel — 20 novembre 2026
+
+- Demande utilisateur depuis le commit local `1f2c023` pour AC-6 à AC-8.
+  Codex a ajouté le catalogue, les quatre écritures et la lecture protégée.
+  Le contrôle du rôle `personnel` est partagé avec les réservations. La session
+  Django, le CSRF et la contrainte PostgreSQL existante protègent les écritures.
+- Les tests ciblés PostgreSQL ont réussi, dont les refus d'un étudiant avec
+  CSRF valide, le refus d'un doublon dans son laboratoire, l'acceptation du même
+  nom dans un autre et la stabilité des identifiants et du rattachement.
+- Codex a exécuté les quatre actions au clavier et F5 dans Edge à 380, 768 et
+  1 280 px CSS. Les créations ont répondu 201, les renommages 200. Les trois
+  paires d'identifiants et les noms révisés sont revenus dans le même ordre et
+  sans débordement horizontal mesuré. Le banc synthétique en mémoire a été
+  arrêté. Les bases de démonstration ont été préservées.
+- Le guide [STAFF_CATALOGUE.md](docs/STAFF_CATALOGUE.md) sépare les preuves Edge,
+  PostgreSQL et DOM. AC-5, AC-40 et AC-42 restent partiels. Le changement d'état
+  des postes reste pour la tranche suivante.
+- Revue indépendante unique. Le test contrôle désormais l'ordre des deux
+  laboratoires et des postes, avec des noms qui donneraient un autre ordre
+  alphabétique. La liste de fichiers du job de couverture JS devra être étendue
+  pour mesurer le catalogue lors d'une publication. La mesure locale inclut
+  les deux écrans du personnel avec le seuil existant.
+- Couverture locale : 568 cas PostgreSQL et 9 TP1 réussis. Services 394/394
+  lignes et 120/120 branches. Global 1 963/2 211 lignes (88,78 %), incluant
+  les anciens bancs Python ignorés. 60 tests Node réussis, couverture UI locale
+  à 97,80 % des lignes. Django, ex2 (32/32), MCP (12/12) et garde SQLite réussis.
+- Les 23 cas ciblés PostgreSQL repassent après la revue. Ex3 reste à 15/18 et
+  reconnaît AC-6 à AC-8. Le vérificateur, les migrations et la CI restent intacts.

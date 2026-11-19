@@ -163,10 +163,15 @@ consignés dans les guides précédents.
 
 **AC-42 partiel.** Les deux écrans livrés ont des preuves aux trois largeurs dans
 les scénarios ci-dessus. Le refus de connexion a été vérifié à 380 px. Les
-autres états et jeux de données, le refus à 768 et 1 280 px, l'espace de compte et
-la gestion du catalogue restent sans preuve. La conformité globale et le
+autres états et jeux de données, le refus à 768 et 1 280 px et l'espace de compte
+restent sans preuve. La conformité globale et le
 parcours clavier complet restent ouverts.
 
 Codex a également testé « Espace du personnel → Réservations » dans Edge à
 380, 768 et 1 280 px CSS. Le guide conserve les mesures de largeur, les horaires
 observés et le réessai clavier à 380 px. [Relevé AC-9](STAFF_BOOKINGS.md#observations-edge)
+
+Pour « Catalogue du personnel », Codex a observé la création, l'ajout du poste,
+les deux renommages et le rechargement dans Edge aux trois largeurs. Les champs
+et boutons ont été utilisés au clavier et la page ne débordait pas horizontalement.
+[Relevé AC-6 à AC-8](STAFF_CATALOGUE.md#observations-edge)
