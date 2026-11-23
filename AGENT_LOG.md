@@ -1651,3 +1651,76 @@ approved the whole feature diff. User must supply their own assessment.
   encore attendue. Le vérificateur officiel est conservé. Le job `spec` lance ex2.
 - La revue indépendante a demandé de préciser la provenance locale du rapport
   JavaScript avant le push. Le guide et le journal l'indiquent explicitement.
+
+## Réexamen de clôture Lab 03 — 23 novembre 2026
+
+- Au réexamen précédent, HEAD `464cbeb` et arbre alors propre. Pages Lab 03 et projet relues via curl HTTP
+  200 après échec du lecteur Web. Seule distribution WSL : `docker-desktop` ;
+  moteur Docker indisponible. Aucun ex3 Linux local déclaré.
+- AC-43 et AC-44 ont des preuves partielles de clavier, libellés, contraste,
+  titre et langue. Le parcours complet et l'audit de tous les écrans restent à
+  faire. Pour AC-45, un test de jetons a d'abord échoué sur `h2` à `1.25rem`.
+  La taille utilise maintenant `--text-section`. Le test ciblé repasse.
+- Suite Node complète : 65/65. Ex2 : 32/32. Ex3 officiel inchangé : 15/18,
+  sortie 1 sous Windows pour `npm` ENOENT, AC-43/44 et note personnelle.
+  `git diff --check` passe. Aucun test PostgreSQL nécessaire pour la seule
+  correction CSS. Note et revue personnelle demeurent à la charge de l'étudiant.
+
+## Complément UI Lab 03 — 23 novembre 2026
+
+- Cette reprise a trouvé `AGENT_LOG.md`, `SPEC.md`,
+  `docs/LAB03_CLOSURE.md`, `docs/UI.md`, `src/static/css/app.css` et
+  `tests/test_booking_page.py` modifiés, ainsi que
+  `tests/style_tokens.test.mjs` non suivi. Ces travaux locaux préexistants ont
+  été préservés et complétés sans remise à zéro.
+- Sur autorisation de l'étudiant, Codex a exécuté dans Edge un parcours continu
+  au clavier avec une instance Django isolée reliée à PostgreSQL de test sur
+  5433. Compte et laboratoire synthétiques ; aucun compte ou réservation de
+  démonstration modifié. Connexion, date, créneau, confirmation, historique,
+  annulation et déconnexion observés. La liste de créneaux a fait 10 → 9 → 10 ;
+  la ligne est passée de « À venir » à « Annulée ». Focus et libellés observés.
+- Edge DevTools Responsive : connexion mesurée à 380/768/1280 px CSS, sans
+  débordement horizontal mesuré. Edge CSS Overview et le calcul WCAG du test
+  Node ont contrôlé les associations principales de couleurs. Les quatre
+  éléments interactifs mesurés sur la connexion font au moins 44 px. Les autres écrans
+  reprennent les preuves Edge antérieures, avec leurs lacunes consignées dans
+  docs/UI.md ; AC-44 reste partiel.
+- AC-45 : `app.css` seul CSS applicatif, inspection complète des règles,
+  `--text-section` vérifié et titres revus dans Edge. `tests/style_tokens.test.mjs`
+  vérifie aussi contraste et cibles CSS. Le test de template porte AC-43 pour
+  ses assertions sémantiques ; l'essai clavier reste une preuve distincte.
+- Vérifications : `tests/test_booking_page.py` sous PostgreSQL, 3 réussites ;
+  suite Node complète 66/66 ; couverture JavaScript 63/63, 97,97 % lignes et
+  94,69 % branches ; ex2 32/32 ; ex3 16/18 sous Windows (`npm` ENOENT et note
+  personnelle manquante) ; `git diff --check` réussi. Le premier lancement
+  Node dans le bac à sable a échoué avec EPERM ; relancé hors bac à sable.
+  Aucun test Python global ni appel fournisseur pour ce changement UI.
+- La note et la revue personnelles de l'étudiant restent en attente. Aucune
+  compréhension personnelle ni approbation professorale revendiquée.
+
+## Complément AC-44 et préparation de publication — 23 novembre 2026
+
+- À la demande de l'étudiant, Codex a repris l'audit Edge des écrans livrés,
+  sans refaire le parcours AC-43. Un banc local non suivi a utilisé uniquement
+  PostgreSQL de test sur 5433, des comptes synthétiques et des réponses GET
+  vides, retardées ou 503 simulées. Aucun fournisseur ni donnée de démonstration.
+- Zoom navigateur Edge réellement réglé à 200 %, émulation désactivée :
+  `innerWidth/clientWidth/scrollWidth = 379/372/372` CSS pour la connexion,
+  l'étudiant, les réservations du personnel et le catalogue. Aucune petite
+  cible visible parmi les liens, boutons et champs mesurés ; aucun débordement
+  horizontal observé. Les états de lecture succès/vide/erreur/chargement et
+  leurs limites sont détaillés dans `docs/UI.md`. AC-44 reste partiel.
+- La couverture JavaScript lancée hors du bac à sable local a réussi : 63/63,
+  97,97 % des lignes et 94,69 % des branches des modules UI mesurés. Le premier
+  essai restreint avait échoué sur `spawn EPERM` ; aucune assertion modifiée.
+- Les lignes du banc UI ont perturbé le premier `npm test` avec `--reuse-db`.
+  `--create-db` a refusé la création, faute de privilège pour le rôle de test.
+  Après arrêt du serveur, Codex a vérifié le nom `test_lab_booking_1a` et le
+  port 5433, puis vidé seulement cette base de test ; migrations conservées.
+  La relance de `npm test` a réussi : 573 PostgreSQL, 1 garde SQLite, 9 TP1 et
+  66 Node. Ex2 : 32/32. Ex3 officiel : 16/18 sous Windows/Node 22.12.0,
+  échecs `npm` ENOENT et note personnelle absente. La CI du nouveau commit
+  reste à vérifier après publication.
+- Une revue indépendante en lecture seule a relevé que la liste des fichiers
+  préexistants omettait `docs/UI.md` et `tests/test_booking_page.py` ; la
+  provenance a été corrigée. Aucun défaut fonctionnel supplémentaire retenu.

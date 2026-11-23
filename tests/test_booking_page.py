@@ -10,7 +10,7 @@ from django.test import Client, RequestFactory
 from src.data.models import User
 
 
-@pytest.mark.parametrize("criterion", ["AC-40-AC-41-AC-42"], ids=str)
+@pytest.mark.parametrize("criterion", ["AC-40-AC-41-AC-42-AC-43"], ids=str)
 def test_student_journey_template_keeps_session_csrf_and_navigation(db: None, criterion: str) -> None:
     client = Client(enforce_csrf_checks=True)
     assert client.get("/labs").status_code == 302
@@ -20,6 +20,9 @@ def test_student_journey_template_keeps_session_csrf_and_navigation(db: None, cr
     assert response.status_code == 200
     html = response.content.decode()
     assert "no-store" in response.headers["Cache-Control"]
+    assert 'lang="fr"' in html
+    assert 'href="#main">Aller au contenu</a>' in html
+    assert 'href="#personal-bookings">Mes réservations</a>' in html
     for target in ("availability", "personal-bookings", "booking-confirm", "booking-csrf"):
         assert f'id="{target}"' in html
     for results_class, list_id in (
@@ -40,6 +43,8 @@ def test_student_journey_template_keeps_session_csrf_and_navigation(db: None, cr
     assert "Europe/Sofia" in html
     assert 'aria-live="polite"' in html
     assert 'id="booking-confirm" type="button" disabled' in html
+    assert 'id="history-refresh" type="button"' in html
+    assert 'id="logout-form"' in html
     assert 'src="/static/js/labs.mjs?v=3" type="module"' in html
     assert 'for="ai-need"' in html
     assert 'maxlength="1000" required' in html

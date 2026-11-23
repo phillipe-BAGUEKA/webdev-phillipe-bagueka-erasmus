@@ -232,3 +232,129 @@ sous-processus. Les deux sélections ont été exécutées localement.
   réservées et leurs listes. `tests/test_booking_page.py` rejoué sous les réglages
   PostgreSQL officiels : 3 réussites. Les mesures Edge, les essais de l'étudiant,
   les tests locaux et les résultats de CI restent des preuves distinctes.
+
+## Réexamen AC-43 à AC-45 — 23 novembre 2026
+
+Le réexamen précédent avait commencé sur le commit publié `464cbeb`, alors
+sans changements locaux. La reprise actuelle a préservé les modifications
+déjà présentes d'AGENT_LOG, SPEC, ce guide, app.css et le test de jetons.
+Les pages actuelles [Lab 03](https://webdev-course.tu-sofia.workers.dev/en/resources/exercises/3/)
+et [guide projet](https://webdev-course.tu-sofia.workers.dev/en/guides/project/)
+ont répondu HTTP 200 via curl. Le Lab demande une note personnelle et un
+autocontrôle intégral. Le guide du projet situe la finition UI au Lab 04.
+
+Le parcours clavier d'AC-43 dispose de preuves partielles dans `docs/UI.md` et
+les guides des jalons. Il manque un parcours étudiant unique, du début à la
+fin, au clavier seul, avec vérification des libellés et des effets métier.
+Pour AC-44, `base.html` fournit titre et langue, `app.css` définit les cibles
+et les couleurs, et `docs/UI.md` consigne des mesures partielles. Il manque un
+audit des écrans et états préparés, avec un outil de contraste nommé et la
+mesure de toutes les cibles tactiles pertinentes. Aucune de ces deux exigences
+n'est déclarée complète par les seuls tests DOM ou recherches textuelles.
+
+Pour AC-45, le nouveau test `tests/style_tokens.test.mjs` a d'abord échoué sur
+la taille littérale du titre `h2`. `src/static/css/app.css` utilise désormais
+`--text-section`. Le test passe après correction et protège les jetons, leurs
+références et l'absence de valeurs dispersées pour les familles contrôlées.
+L'inspection complète des éventuels autres styles et le rendu restent à faire.
+
+Sur cette machine, WSL ne liste que `docker-desktop` et le moteur Docker ne
+répond pas. Aucun environnement Linux de travail n'est disponible pour lancer
+`ex3` intégralement. Le job Ubuntu `test` du SHA publié prouve `npm test`, pas
+`node checks/ex3.mjs`. Le vérificateur officiel reste inchangé. Sa recherche
+des identifiants est une recherche de sous-chaînes dans les sources des tests ;
+elle ne démontre ni la réussite ni l'absence d'un comportement.
+
+Après correction, `node --test tests/*.test.mjs` réussit avec 65 cas. `ex3`
+sur Windows donne encore 15/18, sortie 1 : lancement `npm` en `ENOENT`, absence
+de titres AC-43/44 et note personnelle absente. AC-45 n'est plus signalé.
+`ex2` passe 32/32 et `git diff --check` réussit.
+
+La note d'architecture dans `SPEC.md` reste à rédiger personnellement. Pour le
+parcours « Confirmer une réservation », relire `src/static/js/booking.mjs`,
+`src/config/urls.py`, `src/routes/bookings.py`, `src/services/booking_creation.py`
+et `src/data/booking_creation.py`, puis répondre aux questions de la section 3 ci-dessus
+avec ses propres mots. La revue personnelle du diff et la question au professeur
+sur le périmètre des critères finaux dans `ex3` restent nécessaires.
+
+### Vérifications complémentaires AC-43 à AC-45 — 23 novembre 2026
+
+Le relevé précédent décrivait les lacunes avant les essais complémentaires.
+Codex a depuis effectué dans Edge un parcours étudiant **continu au clavier**
+sur une instance Django isolée (port 8015, PostgreSQL de test sur 5433,
+fournisseur IA désactivé). Connexion, laboratoire, date, créneau, confirmation,
+historique, annulation et déconnexion ont fonctionné. Le focus visible, les
+libellés et les états « À venir » puis « Annulée » ont été observés ; le nombre
+de créneaux est passé de 10 à 9 puis à 10. La ligne annulée reste dans
+l'historique. Les données de démonstration sont restées intactes. Le test de
+template porte maintenant AC-43 et vérifie les éléments sémantiques utiles ;
+il ne remplace pas l'observation navigateur. Détails dans [UI.md](UI.md).
+
+La connexion a été mesurée à 380, 768 et 1280 px CSS via Edge DevTools :
+`innerWidth/clientWidth/scrollWidth` sont respectivement 380/380/380,
+768/768/768 et 1280/1280/1280. Titre, langue et hauteurs de quatre éléments
+interactifs (lien d'évitement, deux champs, bouton) ont été vérifiés. Edge
+« Aperçu du CSS » a relevé la palette ; le test
+Node applique le calcul de contraste WCAG aux principales associations
+texte/fond, toutes au-dessus de 4,5:1. Les essais antérieurs des écrans étudiant
+et personnel aux trois largeurs restent cités avec leurs limites. Le zoom,
+les cibles de tous les écrans et tous les états d'erreur ne sont pas entièrement
+audités : **AC-44 reste partiel**.
+
+`src/static/css/app.css` est le seul CSS applicatif. Son inspection, le test de
+jetons et le rendu Edge après correction confirment AC-45 dans le périmètre
+construit. Le test contrôle désormais explicitement `--text-section` et les
+contrastes/minimums CSS. Aucune refonte ni nouvelle fonctionnalité. La note
+personnelle reste absente. `node checks/ex3.mjs` officiel, inchangé, donne
+**16/18 sous Windows** : traçabilité AC-43/44/45 acceptée ; `spawnSync npm
+ENOENT` persiste et la note personnelle manque. Ce résultat n'est pas un
+contrôle Lab 03 entièrement réussi. Le relevé 15/18 précédent reste daté.
+
+### Complément d'audit AC-44 — 23 novembre 2026
+
+Codex a utilisé Edge sur un serveur local ignoré par Git, relié exclusivement
+à la base PostgreSQL de test sur 5433. La connexion et les écrans étudiant,
+réservations du personnel et catalogue du personnel ont été inspectés avec le
+zoom **navigateur** de 200 % (émulation Responsive désactivée). Sur la fenêtre
+physique de 768 px, la Console a mesuré `innerWidth/clientWidth/scrollWidth =
+379/372/372` CSS. Les quatre écrans ont replié leur contenu sans perte visible
+ni défilement horizontal. Les contrôles `a`, `button`, `input`, `textarea`
+visibles et mesurés n'ont pas de rectangle inférieur à 44 CSS px ; les
+sous-commandes natives ne sont pas couvertes. Le personnel, réservations, a
+également été remesuré en Responsive à 380/768/1280 CSS px, sans débordement.
+
+Les états chargement, vide et erreur des trois vues de données ont été observés
+dans Edge via un middleware **local de simulation** des réponses GET ; les
+états succès utilisent les vrais services et données de la base de test. Le
+refus de connexion à 380 px et les autres parcours aux trois largeurs déjà
+documentés ont été réutilisés sans les revendiquer comme nouveaux essais.
+Les résultats et limites écran par écran sont dans [UI.md](UI.md). Aucun appel
+fournisseur, donnée de démonstration ou changement métier. Aucune nouvelle
+correction de production n'a été nécessaire pendant ce complément ; la
+correction `--text-section` d'AC-45 reste à publier avec ses tests.
+
+Le premier `npm test` après l'audit a échoué sur des assertions de base vide :
+les lignes synthétiques du banc avaient persisté dans la base de test réutilisée.
+Le rôle Django de test ne peut pas recréer la base (`--create-db` refuse
+`CREATE DATABASE`, conformément à ses permissions limitées). Codex a donc
+exécuté `flush` **uniquement** sur `test_lab_booking_1a` après vérification
+explicite du nom et du port 5433, en conservant les migrations. La base de
+développement et les données de démonstration n'ont pas été touchées.
+
+AC-44 reste **partiel** : contrôles internes natifs, commandes désactivées de
+mutation et certains états transitoires non revus, et écrans Google/compte
+non livrés. Les rapports de contrastes automatisés sur la palette ne sont pas
+une inspection de chaque pixel rendu. La note et la revue personnelles restent
+à faire par l'étudiant.
+
+Vérifications locales après nettoyage de la base de test : `npm test` a réussi
+avec **573 tests PostgreSQL**, **1 garde SQLite**, **9 tests TP1** et **66 tests
+Node**. La couverture JavaScript du job `coverage` a réussi : 63 tests, 97,97 %
+des lignes et 94,69 % des branches des modules mesurés. Le lanceur `npm test`
+inclut automatiquement `tests/style_tokens.test.mjs` parmi les `*.test.mjs` ;
+le job de couverture exécute les cinq fichiers UI qui instrumentent les modules
+de production, sans ajouter de nouvelle exclusion. `node checks/ex2.mjs` :
+32/32. `node checks/ex3.mjs` officiel, exécuté sous Windows/Node 22.12.0 :
+16/18, sortie 1 ; `spawnSync npm ENOENT` dans ce vérificateur et note personnelle
+absente. `npm test` réussi ne vaut pas réussite d'ex3. `git diff --check` :
+réussi. La CI du futur SHA publié reste à observer séparément.
