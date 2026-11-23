@@ -3,10 +3,11 @@
 from django.urls import path
 
 from src.routes import (
-    ai_suggestion, auth, bookings, labs, pages, staff_bookings, staff_catalogue,
+    ai_suggestion, auth, bookings, health, labs, pages, staff_bookings, staff_catalogue,
 )
 
 urlpatterns = [
+    path("health", health.health, name="health"),
     path("login", pages.login_page, name="login"),
     path("labs", pages.laboratories_page, name="laboratories"),
     path("staff/bookings", staff_bookings.reservations_page, name="staff-bookings"),
@@ -41,3 +42,6 @@ urlpatterns = [
     path("api/auth/login", auth.sign_in, name="sign-in"),
     path("api/auth/logout", auth.sign_out, name="sign-out"),
 ]
+
+handler404 = "src.routes.errors.not_found"
+handler500 = "src.routes.errors.server_error"

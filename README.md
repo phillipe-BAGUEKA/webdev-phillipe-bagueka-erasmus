@@ -2,7 +2,18 @@
 
 This repository contains Exercise 1 in `mcp-server/` and Lab booking in the rest of it. The first slice was developed locally on Windows with Python 3.13, Django 5.2 LTS, SQLite and plain JavaScript. The course Codespaces template remains available; its Python 3.12 environment has not been validated in this work.
 
-The final target in [SPEC.md](SPEC.md) includes workstation reservations, staff management, Google sign-in, a model suggestion and project MCP tools. Slice 1 provides local sign-in/sign-out and a protected database-backed laboratory list. TP3 now provides PostgreSQL booking services, protected HTTP APIs and the student journey on /labs. See [student checkpoint 4](docs/STUDENT_UI_4.md) and [Slice 2 finalization](docs/SLICE2_FINALIZATION.md) for commands, automated evidence and the Edge creation/history/cancellation, keyboard, network retry and palette checks on 2026-11-12. Full accessibility and width checks remain incomplete; 380 pixels is deferred. Staff management, Google and real-provider validation remain future work; the optional AI UI is implemented with offline/simulated evidence; the AI service, bounded adapter, protected suggestion API and four project MCP tools are implemented, with final MCP-client validation still pending. Specification wording and code were prepared with ChatGPT/Codex assistance, recorded in AGENT_LOG.md and USAGE.md; they are not presented as wholly independent student work.
+The final target in [SPEC.md](SPEC.md) includes workstation reservations, staff management, Google sign-in, a model suggestion and project MCP tools. Slice 1 provides local sign-in/sign-out and a protected database-backed laboratory list. TP3 provides PostgreSQL booking services, protected HTTP APIs, the student journey on `/labs` and staff screens. See [student checkpoint 4](docs/STUDENT_UI_4.md), [Slice 2 finalization](docs/SLICE2_FINALIZATION.md) and [Lab 03 closure](docs/LAB03_CLOSURE.md) for automated and browser evidence. Some UI states still need proof. Google sign-in, real-provider use and final MCP-client validation remain open. The AI service, bounded adapter, protected suggestion API and four project MCP tools are implemented. Specification wording and code were prepared with ChatGPT/Codex assistance, recorded in AGENT_LOG.md and USAGE.md; they are not presented as wholly independent student work.
+
+## Lab 04 local deployment preparation
+
+The deployment draft is in [LAB04_DEPLOYMENT.md](docs/LAB04_DEPLOYMENT.md):
+Dockerfile, production-only Django settings, Gunicorn, collected static files,
+PostgreSQL TLS configuration, and `GET /health`. The image and isolated local
+container have been verified; no public service has been deployed.
+[READINESS.md](READINESS.md) contains the required report structure with public
+evidence explicitly pending. The separate
+[Codex architecture draft](docs/ARCHITECTURE_DRAFT_CODEX.md) is for student
+revision and is not the personal note in `SPEC.md`.
 
 ## Start
 

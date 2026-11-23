@@ -53,12 +53,10 @@ jobs:
           PYTEST_ADDOPTS: '-rA'
         run: npm test
 
-      # From Exercise 4 on. An image that does not build is the most common reason a
-      # deploy fails, and finding it here takes a minute instead of waiting for the
-      # host to build it remotely and reading its log. Skipped until you write one.
-      - name: Docker image builds
-        if: hashFiles('Dockerfile') != ''
-        run: docker build -t ci-check .
+      # Build with the non-secret static settings; runtime database settings are
+      # supplied only when a container starts, never during image construction.
+      - name: Docker image builds without runtime credentials
+        run: docker build --tag lab-booking:ci .
 
   # Service rules are Python, not JavaScript: enforce 100% lines AND branches there.
   # The Python global line gate is 80%, including TP1 subprocesses and all production

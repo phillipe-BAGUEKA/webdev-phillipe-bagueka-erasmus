@@ -1,0 +1,16 @@
+.git
+.github
+.venv
+.local
+.env
+.env.*
+data
+docs
+tests
+checks
+__pycache__
+*.pyc
+*.sqlite3
+.coverage*
+coverage
+staticfiles

@@ -38,7 +38,13 @@ The current checkpoint authorizes staff slice publication after checks and revie
 with the JavaScript coverage update, catalogue guide and a normal push to origin/main.
 Keep the three existing staff commits and verify CI on the published SHA.
 See docs/STAFF_CATALOGUE.md and docs/STAFF_BOOKINGS.md.
-Further features, real provider calls, key access, installation, billing and Lab 04 are out of scope.
+Current Lab 04 authorization covers publication of the locally validated
+deployment preparation and a blocking CI Docker build without runtime secrets.
+The Codex architecture draft remains separate from the student's personal note.
+No public deployment, remote resource creation, provider call, key access or
+billing is authorized. See docs/LAB04_DEPLOYMENT.md and READINESS.md.
+The student's Lab 03 architecture note and personal review remain open.
+Further features remain out of scope.
 The provider stays disabled by default. See docs/AI_FINALIZATION.md and AI_UI_3.md.
 Local controlled-process timing is not Google access or browser latency proof.
 Local checkpoint commit authorized. The user also authorized PostgreSQL CI
