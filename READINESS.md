@@ -11,15 +11,15 @@ Non vérifié : aucun déploiement public ni URL dans `course.json`. Vérifier u
 | Nom | But | Source future | Secret |
 | --- | --- | --- | --- |
 | `DJANGO_SECRET_KEY` | Signature Django | nouvelle valeur générée pour Render | oui |
-| `DATABASE_URL` | PostgreSQL TLS | tableau de bord Neon | oui |
-| `DJANGO_ALLOWED_HOSTS` | Hôtes admis | domaine Render exact | non |
-| `DJANGO_CSRF_TRUSTED_ORIGINS` | Origines HTTPS | domaine Render exact | non |
+| `DATABASE_URL` | PostgreSQL TLS avec vérification du nom et de la CA système | chaîne directe de la base Neon existante, à contrôler localement | oui |
+| `DJANGO_ALLOWED_HOSTS` | Hôtes admis | facultatif pour le domaine Render initial, dérivé de `RENDER_EXTERNAL_HOSTNAME` | non |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | Origines HTTPS | facultatif pour le domaine Render initial, dérivé de `RENDER_EXTERNAL_HOSTNAME` | non |
 | `PORT` | Port Gunicorn | Render | non |
 | `LAB_BOOKING_AI_ENABLED` | Activation volontaire de l'IA | choix futur ; 0 par défaut | non |
 | `GEMINI_API_KEY` | Fournisseur IA facultatif | compte fournisseur, si autorisé | oui |
 | `LAB_BOOKING_MCP_SESSION` | Client MCP local uniquement | session ordinaire hors Render | oui |
 
-How I checked : noms relevés dans le code et `.env.example` le 23 novembre 2026 ; image et conteneur locaux lancés avec des valeurs éphémères, sans profil de démonstration ; démarrage Render non vérifié.
+How I checked : noms relevés dans le code et `.env.example` le 24 novembre 2026 ; image et conteneur locaux lancés avec des valeurs éphémères, sans profil de démonstration. L'étudiant a exécuté le contrôle Neon en lecture seule avec saisie masquée et a transmis son succès pour Django, `verify-full`, la CA de l'image et PostgreSQL 16. Codex a vérifié le mécanisme du contrôle, sans voir l'URL ou la console de saisie. Démarrage Render non vérifié.
 
 ## 3. What happens when things fail
 

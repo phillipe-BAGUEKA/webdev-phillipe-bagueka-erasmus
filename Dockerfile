@@ -2,12 +2,14 @@ FROM python:3.13-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
+    SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt \
     DJANGO_SETTINGS_MODULE=src.config.production
 
 WORKDIR /app
 
 COPY requirements.txt ./
 RUN python -m pip install --no-cache-dir -r requirements.txt
+RUN test -s "$SSL_CERT_FILE"
 
 COPY manage.py ./
 COPY src ./src

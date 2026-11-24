@@ -1,6 +1,7 @@
 """Production-only settings: explicit secrets, hosts, TLS and PostgreSQL."""
 
 import os
+import re
 from urllib.parse import parse_qs, unquote, urlsplit
 
 from django.core.exceptions import ImproperlyConfigured
@@ -21,8 +22,21 @@ SECRET_KEY = required("DJANGO_SECRET_KEY")
 if len(SECRET_KEY) < 50:
     raise ImproperlyConfigured("DJANGO_SECRET_KEY is too short; see .env.example")
 raw_url = required("DATABASE_URL")
-raw_hosts = required("DJANGO_ALLOWED_HOSTS")
-raw_origins = required("DJANGO_CSRF_TRUSTED_ORIGINS")
+render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "").strip()
+if render_hostname and not re.fullmatch(
+    r"[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.onrender\.com",
+    render_hostname,
+):
+    raise ImproperlyConfigured("Invalid RENDER_EXTERNAL_HOSTNAME.")
+raw_hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "").strip()
+raw_origins = os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").strip()
+if not raw_hosts:
+    raw_hosts = render_hostname or required("DJANGO_ALLOWED_HOSTS")
+if not raw_origins:
+    raw_origins = (
+        f"https://{render_hostname}"
+        if render_hostname else required("DJANGO_CSRF_TRUSTED_ORIGINS")
+    )
 
 ALLOWED_HOSTS = [part.strip() for part in raw_hosts.split(",") if part.strip()]
 CSRF_TRUSTED_ORIGINS = [
@@ -50,8 +64,23 @@ try:
         or not parsed.hostname or not parsed.path.strip("/")
         or not parsed.username or not parsed.password
         or "sslmode" not in query
-        or not set(query) <= {"sslmode", "channel_binding"}
+        or not set(query) <= {"sslmode", "channel_binding", "sslrootcert"}
         or query["sslmode"] not in (["require"], ["verify-full"])
+        or (
+            parsed.hostname.endswith(".neon.tech")
+            and (
+                query["sslmode"] != ["verify-full"]
+                or query.get("sslrootcert") != ["system"]
+                or query.get("channel_binding") != ["require"]
+            )
+        )
+        or (
+            "sslrootcert" in query
+            and (
+                query["sslrootcert"] != ["system"]
+                or query["sslmode"] != ["verify-full"]
+            )
+        )
         or (
             "channel_binding" in query
             and query["channel_binding"] != ["require"]
@@ -75,6 +104,7 @@ DATABASES = {
             "sslmode": query["sslmode"][0],
             "connect_timeout": 5,
             **({"channel_binding": "require"} if "channel_binding" in query else {}),
+            **({"sslrootcert": "system"} if "sslrootcert" in query else {}),
         },
     },
 }

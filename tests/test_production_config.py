@@ -48,6 +48,46 @@ def test_production_settings_accept_neon_channel_binding():
     assert settings.DATABASES["default"]["OPTIONS"]["channel_binding"] == "require"
 
 
+def test_production_settings_accept_verified_system_ca():
+    settings = load_production({
+        "DATABASE_URL": (
+            "postgresql://example:fake@ep-demo.aws.neon.tech/lab?"
+            "sslmode=verify-full&sslrootcert=system&channel_binding=require"
+        ),
+    })
+    options = settings.DATABASES["default"]["OPTIONS"]
+    assert options["sslmode"] == "verify-full"
+    assert options["sslrootcert"] == "system"
+    assert options["channel_binding"] == "require"
+
+
+@pytest.mark.parametrize("parameters", [
+    "sslmode=require&channel_binding=require",
+    "sslmode=verify-full&channel_binding=require",
+    "sslmode=verify-full&sslrootcert=system",
+])
+def test_production_settings_reject_weaker_neon_tls(parameters):
+    with pytest.raises(ImproperlyConfigured, match="Invalid DATABASE_URL"):
+        load_production({
+            "DATABASE_URL": (
+                "postgresql://example:fake@ep-demo.aws.neon.tech/lab?"
+                f"{parameters}"
+            ),
+        })
+
+
+@pytest.mark.parametrize("parameters", [
+    "sslmode=require&sslrootcert=system",
+    "sslmode=verify-full&sslrootcert=/tmp/untrusted.pem",
+    "sslmode=verify-full&sslrootcert=system&sslrootcert=other",
+])
+def test_production_settings_reject_unapproved_ca_options(parameters):
+    with pytest.raises(ImproperlyConfigured, match="Invalid DATABASE_URL"):
+        load_production({
+            "DATABASE_URL": f"postgresql://example:fake@db.example.test/lab?{parameters}",
+        })
+
+
 @pytest.mark.parametrize("name", list(VALID))
 def test_production_settings_require_each_variable(name):
     with pytest.raises(ImproperlyConfigured, match=f"missing {name}"):
@@ -78,6 +118,36 @@ def test_production_settings_reject_non_https_csrf_origins():
 def test_production_settings_reject_csrf_origin_with_path():
     with pytest.raises(ImproperlyConfigured, match="DJANGO_CSRF_TRUSTED_ORIGINS"):
         load_production({"DJANGO_CSRF_TRUSTED_ORIGINS": "https://lab.example.test/path"})
+
+
+def test_render_hostname_supplies_exact_host_and_https_origin():
+    settings = load_production({
+        "DJANGO_ALLOWED_HOSTS": "",
+        "DJANGO_CSRF_TRUSTED_ORIGINS": "",
+        "RENDER_EXTERNAL_HOSTNAME": "lab-booking-abc.onrender.com",
+    })
+    assert settings.ALLOWED_HOSTS == ["lab-booking-abc.onrender.com"]
+    assert settings.CSRF_TRUSTED_ORIGINS == [
+        "https://lab-booking-abc.onrender.com",
+    ]
+
+
+def test_explicit_host_and_origin_override_render_defaults():
+    settings = load_production({
+        "RENDER_EXTERNAL_HOSTNAME": "lab-booking-abc.onrender.com",
+    })
+    assert settings.ALLOWED_HOSTS == ["lab.example.test"]
+    assert settings.CSRF_TRUSTED_ORIGINS == ["https://lab.example.test"]
+
+
+@pytest.mark.parametrize("hostname", [
+    "other.example.com",
+    "lab-booking.onrender.com:443",
+    "https://lab-booking.onrender.com",
+])
+def test_render_hostname_rejects_unexpected_values(hostname):
+    with pytest.raises(ImproperlyConfigured, match="Invalid RENDER_EXTERNAL_HOSTNAME"):
+        load_production({"RENDER_EXTERNAL_HOSTNAME": hostname})
 
 
 @override_settings(SECURE_SSL_REDIRECT=True, SECURE_REDIRECT_EXEMPT=[r"^health$"])
