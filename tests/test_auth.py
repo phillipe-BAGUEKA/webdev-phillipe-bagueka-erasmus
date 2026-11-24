@@ -15,6 +15,17 @@ def criterion_id(request: pytest.FixtureRequest) -> str:
     return request.param
 
 
+def test_home_opens_existing_laboratory_sign_in_journey() -> None:
+    client = Client()
+    home = client.get("/")
+    assert home.status_code == 302
+    assert home["Location"] == "/labs"
+
+    laboratories = client.get(home["Location"])
+    assert laboratories.status_code == 302
+    assert laboratories["Location"] == "/login?next=/labs"
+
+
 def test_AC_47_login_page_has_accessible_fields_and_csrf(csrf_client: Client) -> None:
     response = csrf_client.get("/login")
     html = response.content.decode()

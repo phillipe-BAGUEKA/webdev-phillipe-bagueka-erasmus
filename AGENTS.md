@@ -38,15 +38,16 @@ The current checkpoint authorizes staff slice publication after checks and revie
 with the JavaScript coverage update, catalogue guide and a normal push to origin/main.
 Keep the three existing staff commits and verify CI on the published SHA.
 See docs/STAFF_CATALOGUE.md and docs/STAFF_BOOKINGS.md.
-Current Lab 04 authorization covers publication of the locally validated
-deployment preparation and a blocking CI Docker build without runtime secrets.
-The student created one Neon project and authorized only a masked, read-only
-certificate-verified connection check from the local image, plus necessary TLS
-configuration fixes and normal publication after tests and review. Do not run
-migrations or write Neon data. The Render form is open but deployment is not
-authorized.
+Lab 04 preparation is published. The student deployed Render at
+`https://lab-booking-phillipe.onrender.com` and reported a successful deploy of
+`dafa3ec` after replacing its Django secret. Current authorization covers a
+root-route and Gunicorn control-socket fix, a local masked procedure for new
+public demonstration rows on the existing Neon database, public read-only
+checks, documentation, and normal publication after tests and review. Do not
+import local data or read existing credentials. The student runs any Neon demo
+preparation interactively; no real AI provider call is authorized.
 The Codex architecture draft remains separate from the student's personal note.
-No public deployment, further remote resource creation, AI provider call, existing key access or
+No further remote resource creation, AI provider call, existing key access or
 billing is authorized. See docs/LAB04_DEPLOYMENT.md and READINESS.md.
 The student's Lab 03 architecture note and personal review remain open.
 Further features remain out of scope.

@@ -163,6 +163,7 @@ def test_gunicorn_binds_to_supplied_port():
         config = importlib.reload(importlib.import_module("src.config.gunicorn_conf"))
     assert config.bind == "0.0.0.0:12345"
     assert config.accesslog is None
+    assert config.control_socket_disable is True
 
 
 def test_gunicorn_rejects_invalid_port():

@@ -1761,3 +1761,32 @@ approved the whole feature diff. User must supply their own assessment.
 - Suite locale après les changements Python : `npm test` a réussi (604 tests PostgreSQL, une garde SQLite séparée, 9 TP1 et 66 Node). Couverture PostgreSQL officielle : services 407/407 lignes, 124/124 branches ; global Python 2082/2513 lignes et 496/616 branches, avec le script local ignoré compté à 0 %. Ex2 : 32/32. La construction de l'image finale et le contrôle de présence du bundle CA ont réussi.
 - Revue indépendante en lecture seule : constat retenu, le profil acceptait encore l'URL Neon par défaut en `sslmode=require`. Le validateur refuse désormais pour les hôtes Neon toute combinaison autre que `verify-full`, `sslrootcert=system` et `channel_binding=require`, avec des tests de refus. Le `require` du banc local autosigné reste utilisable pour les autres hôtes. La revue a également relevé une phrase documentaire obsolète sur les hôtes Render et l'espacement de la commande locale ; les deux ont été corrigés. Les 29 tests ciblés ont réussi après cette correction, et l'image finale a été reconstruite sans secret ni base au build.
 - Couverture officielle relancée sur le code final : 607 tests PostgreSQL réussis, 1 garde SQLite désélectionnée dans ce lot, 9 tests TP1 réussis ; services 407/407 lignes et 124/124 branches, global Python 2082/2513 lignes et 496/616 branches (82,39 % combiné). Le script local ignoré figure toujours dans le dénominateur à 0 %, sans exclusion nouvelle. `npm test` complet avait réussi avant le dernier durcissement ciblé de l'URL Neon ; les 29 tests de configuration concernés ont été rejoués après.
+## Lab 04 — première mise en ligne et correction ciblée, 24 novembre 2026
+
+- Observations de l'étudiant : Render a déployé `dafa3ec` après remplacement de
+  `DJANGO_SECRET_KEY` ; `/` affichait « Page introuvable », `/labs` conduisait à
+  une connexion mise en forme, `/health` rendait `{"status":"ok","db":"ok"}` ;
+  les journaux contenaient `Control server error` avec permission refusée sur
+  `/home/appuser`. Aucun secret ni journal complet n'a été reçu.
+- Observations de Codex avant correction publique : HTTPS `/` 404, `/labs` 302,
+  `/login` 200, `/api/labs` 401 JSON, CSS et module JS 200 avec MIME correct.
+  Le routeur manquait `/`. Le conteneur tourne comme UID 10001 sans répertoire
+  personnel ; le socket de contrôle facultatif de Gunicorn le cherchait sous
+  `/home/appuser`. Une redirection `/` vers `/labs` et la désactivation du socket
+  corrigent ces causes sans élargir les permissions.
+- Le préparateur de démonstration publique a été écrit pour deux nouveaux
+  comptes ordinaires et un petit catalogue sur la base Neon existante. Sa
+  transaction est relançable, ne modifie pas les mots de passe existants et ne
+  transfère aucune donnée locale. Il n'a pas été exécuté sur Neon ; l'étudiant
+  doit saisir localement l'URL directe et deux mots de passe masqués.
+- Les vérifications de connexion, réservation, annulation, cookie de session
+  HTTPS, disparition du message Gunicorn sur Render et persistance après
+  redéploiement restent distinctes des tests locaux. L'IA reste désactivée.
+- Tests locaux du correctif : 71 ciblés PostgreSQL, `npm test` avec 616
+  PostgreSQL, 1 garde SQLite, 9 TP1 et 66 Node ; couverture PostgreSQL/TP1
+  services 407/407 lignes et 124/124 branches, global 2156/2601 lignes et
+  520/648 branches (82,36 % combiné) ; ex2 32/32. Ex4 avant redéploiement :
+  25/34, dont le 404 public attendu avant publication. L'image locale a lancé
+  Gunicorn 27.0.1 et deux workers sans erreur de socket, puis a été arrêtée
+  volontairement. Revue indépendante : aucun blocage ; la recommandation
+  d'essai Gunicorn réel a été suivie. Les journaux Render restent à confirmer.

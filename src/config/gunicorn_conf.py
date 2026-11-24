@@ -11,3 +11,6 @@ workers = 2
 # Request paths can contain user data; keep the default access log disabled.
 accesslog = None
 errorlog = "-"
+# The unneeded Gunicorn control socket defaults to $HOME, which this non-root
+# image deliberately does not make writable.
+control_socket_disable = True

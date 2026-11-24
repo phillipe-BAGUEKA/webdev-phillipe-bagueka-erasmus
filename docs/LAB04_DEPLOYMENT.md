@@ -1,5 +1,47 @@
 # Lab 04 — préparation locale
 
+## Première mise en ligne et correctif, 24 novembre 2026
+
+L'étudiant a signalé le déploiement réussi de `dafa3ec` après remplacement de
+`DJANGO_SECRET_KEY`. Sur le domaine public Render, il a observé `/` avec
+« Page introuvable », `/labs` redirigé vers la connexion correctement mise en
+forme et `/health` avec `{"status":"ok","db":"ok"}`. Codex a relevé les
+statuts HTTPS correspondants (404, 302 et 200), l'API `/api/labs` à 401 JSON et
+les fichiers CSS/JavaScript à 200 avec leurs types MIME attendus.
+
+Le routeur ne définissait aucune route `/`. Le correctif y ajoute une redirection
+temporaire vers `/labs`, qui conserve le contrôle de session existant. Render
+signalait aussi `Control server error: [Errno 13] Permission denied:
+'/home/appuser'`. L'image utilise volontairement l'UID 10001 sans créer de
+répertoire personnel. Le socket de contrôle facultatif de Gunicorn cherchait
+son chemin sous ce répertoire. La configuration désactive ce seul socket ; elle
+n'élargit pas les permissions du conteneur. L'image corrigée a été construite
+localement et son utilisateur, l'absence de répertoire personnel et le réglage
+du socket ont été vérifiés. L'absence du message dans les journaux Render doit
+encore être confirmée après le redéploiement.
+
+La préparation limitée de comptes et d'un catalogue de démonstration publics
+est décrite dans [NEON_PUBLIC_DEMO.md](NEON_PUBLIC_DEMO.md). Elle requiert une
+saisie masquée locale de la chaîne Neon et de deux nouveaux mots de passe. La
+procédure n'a pas été exécutée sur Neon par Codex. Les connexions publiques,
+mutations, attributs du cookie de session et persistance après redéploiement
+restent donc à observer.
+
+Vérifications locales du correctif : 71 tests ciblés PostgreSQL réussis ;
+`npm test` : 616 tests PostgreSQL, une garde SQLite séparée, 9 tests TP1 et 66 tests
+Node réussis. Couverture officielle PostgreSQL et TP1 : services 407/407 lignes
+et 124/124 branches ; global Python 2156/2601 lignes et 520/648 branches, soit
+82,36 % combiné. L'inventaire inclut aussi les scripts locaux ignorés de
+`.local`, sans exclusion nouvelle. `node checks/ex2.mjs` : 32/32. Avant
+publication du correctif, `node checks/ex4.mjs` : 25/34 ; les deux échecs de
+page publique reflètent encore le 404 du SHA déployé, et les autres échecs
+portent sur la reconnaissance structurelle de la couverture Python, des
+preuves UI et du prix fournisseur non mesuré. Aucun vérificateur n'a été modifié.
+L'image `lab-booking:render-fix` a été construite. Un essai de démarrage dans
+cette image avec les réglages statiques, sans base ni secret, a lancé Gunicorn
+27.0.1 et deux workers sans message de socket ; l'arrêt programmé du processus
+ne constitue pas une preuve des journaux Render après redéploiement.
+
 Sources consultées le 23 novembre 2026 : [Exercise 04, Steps et What you build](https://webdev-course.tu-sofia.workers.dev/en/resources/exercises/4/) ; [Project, The requirements exactly](https://webdev-course.tu-sofia.workers.dev/en/guides/project/). Les exemples du cours supposent Node ; notre application utilise Django, Gunicorn, PostgreSQL et la couverture Python existante.
 
 ## Livrables et contrôles exacts du cours
@@ -13,7 +55,7 @@ Sources consultées le 23 novembre 2026 : [Exercise 04, Steps et What you build]
 
 `Dockerfile` installe les dépendances figées, collecte les fichiers statiques sans secret réel, puis lance Gunicorn avec `src.config.production` sur `PORT` (10000 par défaut), sans privilège root. `.dockerignore` écarte données, profils, tests et fichiers locaux du contexte. `production.py` exige `DJANGO_SECRET_KEY` et `DATABASE_URL`. Les hôtes et origines CSRF sont soit explicites, soit déduits du domaine initial `RENDER_EXTERNAL_HOSTNAME` fourni par Render ; hors Render ou pour un domaine personnalisé, les valeurs exactes doivent être renseignées. Les erreurs de configuration ne reproduisent jamais la chaîne de connexion. Pour un hôte Neon, le profil exige `verify-full`, la CA système et le channel binding ; le `require` du test local autosigné reste accepté seulement pour d'autres hôtes. Les sessions restent dans la base. WhiteNoise sert les fichiers collectés avec manifeste et compression. `GET /health` exécute `SELECT 1` dans la couche de données : 200 `{"status":"ok","db":"ok"}` ou 503 `{"status":"error","db":"down"}` sans détail sensible. La redirection HTTPS, les cookies sécurisés, les hôtes et les origines CSRF sont propres au profil de production.
 
-`.env.example` ne contient que des valeurs factices. Les vraies valeurs iront dans Render, jamais dans Git ni dans l'image. L'IA reste désactivée par défaut ; une clé éventuelle ne doit pas venir du profil Gemini CLI. Le serveur MCP stdio ne sera pas exposé par le service web. SQLite, PostgreSQL local 5433 et l'instance 5432 restent indépendants du futur Neon.
+`.env.example` ne contient que des valeurs factices. Les vraies valeurs sont configurées dans Render, jamais dans Git ni dans l'image. L'IA reste désactivée par défaut ; une clé éventuelle ne doit pas venir du profil Gemini CLI. Le serveur MCP stdio n'est pas exposé par le service web. SQLite, PostgreSQL local 5433 et l'instance 5432 restent indépendants de Neon.
 
 `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` restent dans l'exemple pour la fonctionnalité future spécifiée et pour le contrôle ex2 ; le code actuel ne les lit pas. Ils ne sont ni nécessaires au démarrage ni à renseigner sur Render maintenant. Ce point diffère de la consigne Lab 04 de retirer les variables inutilisées : il sera résolu lorsque la connexion Google sera implémentée ou après clarification avec le professeur, sans prétendre que la fonctionnalité existe.
 
@@ -51,7 +93,7 @@ Observations de l'essai final :
 | Persistance | Un laboratoire synthétique créé dans cette seule base a gardé le même identifiant et le même nom après suppression et recréation du conteneur applicatif avec le volume DB inchangé. |
 | Nettoyage | Conteneurs applicatif, DB et proxy, réseau, volume et image propres à cet essai supprimés ; absence vérifiée des ressources nommées. |
 
-Ce parcours ne valide pas Render, Neon, le certificat public, les cookies de session sécurisés dans un vrai navigateur ni la persistance après un redéploiement Render. Les essais publics de `READINESS.md` restent non vérifiés.
+Ce parcours local ne valide pas à lui seul Render, Neon, le certificat public, les cookies de session sécurisés dans un vrai navigateur ni la persistance après un redéploiement Render. Les observations publiques ultérieures sont distinguées dans `READINESS.md`.
 
 Le test local du 23 novembre a utilisé `sslmode=require` avec un certificat autosigné. Cela prouve le chiffrement de la liaison de test, pas l'authentification du serveur PostgreSQL. [Neon explique la différence entre `require` et `verify-full`](https://neon.com/blog/postgres-needs-better-connection-security-defaults). Le 24 novembre, le profil Django a été adapté pour accepter `sslrootcert=system` uniquement avec `sslmode=verify-full`, en plus de l'option facultative `channel_binding=require`. L'image contient libpq 18 et un bundle CA Linux explicitement fourni à OpenSSL par `SSL_CERT_FILE` ; le build vérifie que ce fichier existe et n'est pas vide. Cette combinaison a réussi le contrôle Neon en lecture seule décrit ci-dessous. `.env.example` reste un exemple non déployable tel quel.
 
@@ -61,7 +103,7 @@ Préparation de publication du 24 novembre 2026 : le job `test` de `.github/work
 
 ### Contrôle Neon en lecture seule — réussi le 24 novembre 2026
 
-L'étudiant a créé le projet Neon `lab-booking`, la base `lab_booking`, PostgreSQL 16 en région AWS Frankfurt et l'offre Free. Ces informations viennent de l'étudiant. Après deux diagnostics ciblés et sans divulguer l'URL, il a exécuté le contrôle final depuis l'image Docker corrigée et transmis : « Connexion Neon vérifiée : Django, verify-full, CA de l'image, lecture seule, PostgreSQL 16. » Codex a vérifié le code et l'image qui produisent ce résultat, mais n'a pas vu la saisie ni la console de l'étudiant. Le formulaire Render est ouvert, sans déploiement lancé.
+L'étudiant a créé le projet Neon `lab-booking`, la base `lab_booking`, PostgreSQL 16 en région AWS Frankfurt et l'offre Free. Ces informations viennent de l'étudiant. Après deux diagnostics ciblés et sans divulguer l'URL, il a exécuté le contrôle final depuis l'image Docker corrigée et transmis : « Connexion Neon vérifiée : Django, verify-full, CA de l'image, lecture seule, PostgreSQL 16. » Codex a vérifié le code et l'image qui produisent ce résultat, mais n'a pas vu la saisie ni la console de l'étudiant. Ce paragraphe décrit le contrôle antérieur au déploiement, désormais réalisé selon le rapport de l'étudiant.
 
 Depuis la racine du dépôt, la commande interactive est `.\.venv\Scripts\python.exe .local\check_neon_readonly.py`. Ce script local, ignoré par Git, demande la chaîne **Direct connection** avec saisie masquée. Il vérifie le domaine Neon et le nom de base, conserve l'hôte direct et les identifiants, impose `sslmode=verify-full`, `sslrootcert=system` et `channel_binding=require`, puis transmet la chaîne uniquement par l'entrée standard d'un conteneur éphémère sans journal Docker. Le conteneur ne lance ni le `CMD` de migration ni Gunicorn : il charge `src.config.production` et effectue seulement des lectures SQL, avec `default_transaction_read_only=on`. Le résultat attendu est un message de réussite sans URL, ou une catégorie d'échec sans détail sensible. Le jeton de connexion ne doit pas être collé dans la conversation, dans une commande, dans un profil ni dans Git. Cette remise locale n'est pas une validation du déploiement Render.
 
@@ -69,9 +111,9 @@ Le premier essai a rendu une erreur TLS générique. Le prédiagnostic SSL de Py
 
 ## Étapes personnelles sur Render et Neon
 
-Vérifier encore les offres lors de la création. Le cours prescrit un service web Render Docker et une base Neon persistante. [Render Free](https://render.com/docs/free) indique que sa base Postgres gratuite expire après 30 jours ; [Render Deploys](https://render.com/docs/deploys) décrit « After CI Checks Pass » ; [Render Health Checks](https://render.com/docs/health-checks) permet de définir `/health`. La [page des offres Neon](https://neon.com/docs/introduction/plans) donne les limites actuelles, à confirmer dans le compte. Gratuit annoncé ne garantit pas l'accès effectif.
+Le cours prescrit un service web Render Docker et une base Neon persistante. [Render Free](https://render.com/docs/free) indique que sa base Postgres gratuite expire après 30 jours ; [Render Deploys](https://render.com/docs/deploys) décrit « After CI Checks Pass » ; [Render Health Checks](https://render.com/docs/health-checks) permet de définir `/health`. La [page des offres Neon](https://neon.com/docs/introduction/plans) donne les limites annoncées, à confirmer dans le compte. Gratuit annoncé ne garantit pas l'accès effectif.
 
-Le [plan gratuit Neon, mis à jour le 18 novembre 2026](https://neon.com/docs/introduction/plans), annonce 1 Go de stockage par projet et 100 CU-heures par mois ; l'étudiant a confirmé l'offre Free de son projet, sans contrôle des quotas effectifs par Codex. La ressource Neon a été créée par l'étudiant ; aucune autre ressource distante n'a été créée par Codex. Avant un déploiement futur autorisé :
+Le [plan gratuit Neon, mis à jour le 18 novembre 2026](https://neon.com/docs/introduction/plans), annonce 1 Go de stockage par projet et 100 CU-heures par mois ; l'étudiant a confirmé l'offre Free de son projet, sans contrôle des quotas effectifs par Codex. La ressource Neon a été créée par l'étudiant ; aucune autre ressource distante n'a été créée par Codex. Les étapes ci-dessous décrivent la préparation historique du premier déploiement et ne demandent pas de recréer les ressources :
 
 1. Dans la [console Neon](https://console.neon.tech/), ouvrir le projet existant `lab-booking`, choisir la base `lab_booking`, puis **Connect → Connection string → Direct connection** (ne pas sélectionner le pooler). Copier localement la chaîne entière, sans la mettre dans Git ni dans le chat. L'hôte direct est approprié au premier démarrage qui applique les migrations ; aucun transfert de données locales n'est prévu.
 2. Exécuter le contrôle masqué ci-dessus. Après réussite effective, employer dans Render la **même chaîne directe** avec l'hôte, le rôle, le mot de passe et la base Neon d'origine, mais avec les paramètres de requête validés `sslmode=verify-full&sslrootcert=system&channel_binding=require`. Ne jamais publier ni journaliser cette chaîne. Sans message de réussite du contrôle, ne pas considérer `DATABASE_URL` prêt.
@@ -81,4 +123,4 @@ Le [plan gratuit Neon, mis à jour le 18 novembre 2026](https://neon.com/docs/in
 
 La connexion sociale Google reste absente : ne pas inventer d'URL de callback. Les éventuels coûts, quotas et limitations doivent être confirmés dans les comptes avant création du service Render. La construction Docker est bloquante dans le job `test` ; sa réussite distante sur le prochain correctif TLS devra être vérifiée avant tout déploiement.
 
-À démontrer plus tard sur Render : conteneur public démarré, persistance après redéploiement, rollback chronométré, erreurs sur site public, quatre états et waterfall navigateur, recherche personnelle de secrets dans Git, coût et accès réels au modèle, client MCP final. `READINESS.md` devra décrire méthode et preuve, jamais une supposition.
+À démontrer plus tard sur Render : connexion et mutations publiques, persistance après redéploiement, rollback chronométré, réponse 500 publique, quatre états et waterfall navigateur, recherche personnelle de secrets dans Git, coût et accès réels au modèle, client MCP final. `READINESS.md` doit décrire méthode et preuve, jamais une supposition.

@@ -1,12 +1,14 @@
 """Page, session and booking routes."""
 
 from django.urls import path
+from django.views.generic import RedirectView
 
 from src.routes import (
     ai_suggestion, auth, bookings, health, labs, pages, staff_bookings, staff_catalogue,
 )
 
 urlpatterns = [
+    path("", RedirectView.as_view(pattern_name="laboratories", permanent=False), name="home"),
     path("health", health.health, name="health"),
     path("login", pages.login_page, name="login"),
     path("labs", pages.laboratories_page, name="laboratories"),
