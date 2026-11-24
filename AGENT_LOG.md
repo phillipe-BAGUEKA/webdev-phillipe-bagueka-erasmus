@@ -1790,3 +1790,12 @@ approved the whole feature diff. User must supply their own assessment.
   Gunicorn 27.0.1 et deux workers sans erreur de socket, puis a été arrêtée
   volontairement. Revue indépendante : aucun blocage ; la recommandation
   d'essai Gunicorn réel a été suivie. Les journaux Render restent à confirmer.
+- Publication et observation : `449bf7b` poussé normalement sur `origin/main` ;
+  [CI 45309644035](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/45309644035)
+  verte (`test`, `coverage`, `mcp`, `spec`). La CI a mesuré services 407/407
+  lignes, 124/124 branches ; global Python 2157/2274 lignes, 521/572 branches
+  (94,10 % combiné). Après le déploiement automatique, Codex a observé `/`
+  à 302 vers `/labs`, `/health` à 200 et `/api/labs` sans session à 401 JSON
+  sans liste. Ex4 officiel : 27/34 ; les deux contrôles de page passent
+  désormais, les sept autres restent décrits dans le guide. Aucun compte ou
+  catalogue public n'a encore été préparé par Codex.

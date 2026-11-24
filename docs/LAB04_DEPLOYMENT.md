@@ -42,6 +42,26 @@ cette image avec les réglages statiques, sans base ni secret, a lancé Gunicorn
 27.0.1 et deux workers sans message de socket ; l'arrêt programmé du processus
 ne constitue pas une preuve des journaux Render après redéploiement.
 
+Après le push de `449bf7b`, les quatre jobs du [run CI
+45309644035](https://github.com/phillipe-BAGUEKA/webdev-phillipe-bagueka-erasmus/actions/runs/45309644035)
+ont réussi : `test` (616 tests PostgreSQL, garde SQLite séparée, 9 TP1, 66 Node
+et build Docker), `coverage`, `mcp` et `spec`. La CI a mesuré 407/407 lignes
+et 124/124 branches des services ; global Python 2157/2274 lignes et 521/572
+branches (94,10 % combiné), et couverture JavaScript sur 63 tests. Le
+dénominateur Python diffère du local, car les scripts ignorés de `.local` ne
+figurent pas dans le clone CI.
+
+Le site public a ensuite répondu `/` 302 vers `/labs`, `/health` 200 JSON et
+`/api/labs` sans session 401 JSON `{"error": "Connexion requise."}` sans liste.
+`node checks/ex4.mjs` a atteint 27/34 : la page et son titre passent désormais.
+Restent : détection structurelle de la commande de couverture Python et de son
+seuil services à 100 % (les jobs CI prouvent l'exécution réelle), 17 cases UI
+non cochées et absence de capture reconnue, prix fournisseur non mesuré et
+deux recherches de mots anglais que le texte français de la section Model ne
+satisfait pas. Ce résultat n'est pas une clôture du Lab 04. L'absence du message
+Gunicorn dans les nouveaux journaux Render n'est pas directement observable
+par Codex et reste à confirmer par l'étudiant.
+
 Sources consultées le 23 novembre 2026 : [Exercise 04, Steps et What you build](https://webdev-course.tu-sofia.workers.dev/en/resources/exercises/4/) ; [Project, The requirements exactly](https://webdev-course.tu-sofia.workers.dev/en/guides/project/). Les exemples du cours supposent Node ; notre application utilise Django, Gunicorn, PostgreSQL et la couverture Python existante.
 
 ## Livrables et contrôles exacts du cours
