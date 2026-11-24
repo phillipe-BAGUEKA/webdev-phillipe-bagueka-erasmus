@@ -23,7 +23,9 @@ encore être confirmée après le redéploiement.
 La préparation limitée de comptes et d'un catalogue de démonstration publics
 est décrite dans [NEON_PUBLIC_DEMO.md](NEON_PUBLIC_DEMO.md). Elle requiert une
 saisie masquée locale de la chaîne Neon et de deux nouveaux mots de passe. La
-procédure n'a pas été exécutée sur Neon par Codex. Les connexions publiques,
+procédure a été exécutée par l'étudiant, qui a rapporté « Préparation réussie :
+2 comptes, 1 laboratoire, 2 postes créés. » Codex n'a pas vu la saisie ni les
+lignes de la base directement. Les connexions publiques,
 mutations, attributs du cookie de session et persistance après redéploiement
 restent donc à observer.
 
@@ -53,6 +55,26 @@ figurent pas dans le clone CI.
 
 Le site public a ensuite répondu `/` 302 vers `/labs`, `/health` 200 JSON et
 `/api/labs` sans session 401 JSON `{"error": "Connexion requise."}` sans liste.
+L'étudiant a ensuite rapporté le succès du préparateur (deux comptes, un
+laboratoire, deux postes), puis un refus de connexion pour le compte étudiant.
+Le code fixe son adresse à `student-public@demo.example` et utilise le premier
+mot de passe masqué de la préparation. Un test PostgreSQL isolé confirme que le
+backend Django accepte le compte créé ainsi. `tools/check_neon_demo_login.py`
+propose un diagnostic en lecture seule avec la même URL et ce mot de passe,
+saisis localement et jamais affichés. L'étudiant a obtenu
+`DEMO_LOGIN:PASSWORD_MISMATCH:catalogue=1/2`. Il demande un reset ciblé des
+deux comptes ; la commande masquée et ses limites sont dans
+`docs/NEON_PUBLIC_DEMO.md`. L'étudiant a ensuite transmis `DEMO_RESET:OK`
+après saisie masquée. L'étudiant a ensuite confirmé que les deux connexions
+Render fonctionnent ; Codex a observé le compte personnel et le catalogue
+sur `/labs` dans Edge. Les réservations publiques restent non vérifiées.
+La revue a reproduit la conversion CRLF de l'ancien transport texte sous
+Windows, qui pouvait laisser un retour chariot dans le mot de passe stocké.
+Le préparateur, le diagnostic et le reset utilisent maintenant un flux binaire
+UTF-8 ; un test de non-régression contrôle ce point. La responsabilité exacte
+de ce défaut sur l'essai Neon initial ne peut pas être prouvée par le seul
+succès des connexions après réinitialisation.
+
 `node checks/ex4.mjs` a atteint 27/34 : la page et son titre passent désormais.
 Restent : détection structurelle de la commande de couverture Python et de son
 seuil services à 100 % (les jobs CI prouvent l'exécution réelle), 17 cases UI

@@ -1799,3 +1799,46 @@ approved the whole feature diff. User must supply their own assessment.
   sans liste. Ex4 officiel : 27/34 ; les deux contrôles de page passent
   désormais, les sept autres restent décrits dans le guide. Aucun compte ou
   catalogue public n'a encore été préparé par Codex.
+- L'étudiant a ensuite exécuté le préparateur Neon avec saisie masquée et a
+  transmis uniquement « Préparation réussie : 2 comptes, 1 laboratoire, 2
+  postes créés. » Codex n'a reçu ni URL de connexion ni mot de passe et n'a
+  pas encore vérifié les connexions publiques ou les lignes Neon par navigateur.
+- Première tentative de connexion publique rapportée par l'étudiant :
+  `student-public@demo.example` reçoit « Adresse e-mail ou mot de passe
+  incorrect ». Codex a vérifié l'adresse constante et l'ordre des mots de
+  passe dans le préparateur, ainsi que le backend Django ; un nouveau test
+  PostgreSQL isolé confirme l'authentification d'un compte préparé. Un outil
+  local de diagnostic masqué et en lecture seule distingue compte absent,
+  inactif, mot de passe différent et rejet du backend. Sept tests ciblés
+  passent. La cause réelle et toute nécessité de réinitialisation restent
+  inconnues avant le retour de l'étudiant. Revue indépendante : aucun blocage ;
+  ses suggestions de nettoyage explicite de la connexion éphémère et de deux
+  assertions supplémentaires sont non bloquantes.
+- L'étudiant a exécuté le diagnostic masqué en lecture seule et rapporté
+  `DEMO_LOGIN:PASSWORD_MISMATCH:catalogue=1/2`. Il a demandé de conserver les
+  deux mots de passe qu'il a choisis par une réinitialisation ciblée, avec
+  saisie masquée. Codex a préparé une transaction ne modifiant que les deux
+  hashes après vérification des comptes/rôles, sans toucher aux lignes de
+  catalogue ou réservations. Treize tests ciblés PostgreSQL et hors réseau
+  passent ; aucune écriture Neon ni connexion publique réussie n'est encore
+  observée.
+- Revue complémentaire du reset : défaut concret du protocole local découvert.
+  Sous Windows, `subprocess.run(text=True)` a transformé `\n` en `\r\n` ; le
+  worker retirait seulement `\n`, pouvant inclure `\r` dans le hash du mot de
+  passe. Le transport des trois lanceurs utilise maintenant des octets UTF-8
+  et retire CRLF. Tests ciblés après correction : 53 réussis, y compris le
+  refus d'un compte personnel devenu administrateur Django. Ce mécanisme
+  est démontré localement mais son rôle exact dans l'échec Neon reste une
+  hypothèse avant le résultat post-reset. La revue a confirmé l'atomicité du
+  reset et recommandé un test de rôle personnel incompatible, ajouté ensuite.
+- L'étudiant a exécuté la réinitialisation masquée et rapporté `DEMO_RESET:OK`.
+  Les deux connexions publiques restent à vérifier ; aucun secret n'a été
+  transmis à Codex. L'image Docker locale a été reconstruite pour l'essai.
+- L'étudiant a ensuite confirmé les connexions étudiante et personnel sur
+  Render. Codex a observé dans Edge le compte personnel sur `/labs`, avec le
+  laboratoire public chargé. Le parcours de réservation et les cookies HTTPS
+  restent non vérifiés. Vérifications locales : 53 tests ciblés réussis ; une
+  première couverture dans le sandbox échouait sur l'accès au dossier Temp
+  Windows, puis la mesure hors sandbox a réussi avec 627 tests PostgreSQL,
+  1 désélection et 9 tests TP1 ; services 407/407 lignes et 124/124 branches,
+  global 2210/2671 lignes et 535/668 branches.

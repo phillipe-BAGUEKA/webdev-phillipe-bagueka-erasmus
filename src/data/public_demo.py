@@ -1,5 +1,6 @@
 """Idempotent public demonstration records, separate from local SQLite seeds."""
 
+from django.contrib.auth.password_validation import validate_password
 from django.db import transaction
 
 from .models import Laboratory, User, Workstation
@@ -68,3 +69,31 @@ def prepare_public_demo(
             created_workstations += int(created)
 
     return created_users, created_laboratories, created_workstations
+
+
+def reset_public_demo_passwords(
+    student_password: str,
+    personnel_password: str,
+) -> None:
+    """Replace only the two planned password hashes after checking both accounts."""
+    with transaction.atomic():
+        accounts = []
+        for email, role, password in (
+            (STUDENT_EMAIL, User.Role.STUDENT, student_password),
+            (PERSONNEL_EMAIL, User.Role.PERSONNEL, personnel_password),
+        ):
+            user = User.objects.select_for_update().filter(email__iexact=email).first()
+            if (
+                user is None
+                or user.role != role
+                or not user.is_active
+                or user.is_staff
+                or user.is_superuser
+            ):
+                raise DemoDataConflict("Missing or incompatible demonstration account.")
+            validate_password(password)
+            accounts.append((user, password))
+
+        for user, password in accounts:
+            user.set_password(password)
+            user.save(update_fields=["password"])

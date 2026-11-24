@@ -11,9 +11,9 @@ import os
 import secrets
 import sys
 
-database_url = sys.stdin.readline().rstrip("\\n")
-student_password = sys.stdin.readline().rstrip("\\n")
-personnel_password = sys.stdin.readline().rstrip("\\n")
+database_url = sys.stdin.buffer.readline().decode("utf-8").rstrip("\\r\\n")
+student_password = sys.stdin.buffer.readline().decode("utf-8").rstrip("\\r\\n")
+personnel_password = sys.stdin.buffer.readline().decode("utf-8").rstrip("\\r\\n")
 os.environ["DATABASE_URL"] = database_url
 os.environ["DJANGO_SECRET_KEY"] = secrets.token_urlsafe(60)
 os.environ["DJANGO_ALLOWED_HOSTS"] = "localhost"
@@ -135,8 +135,7 @@ def main() -> int:
                 "docker", "run", "--rm", "-i", "--log-driver=none",
                 "--entrypoint", "python", IMAGE, "-c", WORKER,
             ],
-            input=f"{url}\n{student_password}\n{personnel_password}\n",
-            text=True,
+            input=f"{url}\n{student_password}\n{personnel_password}\n".encode("utf-8"),
             capture_output=True,
             timeout=120,
             check=False,
@@ -145,7 +144,7 @@ def main() -> int:
         print("Préparation interrompue ; vérifier les lignes en base avant de réessayer.")
         return 1
 
-    output = result.stdout.strip()
+    output = result.stdout.decode("ascii", errors="replace").strip()
     if result.returncode == 0 and output.startswith("DEMO_OK:"):
         parts = output.split(":")
         if len(parts) == 4 and all(part.isdigit() for part in parts[1:]):
